@@ -22,9 +22,7 @@ public class AppStore
 	private List<App> apps;							// Applications in the store
 	private List<Purchase> purchases; 				// Purchases made in the store
 	private List<User> users;						// List of all users in the store
-	private List<Client> clients; 					// List of clients normals in the store
-	private List<ClientPremium> clientsPremium;	 	// List of clients in the store
-	private List<Programmer> programmers; 			// List of programmers in the store
+
 	private List<Score> scores; 						// List of all scores given to the applications
 
 	public AppStore(String aName)
@@ -36,9 +34,6 @@ public class AppStore
 		apps = new ArrayList<App>();
 		purchases = new ArrayList<Purchase>();
 		users = new ArrayList<User>();
-		clients = new ArrayList<Client>();
-		clientsPremium = new ArrayList<ClientPremium>(); 
-		programmers = new ArrayList<Programmer>();
 		scores = new ArrayList<Score>();
 	}
 
@@ -50,19 +45,16 @@ public class AppStore
 		if (aType.equals("Client"))
 		{
 			Client client = new Client(aName, aAge);
-			clients.add(client);
 			users.add(client);
 		}
 		else if (aType.equals("Programmer"))
 		{
 			Programmer programmer = new Programmer(aName, aAge);
-			programmers.add(programmer);
 			users.add(programmer);	
 		}
 		else if (aType.equals("ClientPremium"))
 		{
 			ClientPremium clientPremium = new ClientPremium(aName, aAge);
-			clientsPremium.add(clientPremium);
 			users.add(clientPremium);	
 		}
 	}
@@ -70,11 +62,11 @@ public class AppStore
 	/** Designates programmer to develop an application **/
 	public void designateProgrammer(String aAppName, double aPrice, AppType aAppType, String aProgrammerName)
 	{
-		for(Programmer programer: programmers)
+		for(User user: users)
 		{
-			if(programer.getName().equals(aProgrammerName))
+			if(user.getName().equals(aProgrammerName) && user instanceof Programmer)
 			{
-				apps.add(programer.developApp(aAppName, aPrice, aAppType));
+				apps.add( ((Programmer)user).developApp(aAppName, aPrice, aAppType));
 			}
 		}
 	}
@@ -104,7 +96,7 @@ public class AppStore
 		
 		for (App app : shoppingBag.getAppsInBag()) 
 		{
-			findClient(aClient).buy(app.getName());
+			chekIfClient(aClient).buy(app.getName());
 			app.registerSale(calendar.getTime());
 		}
 		purchases.add(tempPurchace);
@@ -229,7 +221,7 @@ public class AppStore
 	public void earningsByProgrammer()
 	{	
 		System.out.println("The programmers earnings are:");
-		for(Programmer programmer : programmers)
+		for(Programmer programmer : getProgrammersList())
 		{
 			System.out.println("Programmer: '" + programmer.getName() + "' earned: " + programmer.getEarnings());
 		}
@@ -241,44 +233,7 @@ public class AppStore
 		scores.add(aScore);
 	}
 
-	/** Finds user in list and return object user **/
-	public User findUser(String aName)
-	{	
-		User returnuser = null;
-		for (User user: users)
-		{
-			if (user.getName().equals(aName))
-			{
-				returnuser = user;
-			}
-		}
-		return returnuser;
-	}
 	
-	/** Finds client in list and return object client **/
-	public Client findClient(String aName)
-	{	
-		Client returnclient = null;
-		for (Client client: clients)
-		{
-			if (client.getName().equals(aName))
-			{
-				returnclient = client;
-			}
-		}
-		return returnclient;
-	}
-
-	/** Prints all Users in the AppStore **/
-	public void  listUsers()
-	{
-		System.out.println("Users:");
-		for (User user: users)
-		{
-			System.out.println(user);
-		}
-	}
-
 	/** Prints all Purchases made in the AppStore **/
 	public void listPurchases()
 	{
@@ -449,6 +404,7 @@ public class AppStore
 		
 		int numberApps = rand.nextInt(3);
 		Bag tempBag = new Bag();
+		List<Client> clients = getClientsList();
 		Client randomClient = clients.get(rand.nextInt(clients.size()));
 		
 		for(int i = 0; i <= numberApps; i++)
@@ -458,6 +414,101 @@ public class AppStore
 		}
 		checkout(randomClient.getName(), tempBag);
 	}
+	
+	
+	/** Methods that verify **/
+		
+	/** Verify if user exists and is Client, returns object client **/
+	public Client chekIfClient(String aName)
+	{	
+		Client returnclient = null;
+		for (User user: users)
+		{
+			if (user.getName().equals(aName) && user instanceof Client)
+			{
+				returnclient = (Client) user;
+			}
+		}
+		return returnclient;
+	}
+	
+	/** Verify if user exists and is ClientPremium, returns object client **/
+	public ClientPremium chekIfClientPremium(String aName)
+	{	
+		ClientPremium returnclient = null;
+		for (User user: users)
+		{
+			if (user.getName().equals(aName) && user instanceof ClientPremium)
+			{
+				returnclient = (ClientPremium) user;
+			}
+		}
+		return returnclient;
+	}
+	
+	/** Verify if user exists and is Programmer, returns object **/
+	public Programmer chekIfProgrammer(String aName)
+	{	
+		Programmer returnProgrammer = null;
+		for (User user: users)
+		{
+			if (user.getName().equals(aName) && user instanceof Programmer)
+			{
+				returnProgrammer = (Programmer) user;
+			}
+		}
+		return returnProgrammer;
+	}
+	
+	
+	/** Methods that return Lists **/
+	
+	/** Return Client list **/
+	public List<Client> getClientsList()
+	{	
+		List<Client>  returnclients = new ArrayList<Client>();
+		for (User user: users)
+		{
+			if (user instanceof Client)
+			{
+				returnclients.add((Client) user);
+			}
+		}
+		return returnclients;
+	}
+	
+	/** Return ClientPremium list **/
+	public List<ClientPremium> getClientsPremiumList()
+	{	
+		List<ClientPremium>  returnClientPremium = new ArrayList<ClientPremium>();
+		for (User user: users)
+		{
+			if (user instanceof ClientPremium)
+			{
+				returnClientPremium.add((ClientPremium) user);
+			}
+		}
+		return returnClientPremium;
+	}
+	
+	/** Return ClientPremium list **/
+	public List<Programmer> getProgrammersList()
+	{	
+		List<Programmer>  returnClientPremium = new ArrayList<Programmer>();
+		for (User user: users)
+		{
+			if (user instanceof Programmer)
+			{
+				returnClientPremium.add((Programmer) user);
+			}
+		}
+		return returnClientPremium;
+	}
+	
+	
+	/** Generators for Simulation **/
+	
+	
 	
 	// Setters
 
@@ -474,21 +525,6 @@ public class AppStore
 	public void setUsers(List<User> aUsers) 
 	{
 		users = aUsers;
-	}
-
-	public void setClients(List<Client> aClients)
-	{
-		clients = aClients;
-	}
-
-	public void setProgrammers(List<Programmer> aProgrammers)
-	{
-		programmers = aProgrammers;
-	}
-
-	public void setClientsPremium(List<ClientPremium> aClientsPremium)
-	{
-		clientsPremium = aClientsPremium;
 	}
 
 	public void setPurchases(List<Purchase> aPurchases) 
@@ -523,21 +559,6 @@ public class AppStore
 	public List<User> getUsers() 
 	{
 		return users;
-	}
-
-	public List<Client> getClients()
-	{
-		return clients;
-	}
-
-	public List<Programmer> getProgrammers() 
-	{
-		return programmers;
-	}
-
-	public List<ClientPremium> getClientsPremium() 
-	{
-		return clientsPremium;
 	}
 
 	public List<Purchase> getPurchases()

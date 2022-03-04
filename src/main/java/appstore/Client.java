@@ -36,7 +36,7 @@ public class Client extends User
 				
 				// Update programmer score
 				String programmerName = app.getProgrammerName();
-				for (Programmer programmer : aStore.getProgrammers())
+				for (Programmer programmer : aStore.getProgrammersList())
 				{
 					if (programmer.getName().equals(programmerName))
 					{

@@ -9,7 +9,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Run {
-
+	
+	private static String userPollNames;
 	private static AppStore storeRequalificar;
 	private static String menuNumber, menuText, userName, clientName, userType, appName, comment;
 	private static int userAge;
@@ -124,10 +125,10 @@ public class Run {
 	public static void loadPreviusScores(AppStore aStore)
 	{
 		// Give Score
-		((Client) aStore.findUser("Paulo"))
+		((Client) aStore.chekIfClient("Paulo"))
 		.giveScore("Tetris", 4.8, "Super Dope", aStore);
 
-		((Client) aStore.findUser("Alice"))
+		((Client) aStore.chekIfClient("Alice"))
 		.giveScore("Tetris", 4.5, "I like this old game!", aStore);;
 	}
 
@@ -256,7 +257,7 @@ public class Run {
 
 		case 1:
 			// Lists all the users in the AppStore
-			aStore.listUsers();
+			aStore.getUsers();
 			menuManager(aStore);
 			break;
 
@@ -634,7 +635,7 @@ public class Run {
 		{
 			System.out.print("\nUserName: ");
 			clientName = scanText.nextLine();
-			if (aStore.getClients().stream().filter(n -> n.getName().equals(userName)).count() > 0)
+			if (aStore.getClientsList().stream().filter(n -> n.getName().equals(userName)).count() > 0)
 			{
 				askForClientName = false;
 			}
@@ -670,7 +671,7 @@ public class Run {
 			}	
 
 			else {
-				for (Client client : aStore.getClients())
+				for (Client client : aStore.getClientsList())
 				{
 					if (client.getName().equals(clientName))
 					{
