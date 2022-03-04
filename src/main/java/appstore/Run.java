@@ -1,15 +1,15 @@
 package appstore;
 
-import java.util.Date;
-import java.util.List;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
-public class Run
-{
+public class Run {
+
 	private static AppStore storeRequalificar;
 	private static String menuNumber, menuText, userName, clientName, userType, appName, comment;
 	private static int userAge;
@@ -319,7 +319,7 @@ public class Run
 			} catch (ParseException e1)
 			{
 				e1.printStackTrace();
-				System.out.println("Wrong data value");
+				System.out.println("Wrong data value: " + startDate);
 			}
 			
 			System.out.println("End date (00-00-0000): ");
@@ -331,7 +331,7 @@ public class Run
 			catch (ParseException e)
 			{
 				e.printStackTrace();
-				System.out.println("Wrong data value");
+				System.out.println("Wrong data value: " + endDate);
 
 			}
 			
