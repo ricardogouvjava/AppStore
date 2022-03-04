@@ -1,0 +1,12 @@
+package appstore;
+
+public enum AppType {
+	GAMES, 
+	BUSINESS, 
+	EDUCATION, 
+	LIFESTYLE, 
+	ENTERTAINMENT, 
+	UTILITIES,
+	TRAVEL, 
+	HEALTHANDFITNESS
+}
