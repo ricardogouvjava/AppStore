@@ -102,7 +102,6 @@ public class AppStore
 		purchases.add(tempPurchace);
 	}
 	
-
 	/** Prints the times an application was sold **/
 	public int timesAppSold(String aAppName)
 	{
@@ -494,7 +493,7 @@ public class AppStore
 	/** Return ClientPremium list **/
 	public List<Programmer> getProgrammersList()
 	{	
-		List<Programmer>  returnClientPremium = new ArrayList<Programmer>();
+		List<Programmer> returnClientPremium = new ArrayList<Programmer>();
 		for (User user: users)
 		{
 			if (user instanceof Programmer)
@@ -551,12 +550,12 @@ public class AppStore
 		return name;
 	}
 
-	public List<App> getApps() 
+	public List<App> getAppsList() 
 	{
 		return apps;
 	}
 
-	public List<User> getUsers() 
+	public List<User> getUsersList() 
 	{
 		return users;
 	}

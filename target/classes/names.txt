@@ -18,7 +18,6 @@ Addams, Jane
 Addison, Joseph
 Adorno, Theodor
 Adler, Alfred
-Aeschylus
 Affleck, Ben
 Agena, Keiko
 Agnew, Spiro
@@ -32,11 +31,9 @@ Alba, Jessica
 Alberti, Leone Battista
 Albom, Mitch
 Alcott, Louisa May
-Alcuin
 Aldiss, Brian
 Alexander the Great
 Alexie, Sherman
-Al-Hallaj
 al-Sadr, Muqtada
 al-Sahaf, Muhammed Saeed
 Alfven, Hannes
@@ -72,8 +69,6 @@ Aquinas, Thomas
 Arafat, Yasser
 Araya, Tom
 Arbuthnot, John
-Archimedes
-Aristotle
 Armstrong, Edwin
 Armstrong, Louis
 Armstrong, Neil
@@ -89,7 +84,6 @@ Atatürk, Mustafa Kemal
 Atwood, Margaret
 Auden, Wystan Hugh
 Audette, Derek R.
-Augustine of Hippo
 Augustine, Norman Ralph
 Austen, Jane
 Austin, Alfred
@@ -147,7 +141,6 @@ Baum, L. Frank
 Bavadra, Timoci
 Bayly, Thomas Haynes
 Bazin, André
-Be-Bl
 Bean, Roy
 Beard, Charles A.
 Beaumont and Fletcher
@@ -195,7 +188,6 @@ Biko, Steve
 Billings, Josh
 Biondo, Frank
 Birrell, Augustine
-Black Elk
 Blair, Robert
 Blair, Tony
 Blake, William
@@ -253,7 +245,6 @@ Bräutigam, Deborah
 Brautigan, Richard
 Brazauskas, Algirdas
 Brecht, Bertolt
-Brennus
 Briggs, Joe Bob
 Brilliant, Ashleigh
 Brodsky, Joseph
@@ -278,7 +269,6 @@ Brutus, Marcus Junius
 Bryan, William Jennings
 Bryant, William Cullen
 Bryson, Bill
-Bu-By
 Buber, Martin
 Buchan, John
 Buck, Pearl
@@ -306,8 +296,6 @@ Bush, John Carder
 Bush, Kate
 Bush, Vannevar
 Butler, Amir
-Butler, Samuel (1835-1902)
-Butler, Samuel (1612-1680)
 Butler, Smedley
 Butler Sloss, Dame Elizabeth
 Buzan, Tony
@@ -435,7 +423,6 @@ Cook, Peter
 Cooley, Mason
 Coolidge, Calvin
 Cooper, Alice
-Cooper, Diana (Lady Diana Manners)
 Copeland, Stewart
 Copernicus, Nicolaus
 Copland, Aaron
@@ -448,7 +435,6 @@ Cortázar, Julio
 Cosby, Bill
 Coulter, Ann
 Coupland, Douglas
-Courtney, Leonard H. (Lord Courtney)
 Courtney, Margaret
 Covington, Stephen
 Coward, Noel
@@ -686,7 +672,6 @@ Gagarin, Yuri
 Gaiman, Neil
 Galbraith, John Kenneth
 Galilei, Galileo
-Gallagher (Leo Anthony Gallagher)
 Gallagher, Fred
 Gallo, Vincent Actor
 Galloway, George
@@ -791,7 +776,6 @@ Hain, Peter
 Halas, George
 Haldeman, Joe
 Haley, Alex
-Hall, Evelyn Beatrice (also known by pseudonym "Stephen G. Tallentyre")
 Halliburton, Richard
 Halme, Tony
 Halsey, William "Bull"
@@ -903,7 +887,6 @@ Howe, Julia Ward
 Howell, James
 Hoyle, Fred
 Hubbard, Elbert
-Hubbard, Kin (Frank McKinney Hubbard)
 Hubbard, L. Ron
 Huckabee, Mike
 Huelskamp, Tim
@@ -976,13 +959,11 @@ Jillette, Penn
 Joan of Arc
 Jobs, Steve
 John of the Cross
-John Paul II (Pope)
 Johns, Michael
 Johnson, Boris
 Johnson, Lyndon
 Johnson, Philip
 Johnson, Samuel
-Johnson, Susan (Australian)
 Johnson, Zach
 Jolie, Angelina
 Jones, John Paul
@@ -999,7 +980,6 @@ Joyce, James
 Juárez, Benito
 Judd, Ashley
 Jueneman, Frederic
-Julian (Emperor)
 Julian of Norwich
 Jung, Carl
 Junge, Traudl
@@ -1094,7 +1074,6 @@ Krieger, Lou
 Krieger, Robbie
 Kripke, Saul
 Krishnamurti, Jiddu
-Krishnamurthy, Kalki (R. Krishnamurthy)
 Kronrod, Alexander
 Kruk, John
 Kruger, Barbara
@@ -1205,7 +1184,6 @@ Maharaji (Prem Rawat)
 Maher, Bill
 Malcolm X
 Malda, Rob "CmdrTaco"
-Mallet, David (or David Malloch)
 Malley, Matt
 Malory, Thomas
 Malraux, André
@@ -1296,7 +1274,6 @@ Miller, Arthur
 Miller, Bode
 Miller, Henry
 Miller, Ron
-Miller, Walter M. (Jr.)
 Milligan, Spike
 Mills, C. Wright
 Milne, A.A.
@@ -1330,7 +1307,6 @@ Morrison, Jim
 Morrison, Robert
 Morrissey
 Mortimer, John
-Mother Teresa (Agnes Gonxha Bojaxhi)
 Mountbatten, Louis
 Mozart, Wolfgang Amadeus
 Mugabe, Robert
@@ -1361,7 +1337,6 @@ Navakasuasua, Maciu
 Negroponte, Nicholas
 Nelson, Hailey Anne
 Nelson, Horatio
-Nero (Emperor)
 Neruda, Pablo
 Newhart, Bob
 Newton, Isaac
@@ -1381,8 +1356,6 @@ Niven, Larry
 Nixon, Richard
 Noam, Eli
 Norton, Joshua Abraham
-Nostradamus (Michel de Notredame, or Michel de Nostredame)
-Novalis
 Nugent, Ted
 Nukem, Duke
 Null, Gary
@@ -1407,10 +1380,8 @@ O'Reilly, Bill
 O'Rourke, P. J.
 Ortiz, David
 Orwell, George
-Osama bin Laden
 Osbourne, Ozzy
 O’Shaughnessy, Arthur
-Osho (also known as Bhagwan Shree Rajneesh)
 Ouspensky, P. D.
 Overbury, Thomas
 Owens, Jesse
@@ -1426,12 +1397,10 @@ Parker, Dorothy
 Parton, Dolly
 Pascal, Blaise
 Pasteur, Louis
-Patañjali
 Pater, Walter
 Paterson, Isabel
 Patrick, Saint
 Patton, George S.
-Paul VI (Pope)
 Paul, Ron
 Pauli, Wolfgang
 Pauling, Linus
@@ -1449,7 +1418,7 @@ Perlis, Alan
 Perry, Michael D.
 Perry, Oliver Hazard
 Pessoa, Fernando
-Pet Shop Boys (Neil Tennant and Chris Lowe)
+Pet Shop Boys
 Peter Kay
 Peter, Dr. Laurence J.
 Petronius, Gaius
@@ -1484,7 +1453,6 @@ Proudhon, P. J.
 Puget, Jade
 Punja, Hari
 Purcell, Steve
-Pushkin, Aleksandr (Alexander Pushkin)
 Putin, Vladimir
 Pynchon, Thomas
 Qarase, Laisenia
@@ -1580,7 +1548,6 @@ Salinger, J. D.
 Sanger, Margaret
 San Martín, José de
 Santayana, George
-Sappho
 Saroyan, William
 Sartre, Jean-Paul
 Sarven, Allen
@@ -1612,7 +1579,7 @@ Seuss, Dr.
 Shahak, Israel
 Shakespeare, William
 Shakur, Tupac
-Shankar, Ravi (Art of Living founder, not the sitar maestro)
+Shankar, Ravi
 Sharpton, Al
 Shaw, George Bernard
 Shawcross, Hartley
@@ -1639,8 +1606,8 @@ Sidhu, Navjot Singh
 Singh, Raman Pratap
 Singh, Sir Vijay
 Sitwell, Edith
-Sixtus V (pope)
-Scanderbeg|Skenderbeu(The prince of Arberia)
+Sixtus V
+Scanderbeg|Skenderbeu
 Slick, Grace
 Smirnoff, Yakov
 Smith, Adam
@@ -1655,7 +1622,7 @@ Smith, Sydney
 Smollett, Tobias
 Smuts, Jan Christiaan
 Snepscheut, Jan L. A. van de
-Snoop Dogg (Calvin Cordozar Broadus)
+Snoop Dogg
 Snow, Carrie
 Sobran, Joseph
 Solzhenitsyn, Alexander
@@ -1691,7 +1658,7 @@ Sterling, Bruce
 Stevens, Wallace
 Stevenson, Adlai
 Stevenson, Robert Louis
-Stewart, James (Jimmy)
+Stewart, James
 Stewart, Jon
 Stein, Ben
 Stimson, Henry L.
@@ -1703,7 +1670,7 @@ Stoner Jr., James R.
 Stoppard, Tom
 Stout, Rex
 Stowe, Madeleine
-Stratford, Lord (Tony Banks)
+Stratford, Lord
 Strauss, Richard
 Stravinsky, Igor
 Stroustrup, Bjarne
@@ -1775,7 +1742,7 @@ Turner, Ted
 Turtledove, Harry
 Tutu, Desmond
 Twain, Mark
-Tweed, William Marcy ("Boss")
+Tweed, William Marcy
 Tyger, Frank
 Tynan, Kenneth
 Tzara, Tristan
@@ -1794,7 +1761,6 @@ Vidal, Gore
 Jarmo Visakorpi
 Vivekananda, Swami
 Vixie, Paul
-Voltaire
 Von Karman, Theodore
 Vonnegut, Kurt
 Vosanibola, Josefa
@@ -1865,7 +1831,7 @@ Wilson, Brian
 Wilson, Colin
 Wilson, Flip
 Wilson, Ron
-Wilson, (Thomas) Woodrow
+Wilson, Woodrow
 Winfrey, Oprah
 Winner, Michael
 Winter, William
@@ -1885,7 +1851,6 @@ Wright, Wilbur
 Wyden, Ron
 Wylie, Philip
 Wilson, Eugene S.
-Yanni
 Yamamoto,Isoroku
 Yashinsky, Edward
 Yeats, William Butler
@@ -1903,7 +1868,6 @@ Yutang, Lin
 Zacharek, Stephanie
 Zappa, Frank
 Zawinski, Jamie
-Zé Tom
 Zeldin, Theodore
 Ziglar, Zig
 Zimmermann, Philip

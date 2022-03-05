@@ -25,9 +25,9 @@ public class Client extends User
 	public void giveScore(String aAppName, double aScore, String aComment, AppStore aStore)
 	{
 		/* Verify if user bought the application so he can score it */
-		for (App app: aStore.getApps())
+		for (App app: aStore.getAppsList())
 		{
-			if (app.getName().equals(aAppName) && this.getAppsbought().contains(aAppName))
+			if (app.getName().equals(aAppName) && appsBought.contains(aAppName))
 			{
 				Score score = new Score(this.getName(), aAppName, aScore, aComment);
 				app.addScore(score);
@@ -47,7 +47,7 @@ public class Client extends User
 			
 			else if (app.getName().equals(aAppName))
 			{
-				System.out.println("\nThis user is not allowed to score this application");
+				System.out.println("\nThis user is not allowed to score this application: " + app.getName());
 			}
 		}	
 	}
