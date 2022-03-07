@@ -9,7 +9,6 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,9 +21,10 @@ public class AppStore
 	private List<App> apps;							// Applications in the store
 	private List<Purchase> purchases; 				// Purchases made in the store
 	private List<User> users;						// List of all users in the store
-
 	private List<Score> scores; 						// List of all scores given to the applications
-
+	private static Generator generator;
+	private int discountValueWeek = 15;
+	
 	public AppStore(String aName)
 	{	
 		name = aName;
@@ -35,40 +35,42 @@ public class AppStore
 		purchases = new ArrayList<Purchase>();
 		users = new ArrayList<User>();
 		scores = new ArrayList<Score>();
+		generator = new Generator(this);
 	}
 
 	// Methods
 
 	/** Ads new user to AppStore **/
-	public void addUser(String aType, String aName, int aAge)
+	public void addUser(String aType, String aFirstName, String aLastName, int aAge)
 	{
 		if (aType.equals("Client"))
 		{
-			Client client = new Client(aName, aAge);
+			Client client = new Client(aFirstName, aLastName, aAge);
+			System.out.println("Client added: " + client);
 			users.add(client);
 		}
-		else if (aType.equals("Programmer"))
-		{
-			Programmer programmer = new Programmer(aName, aAge);
-			users.add(programmer);	
-		}
+		
 		else if (aType.equals("ClientPremium"))
 		{
-			ClientPremium clientPremium = new ClientPremium(aName, aAge);
+			ClientPremium clientPremium = new ClientPremium(aFirstName, aLastName, aAge);
+			System.out.println("ClientPremium added: " + clientPremium);
 			users.add(clientPremium);	
 		}
+		
+		else if (aType.equals("Programmer"))
+		{
+			Programmer programmer = new Programmer(aFirstName, aLastName, aAge);
+			System.out.println("Programmer: " + programmer);
+			
+			users.add(programmer);	
+		}
+
 	}
 
 	/** Designates programmer to develop an application **/
-	public void designateProgrammer(String aAppName, double aPrice, AppType aAppType, String aProgrammerName)
+	public void designateProgrammer(String aAppName, double aPrice, AppType aAppType, Programmer programmer)
 	{
-		for(User user: users)
-		{
-			if(user.getName().equals(aProgrammerName) && user instanceof Programmer)
-			{
-				apps.add( ((Programmer)user).developApp(aAppName, aPrice, aAppType));
-			}
-		}
+		apps.add(programmer.developApp(aAppName, aPrice, aAppType));
 	}
 
 	/** Create new shopping bag **/
@@ -92,14 +94,24 @@ public class AppStore
 	/** Checkouts the client with items in the shopping bag **/
 	public void checkout(String aClient, Bag shoppingBag)
 	{	
-		Purchase tempPurchace = new Purchase(aClient, shoppingBag, calendar.getTime());
+		Purchase purchase = new Purchase(aClient, shoppingBag, calendar.getTime());
 		
-		for (App app : shoppingBag.getAppsInBag()) 
+		try 
 		{
-			chekIfClient(aClient).buy(app.getName());
-			app.registerSale(calendar.getTime());
+			chekIfClient(aClient).buy(purchase);
+			for (App app : shoppingBag.getAppsInBag()) 
+			{
+				
+				app.registerSale(calendar.getTime());
+			}
+			System.out.println("Purchase made: " + purchase );
+			purchases.add(purchase);
 		}
-		purchases.add(tempPurchace);
+		catch (NullPointerException e) 
+		{
+			System.out.println(e.getMessage());
+		}
+		
 	}
 	
 	/** Prints the times an application was sold **/
@@ -217,12 +229,12 @@ public class AppStore
 	}
 
 	/** Prints earnings by programmer **/
-	public void earningsByProgrammer()
+	public void earningsByProgrammer(AppStore aStore)
 	{	
 		System.out.println("The programmers earnings are:");
 		for(Programmer programmer : getProgrammersList())
 		{
-			System.out.println("Programmer: '" + programmer.getName() + "' earned: " + programmer.getEarnings());
+			System.out.println("Programmer: '" + programmer.getName() + "' earned: " + programmer.getEarnings(aStore));
 		}
 	}
 
@@ -232,7 +244,6 @@ public class AppStore
 		scores.add(aScore);
 	}
 
-	
 	/** Prints all Purchases made in the AppStore **/
 	public void listPurchases()
 	{
@@ -244,22 +255,47 @@ public class AppStore
 	}
 	
 	/** Returns all Purchases made in a certain week **/
-	public List<Purchase> listPurchasesByWeek(int aWeek)
+	public List<Purchase> getWeekPurchases(int aWeek)
 	{
 		List<Purchase> tempList = new ArrayList<Purchase>();
 		for(Purchase purchase : purchases) 
 		{
-			Calendar cal = Calendar.getInstance();
-		    cal.setTime(purchase.getBuyDate());
-			
-		    if (cal.get(Calendar.WEEK_OF_YEAR) == aWeek) 
+			if(purchase.getWeekPurchase() == aWeek)
 			{
 				tempList.add(purchase);
 			}
 		}
 		return tempList;
 	}
-
+	
+	/** Returns count of all application sold made in a certain week **/
+	public  HashMap<String, Integer> getWeekAppSales(int aWeek)
+	{
+		HashMap<String, Integer> weekAppSales = new HashMap<String, Integer>();
+		List<Purchase> weekPurchases = getWeekPurchases(aWeek);
+		
+		for(Purchase purchase : weekPurchases)
+		{
+			//Map of bag items
+			Map<App, Integer> bag = purchase.getPurchaseBag().getBagData();
+			
+			for(Map.Entry<App, Integer> entry : bag.entrySet())
+			{
+				if(!weekAppSales.containsKey(entry.getKey().getName()))
+				{
+					weekAppSales.putIfAbsent(entry.getKey().getName(), entry.getValue());
+				}
+				
+				else 
+				{
+					weekAppSales.put(entry.getKey().getName(), weekAppSales.get(entry.getKey().getName()) + entry.getValue());
+				}
+			}		
+		}
+		return weekAppSales;
+	
+	}
+	
 	/** Returns all Purchases made in a time period **/
 	public List<Purchase> listPurchasesTimePeriod(Date aStart, Date aEnds)
 	{
@@ -274,53 +310,18 @@ public class AppStore
 		return tempList;
 	}
 	
-	/** Finds 5 least sold applications in a determined time **/
-	
-	/*
-	public HashMap<String, Integer> checkLessSoldApps(Date aStart, Date aEnds){
-
-		Map<String, Integer> appsSoldInPeriod = new HashMap<String, Integer>();
-		
-		// finds all applications sold in time period
-		for(App app : apps)
-		{
-			int count = 0;
-			
-			{
-				if(date.after(aStart) && date.before(aEnds))
-				{
-					count += 1;
-					appsSoldInPeriod.put(app.getName(), count);
-				}
-			}
-		}
-		
-		// function to sort hashmap by values
-		HashMap<String, Integer> tempmaplist = appsSoldInPeriod.entrySet()
-				.stream()
-				.sorted((i1, i2) -> i1.getValue().compareTo(i2.getValue()))
-				.limit(5)
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
-		
-		return tempmaplist;
-
-	}
-	*/
-
 	/** Finds 5 least sold applications in a determined week **/
 	public HashMap<String, Integer> checkLessSoldApps(int aWeek, int appNumber)
 	{
-		Map<String, Integer> appsSoldInWeek = new HashMap<String, Integer>();
+		HashMap<String, Integer> weekAppSales = getWeekAppSales(aWeek);
 		
-		
-		// function to sort hashmap by values
-		HashMap<String, Integer> tempmaplist = appsSoldInWeek.entrySet()
-				.stream()
-				.sorted((i1, i2) -> i1.getValue().compareTo(i2.getValue()))
-				.limit(appNumber)
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
-		
-		return tempmaplist;
+		LinkedHashMap<String, Integer> sortedWeekAppSales = new LinkedHashMap<>();
+	    
+		weekAppSales.entrySet().stream()
+								.sorted(Map.Entry.comparingByValue())
+								.forEachOrdered(x -> sortedWeekAppSales.put(x.getKey(), x.getValue()));
+	     
+		return sortedWeekAppSales;
 
 	}
 	
@@ -338,22 +339,15 @@ public class AppStore
 				if(tempWeek != currentWeeK)
 				{
 					System.out.println("Week:" + calendar.get(Calendar.WEEK_OF_YEAR));
-					updateAppDiscounts(tempWeek);
+					updateAppDiscounts(tempWeek , discountValueWeek);
 					currentWeeK = tempWeek;
 				}
-				else
-				{
-					calendar.add(Calendar.DATE, 1);
-					System.out.println("New Day");
-					Random rand = new Random();
-					int randBuys = rand.nextInt(3);
-					
-					for(int j = 0 ; j <= randBuys ; j++)
-					{
-						generatePurchase();
-					}
 
-				}
+				calendar.add(Calendar.DATE, 1);
+				System.out.println("New Day");
+				
+				generator.generateDaysData();
+
 			}
 		}
 		else {
@@ -362,12 +356,28 @@ public class AppStore
 		return inform;
 	}
 	
-	/** update application discounts based on performance of previous week
-	 * @param i **/
-	public void updateAppDiscounts(int aWeek)
+	/** update application discounts based on performance of previous week **/
+	public void updateAppDiscounts(int aWeek, int discountValue)
 	{
-		Map<String, Integer> lessSold = checkLessSoldApps(aWeek , 5);
-		giveDiscount(lessSold.keySet());
+		Map<String, Integer> lessSold = new HashMap<String, Integer>(5);
+		lessSold = checkLessSoldApps(aWeek , 5);
+		giveDiscount(lessSold.keySet(), discountValue);
+	}
+	
+	/** Check applications with discounts **/
+	public List<String> checkAppsWithDiscounts()
+	{
+		List<String> appsWithDiscount = new ArrayList<String>();
+		
+		for(App app : apps) 
+		{
+			if(app.getDiscount() != 0) 
+			{
+				appsWithDiscount.add(app.getName());
+			}
+		}
+		
+		return appsWithDiscount;
 	}
 	
 	/** Reset discounts **/
@@ -380,38 +390,19 @@ public class AppStore
 	}
 	
 	/** Give discount 15% **/
-	public void giveDiscount(Set<String> aApps)
+	public void giveDiscount(Set<String> aApps, int discountValue)
 	{
-
 		for(App appToChange : apps) 
 		{
 			for(String appNameToCompare : aApps) 
 			{
 				if(appToChange.getName().equals(appNameToCompare))
 				{
-					appToChange.setDiscount(15);
+					appToChange.setDiscount(discountValue);
 				}
 				
 			}
 		}
-	}
-	
-	/** Generates purchases and checkout**/
-	public void generatePurchase()
-	{
-		Random rand = new Random();
-		
-		int numberApps = rand.nextInt(3);
-		Bag tempBag = new Bag();
-		List<Client> clients = getClientsList();
-		Client randomClient = clients.get(rand.nextInt(clients.size()));
-		
-		for(int i = 0; i <= numberApps; i++)
-		{	
-			App randomApp =  apps.get(rand.nextInt(apps.size()));
-			tempBag.putInBag(randomApp, 1);
-		}
-		checkout(randomClient.getName(), tempBag);
 	}
 	
 	
@@ -504,6 +495,17 @@ public class AppStore
 		return returnClientPremium;
 	}
 	
+	/** Methods that return variable **/
+	public App findApp(String aAppName)
+	{
+		App application = null;
+		for(App app : apps)
+		{
+			if(app.getName().equals(aAppName));
+			application = app;
+		}
+		return application;
+	}
 	
 	/** Generators for Simulation **/
 	

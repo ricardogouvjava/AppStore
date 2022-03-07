@@ -61,8 +61,22 @@ public class App
 		updateTimesSold();
 	}
 	
+	/** Verify if user scored application**/
+	public boolean userScoredApp(Client client)
+	{
+		boolean userScored = false;
+		for(Score score : scores)
+		{
+			if(score.getUserName().equals(client.getName()))
+			{
+				userScored = true;
+			}
+		}
+		return userScored;
+	}
+	
 	/** updates the counter of times sold **/
-	public void updateTimesSold()
+	private void updateTimesSold()
 	{
 		timesSold += 1;
 	}
@@ -153,6 +167,4 @@ public class App
 	public void setWhenSold(List<Date> aWhenSold) {
 		whenSold = aWhenSold;
 	}
-	
-	
 }

@@ -1,6 +1,7 @@
 package appstore;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Purchase 
@@ -21,15 +22,22 @@ public class Purchase
 	}
 		
 	//Methods
-		@Override
-		public String toString()
-		{
-			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-			return "Date: "+ formatter.format(buyDate.getTime()) + ", Client: " + clientName + 
-					", value: " + price + ", Apps: " + purchaseBag.getAppsInBag();
-		}
-		
+	@Override
+	public String toString()
+	{
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		return "Date: "+ formatter.format(buyDate.getTime()) + ", Client: " + clientName + 
+				", value: " + price + ", Apps: " + purchaseBag.getAppsInBag();
+	}
 	
+	public int getWeekPurchase() 
+	{
+		Calendar cal = Calendar.getInstance();
+	    cal.setTime(getBuyDate());
+	    return cal.get(Calendar.WEEK_OF_YEAR);
+	}
+	
+		
 	// Getters
 	public String getClientName() 
 	{

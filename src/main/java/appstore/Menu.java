@@ -1,10 +1,7 @@
 package appstore;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Menu
@@ -62,10 +59,12 @@ public class Menu
 			break;
 	
 		case 1:
+			//Access Manager options
 			menuManager();
 			break;
 	
 		case 2:
+			//Access client options
 			String clientName = askForClientNameAndValidate();
 			Client client = (Client) returnUserObject(clientName, "Client");
 			menuUser(client);
@@ -75,7 +74,7 @@ public class Menu
 			System.out.print("\nUser Creation"
 					+ "\nUserType: {Client, ClientPremium, Programmer} ");
 			
-			String userType = null, userName = null;
+			String userType = null, userFirstName = null, userLastName = null;
 			int userAge = 0;
 			
 			boolean askForType = true;
@@ -92,22 +91,38 @@ public class Menu
 				}
 			}
 	
-			boolean askForName = true; 
+			boolean askForFirstName = true; 
 			
-			while(askForName)
+			while(askForFirstName)
 			{
-				System.out.print("\nUserName: ");
-				userName = scanText.nextLine();
-				if (userName.length() > 3)
+				System.out.print("\nUserFirstName: ");
+				userFirstName = scanText.nextLine();
+				if (userFirstName.length() > 3)
 				{
-					askForName = false;
+					askForFirstName = false;
 				}
 				else {
-					System.out.print("Please input a valid user name");
+					System.out.print("Please input a valid user first name");
 				}
 			}
 	
+			boolean askForLastName = true; 
+			
+			while(askForLastName)
+			{
+				System.out.print("\nUserLastName: ");
+				userLastName = scanText.nextLine();
+				if (userLastName.length() > 3)
+				{
+					askForLastName = false;
+				}
+				else {
+					System.out.print("Please input a valid user last name");
+				}
+			}
+			
 			boolean askForAge = true; 
+			
 			while(askForAge)
 			{
 				System.out.print("\nUser Age: ");
@@ -123,7 +138,7 @@ public class Menu
 				}
 			}
 	
-			store.addUser(userType, userName, userAge);
+			store.addUser(userType, userFirstName, userLastName, userAge);
 			System.out.print("\nUser added.");
 			menuMain();
 			break;
@@ -140,20 +155,23 @@ public class Menu
 		System.out.print("\n"
 				+ "Manager Options:"
 				+ "\n (0) Return"
-				+ "\n (1) List all Users"
-				+ "\n (20) List all purchases"
-				+ "\n (21) List purchases by week"
+				+ "\n (1) List all purchases"
+				+ "\n (2) List purchases by week"
 				+ "\n (3) Total earnings"
 				+ "\n (4) Earnings by programmer"
 				+ "\n (5) List applications owned by User"
 				+ "\n (6) Times an app was sold"
-				+ "\n (7) Less sold apps by time Interval"
+				+ "\n (7) Apps with discount"
 				+ "\n (8) Less sold apps by week"
 				+ "\n (9) TimeFoward"
+				+ "\n (10) List all Users"
+				+ "\n (11) List all Clients"
+				+ "\n (12) List all ClientPremium"
+				+ "\n (13) List all Programmers"
 				+ "\n"
 				+ "\n input:");	
 	
-		switch (askInputIntAndValidate(0, 21))
+		switch (askInputIntAndValidate(0, 13))
 		{
 	
 		case 0:
@@ -162,22 +180,16 @@ public class Menu
 			break;
 	
 		case 1:
-			// Lists all the users in the AppStore
-			printList(store.getUsersList());
-			menuManager();
-			break;
-	
-		case 20:
 			  // Lists all the purchases in the AppStore 
 			  store.listPurchases();
 			  menuManager(); 
 			  break;
 		 	
-		case 21:
+		case 2:
 			// Lists all purchases in a certain week of the year
 			System.out.println("Wanted week: ");
-			int weekNumber =  askInputIntAndValidate(0, Calendar.WEEK_OF_YEAR);
-			List<Purchase> purchaseList = store.listPurchasesByWeek(weekNumber);
+			int weekNumber =  askInputIntAndValidate(0, store.getCurrentWeeK());
+			List<Purchase> purchaseList = store.getWeekPurchases(weekNumber);
 			for(Purchase purchase : purchaseList)
 			{
 				System.out.println(purchase);
@@ -193,7 +205,7 @@ public class Menu
 	
 		case 4:
 			// Prints the earnings by programmer of the AppStore
-			store.earningsByProgrammer();
+			store.earningsByProgrammer(store);
 			menuManager();
 			break;	
 	
@@ -214,48 +226,21 @@ public class Menu
 			break;
 		
 		case 7:
-			// finds 5 less sold applications in a defined time
-			SimpleDateFormat formatter = new SimpleDateFormat("dd-M-yyyy");
-			
-			System.out.println("Define the start date and end date for analysis."
-					+ "\nStart date (00-00-0000): ");
-			Date startDate  = null;
-			try
-			{
-				startDate = formatter.parse(scanText.nextLine());
-			} catch (ParseException e1)
-			{
-				e1.printStackTrace();
-				System.out.println("Wrong data value: " + startDate);
-			}
-			
-			System.out.println("End date (00-00-0000): ");
-			Date endDate = null;
-			try 
-			{
-				endDate = formatter.parse(scanText.nextLine());
-			} 
-			catch (ParseException e)
-			{
-				e.printStackTrace();
-				System.out.println("Wrong data value: " + endDate);
-	
-			}
-			
-			//System.out.println("The Least sold applications are: " +
-				//	aStore.checkLessSoldApps(startDate, endDate));
+			// Check applications with discounts
+			System.out.println("Apps with discount: " + store.checkAppsWithDiscounts());
+			//printList(store.checkAppsWithDiscounts());
 			menuManager();
 			break;
 			
 		case 8:
-			// finds less sold applications in a defined time	
-			System.out.println("Wanted week. ");
-			int week =  askInputIntAndValidate(0, Calendar.WEEK_OF_YEAR);
-			System.out.println("Number of Apps. ");
+			// finds less sold applications in a defined week	
+			System.out.println("Wanted week: ");
+			int week =  askInputIntAndValidate(0, store.getCurrentWeeK());
+			System.out.println("Number of Apps: ");
 			int appnumber =  askInputIntAndValidate(0, store.getAppsList().size());
 						
-			System.out.println("The less sold applications are: " +
-					store.checkLessSoldApps(week, appnumber).keySet());
+			System.out.println("The less sold applications are: ");
+			printMap(store.checkLessSoldApps(week, appnumber));
 			menuManager();
 			break;
 			
@@ -266,7 +251,34 @@ public class Menu
 			store.forwardLocalDateXDays(numberDays);
 			menuManager();
 			break;
-	
+		
+		case 10:
+			// Lists all the users in the AppStore
+			System.out.println("Users: ");
+			printList(store.getUsersList());
+			menuManager();
+			break;
+
+		case 11:
+			// Lists all the Clients in the AppStore
+			System.out.println("Clients: ");
+			printList(store.getClientsList());
+			menuManager();
+			break;
+
+		case 12:
+			// Lists all the Premium Clients in the AppStore
+			System.out.println("ClientPrmium: ");
+			printList(store.getClientsPremiumList());
+			menuManager();
+			break;
+
+		case 13:
+			// Lists all the Programmers in the AppStore
+			System.out.println("Programmers: ");
+			printList(store.getProgrammersList());
+			menuManager();
+			break;
 	
 		default:
 			// Ask again for input!!
@@ -282,13 +294,16 @@ public class Menu
 		System.out.print("\n"
 				+ "User Options:"
 				+ "\n (0) Return"
-				+ "\n (1) List apps By Type"
-				+ "\n (2) List apps By Name"
-				+ "\n (3) List apps By Sold"
-				+ "\n (4) List apps By Score"
-				+ "\n (5) Give score"
-				+ "\n (6) List Scores and Comments of App"
-				+ "\n (7) Buy Apps"
+				+ "\n (1) List AppStore applications by Type"
+				+ "\n (2) List AppStore applications by Name"
+				+ "\n (3) List AppStore applications by times Sold"
+				+ "\n (4) List AppStore applications by Score"
+				+ "\n (5) List onwed applications"
+				+ "\n (6) List application that score was given"
+				+ "\n (7) List application that score was not given"
+				+ "\n (8) List Scores and Comments of an App"
+				+ "\n (9) Buy Apps"
+				+ "\n (10) Give score"
 				+ "\n"
 				+ "\n input:");
 	
@@ -325,13 +340,48 @@ public class Menu
 			break;
 	
 		case 5:
+			// List Application owned by user
+			System.out.println("Owned applications:");
+			printList(aClient.getAppsbought());
+			menuUser(aClient);
+			break;
+	
+		case 6:
+			// Lists applications that score was given by user
+			System.out.print("\nAppScored: ");
+			printList(aClient.getAppsScored());
+			menuUser(aClient);
+			break;
+
+		case 7:
+			// Lists applications that score was given by user
+			System.out.print("\nAppNotScored: ");
+			printList(aClient.getAppsNotScored());
+			menuUser(aClient);
+			break;
+		
+		case 8:
+			// List scores and comments of application
+			System.out.print("\nAppName: ");
+			String appName = scanText.nextLine();
+			store.listAppScores(appName);
+			menuUser(aClient);
+			break;
+			
+		case 9:
+			// Buy application
+			buyAppMenu(aClient);
+			menuUser(aClient);
+			break;
+		
+		case 10:
 			// Allows user to give score
 			System.out.print("\nThis option allow You to input your score of an aplication."
 					+ "\nYou require to introduce:"
 					+ "\n'AppName' 'Score' and 'Comment' if wanted.");
 	
 			// Asks for application name
-			String appName = askForAppNameAnValidates();
+			String appToScore = askForAppNameAnValidates();
 	
 			// Asks for user score
 			double score = askForScoreAndValidate();
@@ -341,22 +391,8 @@ public class Menu
 			String comment = scanText.nextLine();
 	
 			// Creates a score
-			aClient.giveScore(appName, score, comment, store);
+			aClient.giveScore(appToScore, score, comment, store);
 			System.out.println("\nThe score was added to the database");
-			menuUser(aClient);
-			break;
-	
-		case 6:
-			// List scores and comments of application
-			System.out.print("\nAppName: ");
-			appName = scanText.nextLine();
-			store.listAppScores(appName);
-			menuUser(aClient);
-			break;
-	
-		case 7:
-			// Buy application
-			buyAppMenu(aClient);
 			menuUser(aClient);
 			break;
 	
@@ -513,7 +549,7 @@ public class Menu
 			try
 			{
 				menuNumber = scanInt.nextInt();
-				if(menuNumber > min && menuNumber < max)
+				if(menuNumber >= min && menuNumber <= max)
 				{
 					askforchoice = false;
 					choice = menuNumber;
@@ -558,10 +594,13 @@ public class Menu
 		
 		while(askForClientName)
 		{
-			System.out.print("\nClientName: ");
-			clientName = scanText.nextLine();
+			System.out.println("ClienFirsttName: ");
+			String firstName = scanText.nextLine();
+			System.out.println("ClientLastName: ");
+			String lastName = scanText.nextLine();
+			clientName = firstName + " " + lastName;
 			
-			if (userExists(clientName, "Client"))
+			if (userExists(clientName, "Client") || userExists(clientName, "ClientPremium"))
 			{
 				askForClientName = false;
 			}
@@ -580,50 +619,13 @@ public class Menu
 		return clientName;
 	}
 	
-	/** Ask, verifies if exists and returns a given user object **/
-	private User askForUserAndValidate()
-	{
-		boolean askForUserName = true;
-		User user = null;
-		String userName = null, userType = null;
-		
-		while(askForUserName)
-		{
-			System.out.println("UserName: ");
-			userName = scanText.nextLine();
-			
-			if (userName.equals("exit"))
-			{
-				askForUserName = false;
-				menuMain();
-			}
-			
-			System.out.println("UserType {Client, ClientPremium, Programmer}: ");
-			userType = scanText.nextLine();
-		
-			if (userExists(userName, userType))
-			{
-				askForUserName = false;
-				user = returnUserObject(userName, userType);
-			}
-
-			else 
-			{
-				System.out.print("User not existente please insert correct user "
-						+ "or 'exit' in user name to exit");
-			}
-		}
-			
-		return user;
-	}
-
 	/** Check if User/Client/ClientPremium/Programmer Exist **/
 	private boolean userExists(String aUserName, String aClassName)
 	{
 		boolean exists = false;
 		for(User user: store.getUsersList()) 
 		{
-			if(user.getName().equals(aUserName) && user.getClass().getSimpleName().equals(aClassName) ) 
+			if(user.getName().equals(aUserName) && user.getClass().getSimpleName().equals(aClassName)) 
 			{
 				exists = true;
 			}
@@ -699,4 +701,13 @@ public class Menu
 			System.out.println(obj);
 		}
 	}
+
+	public <K, V> void printMap(Map<K, V>  aMap)
+	{
+		for(Map.Entry<K, V>  entry : aMap.entrySet()) 
+		{
+			System.out.println(entry.getKey() +" : " + entry.getValue());
+		}
+	}
+
 }

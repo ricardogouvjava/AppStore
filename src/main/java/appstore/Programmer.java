@@ -3,62 +3,98 @@ package appstore;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Programmer extends User {
-	private List<App> developpedApps;
+public class Programmer extends User 
+{
+	private List<String> developpedApps;
+	private List<Score> reviews;
+	double averageScoreReview;
+
 	
 	//Constructor
-	public Programmer(String aName, int aAge)
+	public Programmer(String aFirstName, String aLastName, int aAge)
 	{
-		super(aName, aAge);
-		developpedApps = new ArrayList<App>();
+		super(aFirstName, aLastName, aAge);
+		developpedApps = new ArrayList<String>();
+		reviews = new ArrayList<Score>();
+		averageScoreReview = 0;
 	}
 	
 	//Methods
 	public App developApp(String aAppName, double aAppPrice, AppType aAppType)
 	{
 		App app = new App(aAppName, aAppPrice, aAppType, getName());
-		developpedApps.add(app);
+		developpedApps.add(aAppName);
 		return app;
 	}
 	
-	@Override
-	public void addScore(double aScore)
+	public void addReview(Score aScore)
 	{
-		super.addScore(aScore);
-		updateScore();
+		reviews.add(aScore);
+		updateScoreReview();
 	}
 	
-	@Override
-	public void updateScore() 
+	public void updateScoreReview() 
 	{
 		double sum = 0;
-		for(App app : developpedApps) 
+		for (Score review : reviews)
 		{
-			sum += app.getAverageScore();
+			sum += review.getScoreValue();
 		}
-		super.setAverageScore(sum / developpedApps.size());
+		averageScoreReview = sum / reviews.size();
 	}
 	
-	public double getEarnings()
-	{	
-		double earn = 0;
-		for(App app : developpedApps)
+	public List<String> getAppsreviewed()
+	{
+		List<String> templist = new ArrayList<String>();
+		for(Score score : reviews)
 		{
-			earn += app.getPrice(); 
+			templist.add(score.getAppName());
 		}
-		return earn;
+		return templist;
+	}
+	
+	public List<String> getAppsNotScored()
+	{
+		List<String> appsNotScored = developpedApps;
+		appsNotScored.removeAll(getAppsreviewed());
+		
+		return appsNotScored;
+	}
+		
+	public double getEarnings(AppStore aStore)
+	{	
+		double earnings = 0;
+		for(String appName : developpedApps)
+		{
+			App app = aStore.findApp(appName);
+			earnings += app.getPrice() * app.getTimesSold(); 
+		}
+		return earnings;
 	}
 	
 	// Getters
-	public List<App> getDeveloppedApps() 
+	public List<String> getDeveloppedApps() 
 	{
 		return developpedApps;
 	}
 
+	
+	public List<Score> getReviews() {
+		return reviews;
+	}
+
+	public double getAverageScoreReview() {
+		return averageScoreReview;
+	}
+
 	// Setters
-	public void setDeveloppedApps(List<App> aDeveloppedApps) {
+	public void setDeveloppedApps(List<String> aDeveloppedApps)
+	{
 		developpedApps = aDeveloppedApps;
 	}
-	
+
+	public void setAppsreviewed(List<Score> appsreviews) {
+		this.reviews = appsreviews;
+	}
 	
 }

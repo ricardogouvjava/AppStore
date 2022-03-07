@@ -31,20 +31,14 @@ public class Bag
 	/** Add application to bag **/
 	public void putInBag(App aApp, int aQuantity)
 	{
-		if(!isAppInBag(aApp))
+		if(!bag.containsKey(aApp))
 		{
-			bag.put(aApp, aQuantity);
+			bag.putIfAbsent(aApp, aQuantity);
 		}
 		
 		else 
 		{
-			for(Map.Entry<App, Integer> set : bag.entrySet())
-			{
-				if(set.getKey().getName().equals(aApp.getName()))
-				{
-					set.setValue(set.getValue() + aQuantity);
-				}
-			}
+			bag.put(aApp, bag.get(aApp) + aQuantity);
 		}
 	}
 
@@ -52,6 +46,8 @@ public class Bag
 	public boolean isAppInBag(App aApp)
 	{
 		boolean appInBag = false;
+		
+		
 		
 		for(App app : bag.keySet())
 		{

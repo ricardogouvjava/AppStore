@@ -1,55 +1,47 @@
 package appstore;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 abstract class User
 {
-	private String name;
+	private String firstName;
+	private String lastName;
 	private int age;
 	private final UUID userNumber;
-	private double averageScore; 
-	private List<Double> scores;
+
 	
 	
 	//Constructor
-	public User(String aName, int aAge) 
+	public User(String aFirstName, String aLastName, int aAge) 
 	{
 		userNumber = UUID.randomUUID();
-		name = aName;
+		firstName = aFirstName;
+		lastName = aLastName;
 		age = aAge;
-		scores = new ArrayList<>();
-		averageScore = 0;
+
 	}
 
 	//Methods
 	@Override
     public String toString() 
 	{
-		return "Id :" + userNumber + ", Name: " + name + ", Age: " + age;	
-	}
-	
-	public void addScore(double aScore)
-	{
-		scores.add(aScore);
-		updateScore();
-	}
-	
-	public void updateScore() 
-	{
-		double sum = 0;
-		for (double score : scores)
-		{
-			sum += score;
-		}
-		averageScore = sum / scores.size();
+		return "Id :" + userNumber + ", Name: " + firstName +" " + lastName + ", Age: " + age;	
 	}
 	
 	// Getters
+	public String getFirstName()
+	{
+		return firstName;
+	}
+	
+	public String getLastName()
+	{
+		return lastName;
+	}
+	
 	public String getName()
 	{
-		return name;
+		return firstName + " " + lastName;
 	}
 	
 	public int getAge()
@@ -62,19 +54,12 @@ abstract class User
 		return userNumber;
 	}
 		
-	public List<Double> getScores() {
-		return scores;
-	}
-
-	public double getAverageScore()
-	{
-		return averageScore;
-	}
 	
 	// Setters
-	public void setName(String aName)
+	public void setName(String aFirstName, String aLastName)
 	{
-		name = aName;
+		firstName = aFirstName;
+		lastName = aLastName;
 	}
 	
 	public void setAge(int aAge)
@@ -82,15 +67,12 @@ abstract class User
 		age = aAge;
 	}
 
-	public void setAverageScore(double aAverageScore)
-	{
-		averageScore = aAverageScore;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public void setScores(List<Double> aScores) {
-		scores = aScores;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
-	
-	
 
 }

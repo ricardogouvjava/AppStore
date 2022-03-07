@@ -2,31 +2,34 @@ package appstore;
 
 public class Score
 {
-	private String username;
-	private String appname;
+	private String userName;
+	private String appName;
 	private double score;
 	private String comment;
 	
 	public Score(String aUserName, String aAppName, double aScore, String aComment)
 	{
-		username = aUserName;
-		appname = aAppName;
+		userName = aUserName;
+		appName = aAppName;
 		score = aScore;
 		comment = aComment;
 	}
 	
 	//Methods
-
+	public String toString() 
+	{
+		return userName + " " + appName + " " + score +" "+ comment;
+	}
 	
 	// Getters
 	public String getUserName() 
 	{
-		return username;
+		return userName;
 	}
 
-	public String getApp() 
+	public String getAppName() 
 	{
-		return appname;
+		return appName;
 	}
 
 	public double getScoreValue() 
@@ -41,12 +44,12 @@ public class Score
 	// Setters
 	public void setUser(String aUserName) 
 	{
-		username = aUserName;
+		userName = aUserName;
 	}
 	
 	public void setApp(String aAppName) 
 	{
-		appname = aAppName;
+		appName = aAppName;
 	}
 	
 	public void setScoreValue(double aScore) 

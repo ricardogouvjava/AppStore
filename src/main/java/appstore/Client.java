@@ -6,20 +6,43 @@ import java.util.List;
 public class Client extends User 
 {
 	private List<String> appsBought;
+	private double spendings;
+	private double averageScore; 
+	private List<Score> scores;
 
 	// Constructor
-	public Client(String aName, int aAge)
+	public Client(String aFirstName, String aLastName, int aAge)
 	{
-		super(aName, aAge);
+		super(aFirstName, aLastName, aAge);
+		scores = new ArrayList<>();
+		averageScore = 0;
 		appsBought = new ArrayList<String>();
+		spendings = 0;
 	}
 
 	// Methods
-	
-	public void buy(String aAppName)
+	/** Adds application to user library **/
+	public void buy(Purchase aPurchase)
 	{
-		appsBought.add(aAppName);
+		for (App app : aPurchase.getPurchaseBag().getAppsInBag())
+		{
+			appsBought.add(app.getName());
+		}
+		
+		updateSpendings(aPurchase.getPurchaseBag().valueInBag());
 	}
+	
+	public List<String> getAppsScored()
+	{
+		List<String> templist = new ArrayList<String>();
+		for(Score score : scores)
+		{
+			templist.add(score.getAppName());
+		}
+		return templist;
+	}
+	
+	
 	
 	/** Allows user to give a score to an application **/
 	public void giveScore(String aAppName, double aScore, String aComment, AppStore aStore)
@@ -32,7 +55,8 @@ public class Client extends User
 				Score score = new Score(this.getName(), aAppName, aScore, aComment);
 				app.addScore(score);
 				aStore.addScore(score);
-				this.addScore(aScore);
+				scores.add(score);
+				updateScore();
 				
 				// Update programmer score
 				String programmerName = app.getProgrammerName();
@@ -40,9 +64,10 @@ public class Client extends User
 				{
 					if (programmer.getName().equals(programmerName))
 					{
-						programmer.addScore(aScore);
+						programmer.addReview(score);
 					}
 				}
+				System.out.println("Score given: " + score);
 			}
 			
 			else if (app.getName().equals(aAppName))
@@ -52,6 +77,28 @@ public class Client extends User
 		}	
 	}
 	
+	public void updateScore() 
+	{
+		double sum = 0;
+		for (Score score : getScores())
+		{
+			sum += score.getScoreValue();
+		}
+		averageScore = sum / scores.size();
+	}
+	
+	public List<String> getAppsNotScored()
+	{
+		List<String> appsNotScored = appsBought;
+		appsNotScored.removeAll(this.getAppsScored());
+		
+		return appsNotScored;
+	}
+	
+	public void updateSpendings(Double aValue)
+	{	
+		spendings += aValue;
+	}
 	
 	// Getters 
 	public List<String> getAppsbought()
@@ -59,9 +106,28 @@ public class Client extends User
 		return appsBought;
 	}
 	
+	public double getSpendings() 
+	{
+		return spendings;
+	}
+	
+	public List<Score> getScores() 
+	{
+		return scores;
+	}
+
+	public double getAverageScore()
+	{
+		return averageScore;
+	}
+	
+	
 	// Setters 
 	public void setAppsbought(List<String> aAppsbought)
 	{
 		appsBought = aAppsbought;
 	}
+
+	
 }
+
