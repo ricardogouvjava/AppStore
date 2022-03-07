@@ -269,7 +269,7 @@ public class AppStore
 	}
 	
 	/** Returns count of all application sold made in a certain week **/
-	public  HashMap<String, Integer> getAppsSoldInWeek(int aWeek)
+	public HashMap<String, Integer> getAppsSoldInWeek(int aWeek)
 	{
 		HashMap<String, Integer> weekAppSales = new HashMap<String, Integer>();
 		List<Purchase> weekPurchases = getWeekPurchases(aWeek);
@@ -518,9 +518,6 @@ public class AppStore
 		return application;
 	}
 	
-	/** Generators for Simulation **/
-	
-	
 	
 	// Setters
 
@@ -590,8 +587,6 @@ public class AppStore
 	public  int getCurrentWeeK() {
 		return currentWeeK;
 	}
-
-
 
 }
 
