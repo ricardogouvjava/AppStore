@@ -7,11 +7,11 @@ import java.util.Map;
 
 public class Bag
 {
-	private Map<App, Integer> bag;
+	private Map<App, Integer> bagItems;
 
 	public Bag ()
 	{
-		bag = new HashMap<App, Integer>();
+		bagItems = new HashMap<App, Integer>();
 	}
 
 	// Method 
@@ -20,7 +20,7 @@ public class Bag
 		String toPrint = "\nBag List:"
 				+ "\nApp : Price : Licences : SubTotal";
 
-		for(Map.Entry<App, Integer> set : bag.entrySet())
+		for(Map.Entry<App, Integer> set : bagItems.entrySet())
 		{	
 			toPrint += "\n" + set.getKey() + " : " + set.getValue() + " :"
 					+ " " + set.getKey().getPrice()*set.getValue();
@@ -31,14 +31,14 @@ public class Bag
 	/** Add application to bag **/
 	public void putInBag(App aApp, int aQuantity)
 	{
-		if(!bag.containsKey(aApp))
+		if(!bagItems.containsKey(aApp))
 		{
-			bag.putIfAbsent(aApp, aQuantity);
+			bagItems.putIfAbsent(aApp, aQuantity);
 		}
 		
 		else 
 		{
-			bag.put(aApp, bag.get(aApp) + aQuantity);
+			bagItems.put(aApp, bagItems.get(aApp) + aQuantity);
 		}
 	}
 
@@ -49,7 +49,7 @@ public class Bag
 		
 		
 		
-		for(App app : bag.keySet())
+		for(App app : bagItems.keySet())
 		{
 			if(app.getName().equals(aApp.getName()))
 			{
@@ -65,7 +65,7 @@ public class Bag
 	public List<App> getAppsInBag()
 	{
 		List<App> templist = new ArrayList<App>();
-		for(App app : bag.keySet())
+		for(App app : bagItems.keySet())
 		{
 			templist.add(app);
 		}
@@ -76,7 +76,7 @@ public class Bag
 	public Double valueInBag()
 	{
 		double sum = 0;
-		for(Map.Entry<App, Integer> set : bag.entrySet()) 
+		for(Map.Entry<App, Integer> set : bagItems.entrySet()) 
 		{
 			sum += set.getKey().getPrice() * set.getValue();
 		}
@@ -86,13 +86,13 @@ public class Bag
 	// Getters
 	public Map<App, Integer> getBagData() 
 	{
-		return bag;
+		return bagItems;
 	}
 
 	// Setters
 	public void setBag(Map<App, Integer> aBag)
 	{
-		bag = aBag;
+		bagItems = aBag;
 	}
 
 }

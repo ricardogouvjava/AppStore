@@ -3,19 +3,16 @@ package appstore;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Date;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class AppStore 
 {
 	private String name;									// Store name
-	private LocalDate date;							// When AppStore starts existing
 	private static int currentWeeK;
 	private static Calendar calendar;
 	private List<App> apps;							// Applications in the store
@@ -28,7 +25,6 @@ public class AppStore
 	public AppStore(String aName)
 	{	
 		name = aName;
-		date = LocalDate.now();
 		calendar = Calendar.getInstance();
 		currentWeeK = calendar.get(Calendar.WEEK_OF_YEAR);
 		apps = new ArrayList<App>();
@@ -546,10 +542,6 @@ public class AppStore
 		scores = aScores;
 	}
 
-	public void setDate(LocalDate aDate) {
-		date = aDate;
-	}
-
 	public void setCurrentWeeK(int aCurrentWeeK) {
 		currentWeeK = aCurrentWeeK;
 	}
@@ -578,10 +570,6 @@ public class AppStore
 	public List<Score> getScores()
 	{
 		return scores;
-	}
-
-	public LocalDate getDate() {
-		return date;
 	}
 
 	public  int getCurrentWeeK() {
