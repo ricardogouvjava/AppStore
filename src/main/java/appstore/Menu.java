@@ -237,7 +237,7 @@ public class Menu
 			System.out.println("Wanted week: ");
 			int week =  askInputIntAndValidate(0, store.getCurrentWeeK());
 			System.out.println("Number of Apps: ");
-			int appnumber =  askInputIntAndValidate(0, store.getAppsList().size());
+			int appnumber =  askInputIntAndValidate(0, store.getAppsSoldInWeek(week).size());
 						
 			System.out.println("The less sold applications are: ");
 			printMap(store.checkLessSoldApps(week, appnumber));

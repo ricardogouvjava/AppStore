@@ -269,11 +269,11 @@ public class AppStore
 	}
 	
 	/** Returns count of all application sold made in a certain week **/
-	public  HashMap<String, Integer> getWeekAppSales(int aWeek)
+	public  HashMap<String, Integer> getAppsSoldInWeek(int aWeek)
 	{
 		HashMap<String, Integer> weekAppSales = new HashMap<String, Integer>();
 		List<Purchase> weekPurchases = getWeekPurchases(aWeek);
-		
+			
 		for(Purchase purchase : weekPurchases)
 		{
 			//Map of bag items
@@ -313,12 +313,23 @@ public class AppStore
 	/** Finds 5 least sold applications in a determined week **/
 	public HashMap<String, Integer> checkLessSoldApps(int aWeek, int appNumber)
 	{
-		HashMap<String, Integer> weekAppSales = getWeekAppSales(aWeek);
+		HashMap<String, Integer> weekAppSold = getAppsSoldInWeek(aWeek);
+		HashMap<String, Integer> weekAppSales = new HashMap<String, Integer>();
+		weekAppSales.putAll(weekAppSold);
+		
+		for(App app : apps) 
+		{
+			if(!weekAppSales.containsKey(app.getName()))
+			{
+				weekAppSales.put(app.getName(), 0);
+			}
+		}
 		
 		LinkedHashMap<String, Integer> sortedWeekAppSales = new LinkedHashMap<>();
 	    
 		weekAppSales.entrySet().stream()
 								.sorted(Map.Entry.comparingByValue())
+								.limit(appNumber)
 								.forEachOrdered(x -> sortedWeekAppSales.put(x.getKey(), x.getValue()));
 	     
 		return sortedWeekAppSales;
