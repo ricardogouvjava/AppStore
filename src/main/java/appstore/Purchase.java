@@ -27,13 +27,13 @@ public class Purchase
 	{
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 		return "Date: "+ formatter.format(buyDate.getTime()) + ", Client: " + clientName + 
-				", value: " + price + ", Apps: " + purchaseBag.getAppsInBag();
+				"\nBag:"+ purchaseBag;
 	}
 	
 	public int getWeekPurchase() 
 	{
 		Calendar cal = Calendar.getInstance();
-	    cal.setTime(getBuyDate());
+	    cal.setTime(buyDate);
 	    return cal.get(Calendar.WEEK_OF_YEAR);
 	}
 	

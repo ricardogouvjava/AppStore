@@ -67,7 +67,7 @@ public class Programmer extends User
 		for(String appName : developpedApps)
 		{
 			App app = aStore.findApp(appName);
-			earnings += app.getPrice() * app.getTimesSold(); 
+			earnings += app.getPrice() * app.timesSold(); 
 		}
 		return earnings;
 	}

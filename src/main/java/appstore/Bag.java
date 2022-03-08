@@ -16,15 +16,16 @@ public class Bag
 
 	// Method 
 	@Override
-	public String toString() {
-		String toPrint = "\nBag List:"
-				+ "\nApp : Price : Licences : SubTotal";
+	public String toString()
+	{
+		String toPrint = "[<App : Price : Licences : SubTotal> Total] >> [";
 
 		for(Map.Entry<App, Integer> set : bagItems.entrySet())
 		{	
-			toPrint += "\n" + set.getKey() + " : " + set.getValue() + " :"
-					+ " " + set.getKey().getPrice()*set.getValue();
+			toPrint += " <" + set.getKey().getName() + " : " + String.format("%.2f",set.getKey().getPrice())
+			+ " : " + set.getValue() + " : " + String.format("%.2f", set.getKey().getPrice() * set.getValue()) + "> ";
 		}
+		toPrint += "> " + String.format("%.2f", valueInBag()) + "]";
 		return toPrint;
 	}
 
@@ -90,9 +91,9 @@ public class Bag
 	}
 
 	// Setters
-	public void setBag(Map<App, Integer> aBag)
+	public void setBag(Map<App, Integer> aBagItems)
 	{
-		bagItems = aBag;
+		bagItems = aBagItems;
 	}
 
 }

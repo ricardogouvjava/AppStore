@@ -2,6 +2,7 @@ package appstore;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 public class Menu
@@ -154,16 +155,16 @@ public class Menu
 	{
 		System.out.print("\n"
 				+ "Manager Options:"
-				+ "\n (0) Return"
-				+ "\n (1) List all purchases"
-				+ "\n (2) List purchases by week"
-				+ "\n (3) Total earnings"
-				+ "\n (4) Earnings by programmer"
-				+ "\n (5) List applications owned by User"
-				+ "\n (6) Times an app was sold"
-				+ "\n (7) Apps with discount"
-				+ "\n (8) Less sold apps by week"
-				+ "\n (9) TimeFoward"
+				+ "\n  (0) Return"
+				+ "\n  (1) List all purchases"
+				+ "\n  (2) List purchases by week"
+				+ "\n  (3) Total earnings"
+				+ "\n  (4) Earnings by programmer"
+				+ "\n  (5) List applications owned by User"
+				+ "\n  (6) Times an app was sold"
+				+ "\n  (7) Apps with discount"
+				+ "\n  (8) List applications sold last week"
+				+ "\n  (9) TimeFoward"
 				+ "\n (10) List all Users"
 				+ "\n (11) List all Clients"
 				+ "\n (12) List all ClientPremium"
@@ -181,7 +182,11 @@ public class Menu
 	
 		case 1:
 			  // Lists all the purchases in the AppStore 
-			  store.listPurchases();
+				System.out.println("Purchases:");
+				for (Purchase purchase : store.getPurchases())
+				{
+					System.out.println(purchase);
+				}
 			  menuManager(); 
 			  break;
 		 	
@@ -199,7 +204,7 @@ public class Menu
 			
 		case 3:
 			// Prints the total earnings of the AppStore
-			System.out.println("The sales total of the app store is: " + store.totalStoreEarnings());
+			System.out.println("The sales total of the app store is: " + String.format("%2f",store.totalStoreEarnings()));
 			menuManager();
 			break;		
 	
@@ -233,6 +238,16 @@ public class Menu
 			break;
 			
 		case 8:
+			// Lists applications sold last week
+			System.out.println("The applications sold last week are: ");
+			for(Entry<App, Integer> entry : store.listAppsSoldLastWeek().entrySet()) 
+			{
+				System.out.println(entry.getKey() + " >> sold:" + entry.getValue());
+			}
+			menuManager();
+			break;
+			
+		case 18:
 			// finds less sold applications in a defined week	
 			System.out.println("Wanted week: ");
 			int week =  askInputIntAndValidate(0, store.getCurrentWeeK());
@@ -248,7 +263,7 @@ public class Menu
 			// moves time forward
 			System.out.println("Introduce number of days: ");
 			int numberDays =  askInputIntAndValidate(0, Integer.MAX_VALUE);
-			store.forwardLocalDateXDays(numberDays);
+			store.forwardDateXDays(numberDays);
 			menuManager();
 			break;
 		

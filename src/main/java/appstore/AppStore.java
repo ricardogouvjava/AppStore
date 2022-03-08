@@ -9,6 +9,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class AppStore 
 {
@@ -95,12 +97,15 @@ public class AppStore
 		try 
 		{
 			chekIfClient(aClient).buy(purchase);
-			for (App app : shoppingBag.getAppsInBag()) 
+			
+			// Register sale in applications
+			for (Map.Entry<App, Integer> entry : shoppingBag.getBagData().entrySet()) 
 			{
 				
-				app.registerSale(calendar.getTime());
+				entry.getKey().registerSale(calendar.getTime(), entry.getValue());
 			}
-			System.out.println("Purchase made: " + purchase );
+			
+			System.out.println("Purchase made: " + purchase);
 			purchases.add(purchase);
 		}
 		catch (NullPointerException e) 
@@ -118,7 +123,7 @@ public class AppStore
 		{
 			if (app.getName().equals(aAppName))
 			{
-				timesSold = app.getTimesSold();
+				timesSold = app.timesSold();
 			}
 		}
 		return timesSold;
@@ -156,13 +161,13 @@ public class AppStore
 		case "Sold":
 			System.out.println("\nApps listed by times sold:");
 			Comparator<App> compareBySold = Comparator
-					.comparing(App::getTimesSold)
+					.comparing(App::timesSold)
 					.thenComparing(App::getName)
 					.reversed();
 
 			apps.stream()
 			.sorted(compareBySold)
-			.forEach(s -> System.out.println(s.getName() +":" + s.getTimesSold()));
+			.forEach(s -> System.out.println(s.getName() +":" + s.timesSold()));
 			break;
 
 		case "Score":
@@ -174,7 +179,7 @@ public class AppStore
 
 			apps.stream()
 			.sorted(compareByScore)
-			.forEach(s -> System.out.println(s.getName() +":" + s.getAverageScore()));
+			.forEach(s -> System.out.println(s.getName() +":" + String.format("%2f",s.getAverageScore())));
 			break;
 		}
 	}
@@ -189,7 +194,7 @@ public class AppStore
 				System.out.println("The existing scores for the aplication '" + app.getName() + "' are: ");
 				for(Score score: app.getScores())
 				{
-					System.out.println("Score: " + score.getScoreValue() + " Comment: " + score.getComment());
+					System.out.println("Score: " + score.getScoreValue() + " Comment: " + String.format("%2f",score.getComment()));
 				}
 			}
 		}
@@ -230,7 +235,8 @@ public class AppStore
 		System.out.println("The programmers earnings are:");
 		for(Programmer programmer : getProgrammersList())
 		{
-			System.out.println("Programmer: '" + programmer.getName() + "' earned: " + programmer.getEarnings(aStore));
+			System.out.println("Programmer: '" + programmer.getName() +
+					"' earned: " + String.format("%2f",programmer.getEarnings(aStore)));
 		}
 	}
 
@@ -240,16 +246,6 @@ public class AppStore
 		scores.add(aScore);
 	}
 
-	/** Prints all Purchases made in the AppStore **/
-	public void listPurchases()
-	{
-		System.out.println("Purchases:");
-		for (Purchase purchase : purchases)
-		{
-			System.out.println(purchase);
-		}
-	}
-	
 	/** Returns all Purchases made in a certain week **/
 	public List<Purchase> getWeekPurchases(int aWeek)
 	{
@@ -329,42 +325,86 @@ public class AppStore
 								.forEachOrdered(x -> sortedWeekAppSales.put(x.getKey(), x.getValue()));
 	     
 		return sortedWeekAppSales;
+		
+		/**
+		 * 	System.out.println("\nApps listed by times sold:");
+			Comparator<App> compareBySold = Comparator
+					.comparing(App::timesSold)
+					.thenComparing(App::getName)
+					.reversed();
+
+			apps.stream()
+			.sorted(compareBySold)
+			.forEach(s -> System.out.println(s.getName() +":" + s.timesSold()));
+			break;
+		 */
 
 	}
 	
-	/** Moves local date X amount of days forward **/
-	public String forwardLocalDateXDays(int aDays) 
-	{
-		String inform = "";
-		if(aDays > 0)
+	/** Returns list of what each application sold last Week  **/
+	public Map<App, Integer> listAppsSoldLastWeek()
+	{	
+		//SortedMap<App, Integer> soldLastWeek = new TreeMap<App, Integer>( new LessSoldAppComparator());
+		
+		Map<App, Integer> soldLastWeek = new HashMap<App, Integer>();
+		
+		
+		for(App app : apps)
 		{
+			soldLastWeek.put(app, app.getTimesSoldLastWeek());
+		}
+		return soldLastWeek;
+		
+	}
+	
+	/** 5 Less sold applications **/
+	public List<String> lessSoldApps() 
+	{
+		Map<App, Integer> soldLastWeek = listAppsSoldLastWeek();
+		List<String> lessSoldAppsLastWeek = new ArrayList<String>(5);
+		soldLastWeek.entrySet().stream()
+				.sorted(Map.Entry.comparingByValue())
+				.limit(5)
+				.forEachOrdered(x -> lessSoldAppsLastWeek.add(x.getKey().getName()));
+		return lessSoldAppsLastWeek;
+	}
+	
+	
+	/** Moves local date X amount of days forward **/
+	public void forwardDateXDays(int aDays) 
+	{		
+		for(int i = 0; i <= aDays; i++)
+		{
+			int tempWeek = calendar.get(Calendar.WEEK_OF_YEAR);
 			
-			for(int i = 0; i <= aDays; i++)
+			// when in new week updates discounts
+			if(tempWeek != currentWeeK)
 			{
-				int tempWeek = calendar.get(Calendar.WEEK_OF_YEAR);
-				
-				if(tempWeek != currentWeeK)
-				{
-					System.out.println("Week:" + calendar.get(Calendar.WEEK_OF_YEAR));
-					updateAppDiscounts(tempWeek , discountValueWeek);
-					currentWeeK = tempWeek;
-				}
-
-				calendar.add(Calendar.DATE, 1);
-				System.out.println("New Day");
-				
-				generator.generateDaysData();
-
+				System.err.println("Week:" + calendar.get(Calendar.WEEK_OF_YEAR));
+				updateAppSoldPreviousWeek();
+				updateAppDiscounts(tempWeek , discountValueWeek);
+				currentWeeK = tempWeek;
 			}
+
+			calendar.add(Calendar.DATE, 1); // Moves a day forward
+			
+			System.err.println("New Day");
+			
+			generator.generateDaysData(); // Generates random data for a day
 		}
-		else {
-			inform = "Invalid date";
+	}
+	
+	/** **/
+	private void updateAppSoldPreviousWeek()
+	{
+		for(App app : apps)
+		{
+			app.updateTimesSoldLastWeek(currentWeeK);
 		}
-		return inform;
 	}
 	
 	/** update application discounts based on performance of previous week **/
-	public void updateAppDiscounts(int aWeek, int discountValue)
+	private void updateAppDiscounts(int aWeek, int discountValue)
 	{
 		Map<String, Integer> lessSold = new HashMap<String, Integer>(5);
 		lessSold = checkLessSoldApps(aWeek , 5);
@@ -443,7 +483,7 @@ public class AppStore
 		return returnclient;
 	}
 	
-	/** Verify if user exists and is Programmer, returns object **/
+	/** Verify if user exists and is a Programmer, returns object **/
 	public Programmer chekIfProgrammer(String aName)
 	{	
 		Programmer returnProgrammer = null;
@@ -542,7 +582,8 @@ public class AppStore
 		scores = aScores;
 	}
 
-	public void setCurrentWeeK(int aCurrentWeeK) {
+	public void setCurrentWeeK(int aCurrentWeeK) 
+	{
 		currentWeeK = aCurrentWeeK;
 	}
 
@@ -572,7 +613,8 @@ public class AppStore
 		return scores;
 	}
 
-	public  int getCurrentWeeK() {
+	public  int getCurrentWeeK()
+	{
 		return currentWeeK;
 	}
 

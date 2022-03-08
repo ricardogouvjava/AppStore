@@ -1,8 +1,12 @@
 package appstore;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class App 
 {
@@ -13,8 +17,8 @@ public class App
 	private AppType type;
 	private String programmerName;
 	private List<Score> scores; // List of Scores given to the application
-	private int timesSold;
-	private List<Date> whenSold;
+	private Map<Date, Integer> sales;
+	private int timesSoldLastWeek;
 	
 	/** Generates new application **/
 	public App(String aName, double aPrice, AppType aType, String aProgrammerName)
@@ -25,15 +29,15 @@ public class App
 		type = aType;
 		programmerName = aProgrammerName;
 		scores = new ArrayList<Score>();
-		timesSold = 0;
-		whenSold = new ArrayList<Date>();
+		sales = new HashMap<Date, Integer>();
+		timesSoldLastWeek = 0;
 	}
 	
 	//Methods
 	@Override
 	public String toString() 
 	{
-		return name + " : " + price;	
+		return "App: " + name;	
 	}
 	
 	/** Adds a new score to score list and updates the average score **/
@@ -44,7 +48,7 @@ public class App
 	}
 	
 	/** updates the application average score using the score list **/
-	public void updateScore() 
+	private void updateScore() 
 	{
 		double sum = 0;
 		for (Score score : scores)
@@ -55,10 +59,9 @@ public class App
 	}
 	
 	/** register when the application was sold and updates sales counter **/
-	public void registerSale(Date aBuyDate)
+	public void registerSale(Date aBuyDate, int aLicences)
 	{
-		whenSold.add(aBuyDate);
-		updateTimesSold();
+		sales.put(aBuyDate , aLicences);
 	}
 	
 	/** Verify if user scored application**/
@@ -75,11 +78,64 @@ public class App
 		return userScored;
 	}
 	
-	/** updates the counter of times sold **/
-	private void updateTimesSold()
+	/** calculates times sold **/
+	public int timesSold()
 	{
-		timesSold += 1;
+		int timesSold = 0;
+		for(Integer value: sales.values()) 
+		{
+			timesSold += value;
+		}
+		return timesSold;
 	}
+	
+	/** Returns sold date list set **/
+	public Set<Date> getWhenSold() 
+	{
+		return sales.keySet();
+	}
+	
+	/** Returns previous week sales **/
+	public Map<Date, Integer> previousWeekSalesList(int currentweek)
+	{
+		Calendar cal = Calendar.getInstance();
+		Map<Date, Integer> salesPreviousWeek = new HashMap<Date, Integer>();
+		for(Map.Entry<Date, Integer> entry : sales.entrySet())
+		{
+			 cal.setTime(entry.getKey());
+			 int soldWeek = cal.get(Calendar.WEEK_OF_YEAR);
+			 if(soldWeek == currentweek -1) 
+			 {
+				 salesPreviousWeek.put(entry.getKey(), entry.getValue());
+			 }
+		}
+		
+	    return salesPreviousWeek;
+	}
+	
+	/** **/
+	private int timesSoldLastWeek(int currentweek)
+	{
+		Calendar cal = Calendar.getInstance();
+		int sold = 0;
+		for(Map.Entry<Date, Integer> entry : sales.entrySet())
+		{
+			 cal.setTime(entry.getKey());
+			 int soldWeek = cal.get(Calendar.WEEK_OF_YEAR);
+			 if(soldWeek == currentweek) 
+			 {
+				 sold += entry.getValue();
+			 }
+		}
+		return sold;
+	}
+	
+	/** Update times sold last Week**/
+	public void updateTimesSoldLastWeek(int currentweek)
+	{
+		timesSoldLastWeek = timesSoldLastWeek(currentweek);
+	}
+	
 	
 	//Getters
 	public String getName()
@@ -92,7 +148,8 @@ public class App
 		return price * (100 - discount) / 100;
 	}
 	
-	public double getDiscount() {
+	public double getDiscount() 
+	{
 		return discount;
 	}
 
@@ -111,18 +168,16 @@ public class App
 		return programmerName;
 	}
 	
-	public List<Score> getScores() {
+	public List<Score> getScores() 
+	{
 		return scores;
 	}
 	
-	public int getTimesSold()
-	{
-		return timesSold;
+
+	public int getTimesSoldLastWeek() {
+		return timesSoldLastWeek;
 	}
-	
-	public List<Date> getWhenSold() {
-		return whenSold;
-	}
+
 
 	// Setters
 	public void setName(String aName)
@@ -158,13 +213,8 @@ public class App
 	{
 		scores = aScores;
 	}
-	
-	public void setTimesSold(int aTimesSold)
-	{
-		timesSold = aTimesSold;
-	}
 
-	public void setWhenSold(List<Date> aWhenSold) {
-		whenSold = aWhenSold;
+	public void setTimesSoldLastWeek(int timesSoldLastWeek) {
+		this.timesSoldLastWeek = timesSoldLastWeek;
 	}
 }

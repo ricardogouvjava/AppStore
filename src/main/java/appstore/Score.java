@@ -18,7 +18,7 @@ public class Score
 	//Methods
 	public String toString() 
 	{
-		return userName + " " + appName + " " + score +" "+ comment;
+		return userName + " " + appName + " " + String.format("%.2f",score) +" '"+ comment+"'";
 	}
 	
 	// Getters
