@@ -9,17 +9,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class AppStore 
 {
-	private String name;									// Store name
-	private static int currentWeeK;
-	private static Calendar calendar;
-	private List<App> apps;							// Applications in the store
-	private List<Purchase> purchases; 				// Purchases made in the store
-	private List<User> users;						// List of all users in the store
+	private String name;								// Store name
+	private static int currentWeeK;						// running calendar week
+	private static Calendar calendar;					// running calendar
+	private List<App> apps;								// Applications in the store
+	private List<Purchase> purchases; 					// Purchases made in the store
+	private List<User> users;							// List of all users in the store
 	private List<Score> scores; 						// List of all scores given to the applications
 	private static Generator generator;
 	private int discountValueWeek = 15;
@@ -230,13 +228,13 @@ public class AppStore
 	}
 
 	/** Prints earnings by programmer **/
-	public void earningsByProgrammer(AppStore aStore)
+	public void earningsByProgrammer()
 	{	
 		System.out.println("The programmers earnings are:");
 		for(Programmer programmer : getProgrammersList())
 		{
 			System.out.println("Programmer: '" + programmer.getName() +
-					"' earned: " + String.format("%2f",programmer.getEarnings(aStore)));
+					"' earned: " + String.format("%2f",programmer.getEarnings(this)));
 		}
 	}
 
@@ -369,7 +367,6 @@ public class AppStore
 		return lessSoldAppsLastWeek;
 	}
 	
-	
 	/** Moves local date X amount of days forward **/
 	public void forwardDateXDays(int aDays) 
 	{		
@@ -380,10 +377,11 @@ public class AppStore
 			// when in new week updates discounts
 			if(tempWeek != currentWeeK)
 			{
-				System.err.println("Week:" + calendar.get(Calendar.WEEK_OF_YEAR));
-				updateAppSoldPreviousWeek();
-				updateAppDiscounts(tempWeek , discountValueWeek);
 				currentWeeK = tempWeek;
+				System.err.println("Week:" + calendar.get(Calendar.WEEK_OF_YEAR));
+				updateAppsSoldPreviousWeek();
+				updateAppDiscounts(tempWeek , discountValueWeek);
+				
 			}
 
 			calendar.add(Calendar.DATE, 1); // Moves a day forward
@@ -395,7 +393,7 @@ public class AppStore
 	}
 	
 	/** **/
-	private void updateAppSoldPreviousWeek()
+	private void updateAppsSoldPreviousWeek()
 	{
 		for(App app : apps)
 		{

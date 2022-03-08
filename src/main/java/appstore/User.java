@@ -1,47 +1,34 @@
 package appstore;
 
-import java.util.UUID;
-
 abstract class User
 {
-	private String firstName;
-	private String lastName;
+	private String userId;
+	private String name;
+	private String password;
 	private int age;
-	private final UUID userNumber;
-
 	
 	
 	//Constructor
-	public User(String aFirstName, String aLastName, int aAge) 
+	public User(String aUserId, String aName, String aPassword, int aAge) 
 	{
-		userNumber = UUID.randomUUID();
-		firstName = aFirstName;
-		lastName = aLastName;
+		userId = aUserId;
+		name = aName;
+		password = aPassword;
 		age = aAge;
-
 	}
 
 	//Methods
 	@Override
     public String toString() 
 	{
-		return "Id :" + userNumber + ", Name: " + firstName +" " + lastName + ", Age: " + age;	
+		return "Id :" + userId + ", Name: " + name +", Age: " + age;	
 	}
 	
 	// Getters
-	public String getFirstName()
-	{
-		return firstName;
-	}
-	
-	public String getLastName()
-	{
-		return lastName;
-	}
 	
 	public String getName()
 	{
-		return firstName + " " + lastName;
+		return name;
 	}
 	
 	public int getAge()
@@ -49,30 +36,38 @@ abstract class User
 		return age;
 	}
 	
-	public UUID getUserNumber()
+	public String getUserId()
 	{
-		return userNumber;
+		return userId;
 	}
-		
+	
+	public String getPassword()
+	{
+		return password;
+	}
 	
 	// Setters
-	public void setName(String aFirstName, String aLastName)
+	public void setName(String aName)
 	{
-		firstName = aFirstName;
-		lastName = aLastName;
-	}
+		name = aName;	}
 	
 	public void setAge(int aAge)
 	{
 		age = aAge;
 	}
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
+
+
+	public void setUserId(String aUserId)
+	{
+		userId = aUserId;
+	}
+	
+	public void setPassword(String aPassword)
+	{
+		password = aPassword;
 	}
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+	
 
 }

@@ -74,7 +74,7 @@ public class Bag
 	}
 	
 	/** Calculates the value in the shopping bag **/
-	public Double valueInBag()
+	public double valueInBag()
 	{
 		double sum = 0;
 		for(Map.Entry<App, Integer> set : bagItems.entrySet()) 

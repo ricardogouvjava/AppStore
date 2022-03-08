@@ -90,7 +90,7 @@ public class App
 	}
 	
 	/** Returns sold date list set **/
-	public Set<Date> getWhenSold() 
+	public Set<Date> whenSold() 
 	{
 		return sales.keySet();
 	}
@@ -122,7 +122,7 @@ public class App
 		{
 			 cal.setTime(entry.getKey());
 			 int soldWeek = cal.get(Calendar.WEEK_OF_YEAR);
-			 if(soldWeek == currentweek) 
+			 if(soldWeek == (currentweek -1)) 
 			 {
 				 sold += entry.getValue();
 			 }

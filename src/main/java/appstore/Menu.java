@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class Menu
 {
-	private AppStore store;
+	private AppStore store; 
 	private static Scanner scanInt, scanText;
 	private int menuNumber;
 	
@@ -210,7 +210,7 @@ public class Menu
 	
 		case 4:
 			// Prints the earnings by programmer of the AppStore
-			store.earningsByProgrammer(store);
+			store.earningsByProgrammer();
 			menuManager();
 			break;	
 	
@@ -553,7 +553,65 @@ public class Menu
 	 * 3. Existence of Application name
 	 * 4. Application Score input
 	 * */
+	/** **/
+	private void userLogin() 
+	{
+		Client client = null;
+		
+		boolean askForUserName = true;
+		while(askForUserName)
+		{
+			System.out.println("UserId: ");
+			String aUserId = scanText.nextLine();
+			
+			if (userExists(aUserId, "Client") || userExists(aUserId, "ClientPremium"))
+			{
+				client = (Client) returnUserObject(aUserId);
+				askForUserName = false;
+			}
+			
+			
 
+			else if (clientName.equals("exit"))
+			{
+				askForUserName = false;
+				menuMain();
+			}
+
+			else {
+				System.out.print("User Id not existente please insert correct user "
+						+ "or 'exit' to create user");
+			}
+		}
+		
+		boolean askForPassoword = true;
+		int counter = 0;
+		while(askForPassoword)
+		{
+
+			System.out.println("password: ");
+			String password = scanText.nextLine();
+			
+			
+			if (userExists(username, "Client") || userExists(username, "ClientPremium"))
+			{
+				askForUserName = false;
+			}
+
+			else if (clientName.equals("exit"))
+			{
+				askForUserName = false;
+				menuMain();
+			}
+
+			else {
+				System.out.print("User Id not existente please insert correct user "
+						+ "or 'exit' to create user");
+			}
+		}
+	}
+	
+	
 	/** Ask for user menu input and verifies its validity **/
 	private int askInputIntAndValidate(int min, int max) 
 	{	
@@ -635,12 +693,12 @@ public class Menu
 	}
 	
 	/** Check if User/Client/ClientPremium/Programmer Exist **/
-	private boolean userExists(String aUserName, String aClassName)
+	private boolean userExists(String aUserId, String aClassName)
 	{
 		boolean exists = false;
 		for(User user: store.getUsersList()) 
 		{
-			if(user.getName().equals(aUserName) && user.getClass().getSimpleName().equals(aClassName)) 
+			if(user.getUserId().equals(aUserId) && user.getClass().getSimpleName().equals(aClassName)) 
 			{
 				exists = true;
 			}
@@ -649,22 +707,22 @@ public class Menu
 	}
 	
 	/** Return User/Client/ClientPremium/Programmer Object **/
-	public User returnUserObject(String aUserName, String aClassName)
+	public User returnUserObject(String aUserId)
 	{
 		User returnUser = null;
 		for(User user: store.getUsersList()) 
 		{
-			if(user.getName().equals(aUserName) && user instanceof Client) 
+			if(user.getUserId().equals(aUserId) && user instanceof Client) 
 			{
 				returnUser = (Client) user;
 			}
 			
-			else if(user.getName().equals(aUserName) && user instanceof ClientPremium) 
+			else if(user.getUserId().equals(aUserId) && user instanceof ClientPremium) 
 			{
 				returnUser = (ClientPremium) user;
 			}
 			
-			else if(user.getName().equals(aUserName) && user instanceof Programmer) 
+			else if(user.getUserId().equals(aUserId) && user instanceof Programmer) 
 			{
 				returnUser = (Programmer) user;
 			}
