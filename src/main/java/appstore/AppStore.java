@@ -146,8 +146,7 @@ public class AppStore
 
 		case "Name":
 			Comparator<App> compareByName = Comparator
-			.comparing(App::getName)
-			.reversed();
+			.comparing(App::getName);
 			returnList = apps.stream().sorted(compareByName).toList();
 			break;
 

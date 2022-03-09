@@ -23,14 +23,14 @@ public class FileReaderTxt
     private static String readFile(String aString) 
     {
     	StringBuilder data = null;
-        var fileName = "src/main/resources/" + aString;
+        String fileName = "src/main/resources/" + aString;
         
         try
         {
         	FileReader filereader = new FileReader(fileName, StandardCharsets.UTF_8);
             try (BufferedReader br = new BufferedReader(filereader))
             {
-				var sb = new StringBuilder();
+            	StringBuilder sb = new StringBuilder();
 
 				String line;
 				while ((line = br.readLine()) != null)

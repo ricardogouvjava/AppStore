@@ -543,14 +543,20 @@ public class Menu
 		case 2:
 			// List Application by times sold 
 			System.out.println("Apps listed by times sold:");
-			printList(store.orderAppsBy("Sold"));
+			for(App app : store.orderAppsBy("Sold"))
+			{
+				System.out.println(app.getName() +":"+ app.timesSold());
+			}
 			menuListApps();
 			break;
 	
 		case 3:
 			// List Application by Score
 			System.out.println("\nApps listed by score:");
-			printList(store.orderAppsBy("Score"));
+			for(App app : store.orderAppsBy("Score"))
+			{
+				System.out.println(app.getName() +":"+ String.format("%2f", app.getAverageScore()));
+			}
 			menuListApps();
 			break;
 		
