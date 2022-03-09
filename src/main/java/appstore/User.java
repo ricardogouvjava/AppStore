@@ -1,8 +1,9 @@
 package appstore;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.jasypt.util.password.PasswordEncryptor;
@@ -15,7 +16,7 @@ abstract class User
 	private int age;
 	private double averageScore; 
 	private List<Score> scores;
-	private List<App> apps;
+	private Map<App, Integer> apps;
 	
 	//Constructor
 	public User(String aUserId, String aPassword, int aAge) 
@@ -25,7 +26,7 @@ abstract class User
 		age = aAge;
 		averageScore = 0;
 		scores = new ArrayList<Score>();
-		apps = new ArrayList<App>();
+		apps = new HashMap<App, Integer>();
 		
 	}
 
@@ -61,9 +62,26 @@ abstract class User
 	}
 	
 	/** Add application to list **/
-	public void addApp(App aApp)
+	public void addApp(App aApp, int aQuantity)
 	{
-		apps.add(aApp);
+		
+		if(!apps.containsKey(aApp))
+		{
+			apps.putIfAbsent(aApp, aQuantity);
+		}
+		
+		else 
+		{
+			apps.put(aApp, apps.get(aApp) + aQuantity);
+		}
+	}
+	
+	public void addShoppingBagToAppsBought(Bag aBag)
+	{
+		for (Map.Entry<App, Integer> entry : aBag.getBagItems().entrySet())
+		{
+			addApp(entry.getKey(), entry.getValue());
+		}	
 	}
 	
 	/** Add Score to list **/
@@ -98,9 +116,8 @@ abstract class User
 	/** return list of applications not scored **/
 	public List<App> getAppsNotScored()
 	{
-		List<App> appsNotScored = new ArrayList<App>(apps);
-		Collections.copy(appsNotScored, apps);
-		appsNotScored.removeAll(getAppsScored());
+		List<App> appsNotScored = new ArrayList<>(apps.keySet()); //Makes Copy of all applications in userList Set into List
+		appsNotScored.removeAll(getAppsScored()); //Remove applications scored
 		
 		return appsNotScored;
 	}
@@ -126,7 +143,7 @@ abstract class User
 		return averageScore;
 	}
 		
-	public List<App> getApps() 
+	public Map<App, Integer> getApps() 
 	{
 		return apps;
 	}

@@ -16,14 +16,14 @@ public class Programmer extends User
 	public App developApp(String aAppName, double aAppPrice, AppType aAppType)
 	{
 		App app = new App(aAppName, aAppPrice, aAppType, this);
-		addApp(app);
+		addApp(app, 0);
 		return app;
 	}
 			
 	public double getEarnings(AppStore aStore)
 	{	
 		double earnings = 0;
-		for(App app : getApps())
+		for(App app : getApps().keySet())
 		{
 			earnings += app.getPrice() * app.timesSold(); 
 		}

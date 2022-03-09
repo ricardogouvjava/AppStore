@@ -1,6 +1,5 @@
 package appstore;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,16 +60,11 @@ public class Bag
 		return appInBag;
 	}
 	
-	
 	/** Returns list of applications in the bag **/ 
 	public List<App> getAppsInBag()
 	{
-		List<App> templist = new ArrayList<App>();
-		for(App app : bagItems.keySet())
-		{
-			templist.add(app);
-		}
-		return templist;
+		return List.copyOf(bagItems.keySet());
+		
 	}
 	
 	/** Calculates the value in the shopping bag **/
@@ -85,7 +79,7 @@ public class Bag
 	}
 
 	// Getters
-	public Map<App, Integer> getBagData() 
+	public Map<App, Integer> getBagItems() 
 	{
 		return bagItems;
 	}

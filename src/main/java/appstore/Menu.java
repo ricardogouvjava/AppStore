@@ -1,5 +1,6 @@
 package appstore;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,11 +30,55 @@ public class Menu
 		
 	}
 	
-	/* Several menu options area:
+	/* MENU LIST:
 	 * 1. Main menu
+	 *    1.1 User Login
+	 *    1.2 User Creation
+	 *    1.3 List AppsMenu
+	 *        1.3.1 By Name
+	 *        1.3.2 By Times Sold
+	 *        1.3.3 By Score
+	 *        1.3.3 By chosen application type
+	 *              1.3.3.1 Games
+	 *              1.3.3.2 Business
+	 *              1.3.3.3 Education
+	 *              1.3.3.4 Lifestyle
+	 *              1.3.3.5 Entertainment
+	 *              1.3.3.6 Utilities
+	 *              1.3.3.7 Travel
+	 *              1.3.3.8 HealthandFitness"
+	 * 
 	 * 2. Client menu
+	 *    2.1 List owned applications
+	 *    2.2 Buy Applications
+	 *        2.2.1 Add application to shopping bag
+	 *        2.2.2 Check value of shopping bag
+	 *        2.2.3 Checkout"
+	 *    2.3 Give Score
+	 *    2.4 List application that score was given
+	 *    2.5 List application that scores was not given
+	 *    2.6 List scores given to application
+	 * 
 	 * 3. Programmer menu
+	 *    3.1 List developed applications
+	 *    3.2 Programmer average score
+	 *    3.3 Earnings
+	 *    
 	 * 4. Administrator Menu
+	 *    4.1 Move Time Forward
+	 *    4.2 Total earnings
+	 *    4.3 Earnings by programmer
+	 *    4.4 applications with discount
+	 *    4.5 Times an application was sold
+	 *    4.6 List applications sold last week
+	 *    4.7 Less sold applications in a given week
+	 *    4.8 List all purchases
+	 *    4.9 List purchases by week
+	 *    4.10 List all Users
+	 *    4.11 List all Clients
+	 *    4.12 List all ClientPremium
+	 *    4.13 List all Programmers
+	 *    4.14 List applications off User
 	 */
 
 	/** Main menu options **/
@@ -108,12 +153,12 @@ public class Menu
 		System.out.print("\n"
 				+ "User Options:"
 				+ "\n  (0) Return"
-				+ "\n  (1) List onwed applications"
-				+ "\n  (2) Buy Apps"
+				+ "\n  (1) List owned applications"
+				+ "\n  (2) Buy Applications"
 				+ "\n  (3) Give Score"
 				+ "\n  (4) List application that score was given"
-				+ "\n  (5) List application that scores were not given"
-				+ "\n  (6) List scores given to app"
+				+ "\n  (5) List application that scores was not given"
+				+ "\n  (6) List scores given to application"
 				+ "\n"
 				+ "\n input:");
 	
@@ -128,7 +173,7 @@ public class Menu
 		case 1:
 			// List Application owned by user
 			System.out.println("Owned applications:");
-			printList(aClient.getApps());
+			printMap(aClient.getApps());
 			menuClient(aClient);
 			break;
 		
@@ -198,7 +243,7 @@ public class Menu
 		System.out.print("\n"
 				+ "User Options:"
 				+ "\n (0) Return"
-				+ "\n (1) List developped applications"
+				+ "\n (1) List developed applications"
 				+ "\n (2) Programmer average score"
 				+ "\n (3) Earnings"
 				+ "\n input:");
@@ -214,7 +259,7 @@ public class Menu
 		case 1:
 			// List Application owned by user
 			System.out.println("Developped applications:");
-			printList(aProgrammer.getApps());
+			printList(new ArrayList<>(aProgrammer.getApps().keySet()));
 			menuProgrammer(aProgrammer);
 			break;
 		
@@ -240,86 +285,67 @@ public class Menu
 		System.out.print("\n"
 				+ "Administrator Options:"
 				+ "\n  (0) Return"
-				+ "\n  (1) List all purchases"
-				+ "\n  (2) List purchases by week"
-				+ "\n  (3) Total earnings"
-				+ "\n  (4) Earnings by programmer"
-				+ "\n  (5) List applications owned by User"
-				+ "\n  (6) Times an app was sold"
-				+ "\n  (7) Apps with discount"
-				+ "\n  (8) List applications sold last week"
-				+ "\n  (9) TimeFoward"
+				+ "\n  (1) Move Time Forward"
+				+ "\n  (2) Total earnings"
+				+ "\n  (3) Earnings by programmer"
+				+ "\n  (4) Applications with discount"
+				+ "\n  (5) Times an app was sold"
+				+ "\n  (6) List applications sold last week"
+				+ "\n  (7) Less sold apps in a given week"
+				+ "\n  (8) List all purchases"
+				+ "\n  (9) List purchases by week"	
 				+ "\n (10) List all Users"
 				+ "\n (11) List all Clients"
 				+ "\n (12) List all ClientPremium"
 				+ "\n (13) List all Programmers"
+				+ "\n (14) List applications off User"
 				+ "\n"
 				+ "\n input:");	
 	
-		switch (askInputIntAndValidate(0, 13))
+		switch (askInputIntAndValidate(0, 14))
 		{
 	
 		case 0:
 			// Returns to main menu
 			menuMain();
 			break;
-	
+
 		case 1:
-			// Lists all the purchases in the AppStore 
-			System.out.println("Purchases:");
-			for (Purchase purchase : store.getPurchases())
-			{
-				System.out.println(purchase);
-			}
-			menuAdministrator(aAdministrator); 
+			// moves time forward
+			System.out.println("Introduce number of days: ");
+			int numberDays =  askInputIntAndValidate(0, Integer.MAX_VALUE);
+			store.forwardDateXDays(numberDays);
+			menuAdministrator(aAdministrator);
 			break;
-		 	
+			
 		case 2:
-			// Lists all purchases in a certain week of the year
-			System.out.println("Wanted week: ");
-			int weekNumber =  askInputIntAndValidate(0, store.getCurrentWeeK());
-			List<Purchase> purchaseList = store.getWeekPurchases(weekNumber);
-			for(Purchase purchase : purchaseList)
-			{
-				System.out.println(purchase);
-			}
+			// Prints the total earnings of the AppStore
+			System.out.println("The sales total of the app store is: " + String.format("%,.2f",store.totalStoreEarnings()));
 			menuAdministrator(aAdministrator);
 			break;
 			
 		case 3:
-			// Prints the total earnings of the AppStore
-			System.out.println("The sales total of the app store is: " + String.format("%2f",store.totalStoreEarnings()));
-			menuAdministrator(aAdministrator);
-			break;		
-	
-		case 4:
 			// Prints the earnings by programmer of the AppStore
 			store.earningsByProgrammer();
 			menuAdministrator(aAdministrator);
-			break;	
-	
-		case 5:
-			// List the applications owned by and user
-			printList(askForUseridValidatesAndReturnsClient().getApps());
-			menuAdministrator(aAdministrator);
-			break;
-	
-		case 6:
-			// Prints the times an application was sold
-			System.out.println("AppName: ");
-			String appName = scanText.nextLine();
-			System.out.println("The app " + appName + " was sold " + store.timesAppSold(appName) + " times.");
+			break;		
+		
+		case 4:
+			// Check applications with discounts
+			System.out.println("Apps with discount: ");
+			printList(store.checkAppsWithDiscounts());
 			menuAdministrator(aAdministrator);
 			break;
 		
-		case 7:
-			// Check applications with discounts
-			System.out.println("Apps with discount: " + store.checkAppsWithDiscounts());
-			//printList(store.checkAppsWithDiscounts());
+	
+		case 5:
+			// Prints the times an application was sold
+			App app = askForAppNameValidatesAndReturnsApp();
+			System.out.println("The app " + app.getName() + " was sold " + app.timesSold() + " times.");
 			menuAdministrator(aAdministrator);
 			break;
 			
-		case 8:
+		case 6:
 			// Lists applications sold last week
 			System.out.println("The applications sold last week are: ");
 			for(Entry<App, Integer> entry : store.listAppsSoldLastWeek().entrySet()) 
@@ -329,7 +355,7 @@ public class Menu
 			menuAdministrator(aAdministrator);
 			break;
 			
-		case 18:
+		case 7:
 			// finds less sold applications in a defined week	
 			System.out.println("Wanted week: ");
 			int week =  askInputIntAndValidate(0, store.getCurrentWeeK());
@@ -340,14 +366,30 @@ public class Menu
 			printMap(store.checkLessSoldApps(week, appnumber));
 			menuAdministrator(aAdministrator);
 			break;
+		
+		
 			
-		case 9:
-			// moves time forward
-			System.out.println("Introduce number of days: ");
-			int numberDays =  askInputIntAndValidate(0, Integer.MAX_VALUE);
-			store.forwardDateXDays(numberDays);
-			menuAdministrator(aAdministrator);
+		case 8:
+			// Lists all the purchases in the AppStore 
+			System.out.println("Purchases:");
+			for (Purchase purchase : store.getPurchases())
+			{
+				System.out.println(purchase);
+			}
+			menuAdministrator(aAdministrator); 
 			break;
+		
+		case 9:
+			// Lists all purchases in a certain week of the year
+			System.out.println("Wanted week: ");
+			int weekNumber =  askInputIntAndValidate(0, store.getCurrentWeeK());
+			List<Purchase> purchaseList = store.getWeekPurchases(weekNumber);
+			for(Purchase purchase : purchaseList)
+			{
+				System.out.println(purchase);
+			}
+			menuAdministrator(aAdministrator);
+			break;		
 		
 		case 10:
 			// Lists all the users in the AppStore
@@ -377,6 +419,13 @@ public class Menu
 			menuAdministrator(aAdministrator);
 			break;
 	
+		case 14:
+			// List the applications owned by and user
+			printMap(askForUserIdValidatesAndReturnsUser().getApps());
+			menuAdministrator(aAdministrator);
+			break;
+			
+			
 		default:
 			// Ask again for input!!
 			System.out.println("Please introduze a correct option");
@@ -384,7 +433,6 @@ public class Menu
 			break;
 		}
 	}
-	
 	
 	/** Buy Applications menu **/
 	private void buyAppMenu(Client aClient)
@@ -399,9 +447,9 @@ public class Menu
 		System.out.print("\n"
 				+ "Buy Options:"
 				+ "\n (0) Return"
-				+ "\n (1) Add App to shopping bag"
+				+ "\n (1) Add application to shopping bag"
 				+ "\n (2) Check value of shopping bag"
-				+ "\n (3) checkout"
+				+ "\n (3) Checkout"
 				+ "\n input:");
 	
 		// asks for user menu input and verifies its validity
@@ -435,94 +483,26 @@ public class Menu
 			store.checkout(aClient, shoppingBag);
 			System.out.println("Sucessful buy of: " + shoppingBag );
 			menuClient(aClient);
-			break;		
+			break;
+
+		default:
+			// Ask again for input!!
+			System.out.println("Please introduze a correct option");
+			buyAppMenu(aClient);
+			break;
 		}
-	}
-
-	/** Lists the applications by Type **/
-	private void menuListAppsByType()
-	{
-		// List Application by type 
-		System.out.print("\n"
-				+ "Choose one of the type Options:"
-				+ "\n (0) Return"
-				+ "\n (1) Games"
-				+ "\n (2) Business"
-				+ "\n (3) Education"
-				+ "\n (4) Lifestyle"
-				+ "\n (5) Entertainment"
-				+ "\n (6) Utilities"
-				+ "\n (7) Travel"
-				+ "\n (8) HealthandFitness"
-				+ "\n"
-				+ "\n:");
-
-		String menuText = scanText.nextLine();
-
-		if(menuText.equals("0") || menuText == "Return")
-		{
-			// Returns to User menu
-			menuListApps();
-		}
-
-		else if(menuText.equals("1") || menuText.equals(AppType.GAMES.name()))
-		{
-			store.listAppsByType(AppType.GAMES);
-		}
-
-		else if (menuText.equals("2") || menuText.equals(AppType.BUSINESS.name()))
-		{
-			store.listAppsByType(AppType.BUSINESS);
-		}
-
-		else if (menuText.equals("3") || menuText.equals(AppType.EDUCATION.name()))
-		{
-			store.listAppsByType(AppType.EDUCATION);
-		}
-
-		else if (menuText.equals("4") || menuText.equals(AppType.LIFESTYLE.name())) 
-		{
-			store.listAppsByType(AppType.LIFESTYLE);
-		}
-
-		else if (menuText.equals("5") || menuText.equals(AppType.ENTERTAINMENT.name()))
-		{
-			store.listAppsByType(AppType.ENTERTAINMENT);
-		}
-
-		else if (menuText.equals("6") || menuText.equals(AppType.UTILITIES.name()))
-		{
-			store.listAppsByType(AppType.UTILITIES);
-		}
-
-		else if (menuText.equals("7") || menuText.equals(AppType.TRAVEL.name()))
-		{
-			store.listAppsByType(AppType.TRAVEL);
-		}
-
-		else if (menuText.equals("8") || menuText.equals(AppType.HEALTHANDFITNESS.name())) 
-		{
-			store.listAppsByType(AppType.HEALTHANDFITNESS);
-		}
-
-		else {
-			System.out.print("Please introduze a correct option");
-		}
-
-		// Refresh the menu options
-		menuListAppsByType();
 	}
 
 	
-	/** Several  **/
+	/** Several ways to list applications  **/
 	private void menuListApps() 
 	{
 		System.out.print("\n------ Menu ------"
 				+ "\n (0) Return"
-				+ "\n (1) List AppStore applications by Name"
-				+ "\n (2) List AppStore applications by times Sold"
-				+ "\n (3) List AppStore applications by Score"
-				+ "\n "
+				+ "\n (1) List AppStore applications ordered by Name"
+				+ "\n (2) List AppStore applications ordered by times Sold"
+				+ "\n (3) List AppStore applications ordered by Score"
+				+ "\n (4) List AppStore applications ordered by chosen application type"
 				+ "\n input:");
 	
 		//asks for input, verifies it and uses it in the switch
@@ -565,18 +545,105 @@ public class Menu
 			menuListAppsByType();
 			menuListApps();
 			break;
-
+			
+		default:
+			// Ask again for input!!
+			System.out.println("Please introduze a correct option");
+			menuListApps();
+			break;
 		}
 	}
 	
+	/** Lists the applications by Type **/
+	private void menuListAppsByType()
+	{
+		// List Application by type 
+		System.out.print("\n"
+				+ "Choose one of the type Options:"
+				+ "\n (0) Return"
+				+ "\n (1) Games"
+				+ "\n (2) Business"
+				+ "\n (3) Education"
+				+ "\n (4) Lifestyle"
+				+ "\n (5) Entertainment"
+				+ "\n (6) Utilities"
+				+ "\n (7) Travel"
+				+ "\n (8) HealthandFitness"
+				+ "\n"
+				+ "\n:");
+
+		List<App> listType =  new ArrayList<App>();
+
+		switch (askInputIntAndValidate(0,8)) 
+		{
+
+		case 0: // Returns to User menu
+			menuListApps();
+			break;
+				
+		case 1: // Returns to User menu
+			listType = store.listAppsByType(AppType.GAMES);
+			break;
+			
+		case 2:
+			listType = store.listAppsByType(AppType.BUSINESS);
+			break;
+		
+		case 3:
+			listType = store.listAppsByType(AppType.EDUCATION);
+			break;
+		
+		case 4:
+			listType = store.listAppsByType(AppType.LIFESTYLE);
+			break;
+		
+		case 5:
+			listType = store.listAppsByType(AppType.ENTERTAINMENT);
+			break;
+		
+		case 6:
+			listType = store.listAppsByType(AppType.UTILITIES);
+			break;
+		
+		case 7:
+			listType = store.listAppsByType(AppType.TRAVEL);
+			break;
+		
+		case 8:
+			listType = store.listAppsByType(AppType.HEALTHANDFITNESS);
+			break;
+			
+		default:
+			// Ask again for input!!
+			System.out.println("Please introduze a correct option");
+			menuListAppsByType();
+			break;
+		
+		}
+		
+		// Analysis if empty
+		if(listType.isEmpty()) 
+		{
+			System.out.println("No applications of the chosen type");
+		}
+		
+		else
+		{
+			System.out.println("The apps of type '" + listType.get(0).getType() + "' in the apps store are:");
+			printList(listType);
+		}
+		
+		menuListAppsByType();	
+	}
 	
 	/*
-	 * Several methods for input & validation :
+	* Several methods for input & validation :
 	 * 1. Menu option input validation
 	 * 2. User login
 	 * 3. User creation
+	 * 4. User validation
 	 * 4. Score Validation
-	 * 5. Application Name Validation
+	 * 5. Application Validation
 	 * */
 		
 	/** Ask for user menu input and verifies its validity **/
@@ -740,6 +807,28 @@ public class Menu
 		return true;
 	}
 	
+	/** Ask for an User name, verifies if exists and returns user object **/
+	private User askForUserIdValidatesAndReturnsUser()
+	{
+		boolean askForId = true;
+		User user = null;
+		while(askForId)
+		{
+			System.out.print("\nUserId: ");
+			String userId = scanText.nextLine();
+			if (userId.length() > 4 && !store.userExists(userId))
+			{
+				askForId = false;
+				user = store.findUser(userId);
+				
+			}
+			else {
+				System.out.print("UserId in use or not valid!");
+			}
+		}
+		return user;
+	}
+
 	/** Asks user for score value and validates **/
 	private double askForScoreAndValidates()
 	{
@@ -783,32 +872,7 @@ public class Menu
 		return app;
 	}
 
-	/** Ask for an User name, verifies if exists and returns user object **/
-	private User askForUseridValidatesAndReturnsClient()
-	{
-		boolean askForId = true;
-		User user = null;
-		while(askForId)
-		{
-			System.out.print("\nUserId: ");
-			String userId = scanText.nextLine();
-			if (userId.length() > 4 && !store.userExists(userId))
-			{
-				askForId = false;
-				user = store.findUser(userId);
-				
-			}
-			else {
-				System.out.print("UserId in use or not valid!");
-			}
-		}
-		return user;
-	}
-
-	
-	/* Prints */
-	/** Print List **/
-	
+	/* Prints */	
 	public void printList(List<?> aList)
 	{
 		for(Object obj : aList) 
@@ -816,7 +880,6 @@ public class Menu
 			System.out.println(obj);
 		}
 	}
-
 	public <K, V> void printMap(Map<K, V>  aMap)
 	{
 		for(Map.Entry<K, V>  entry : aMap.entrySet()) 

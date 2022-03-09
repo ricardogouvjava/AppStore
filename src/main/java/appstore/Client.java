@@ -1,6 +1,7 @@
 package appstore;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class Client extends User 
@@ -18,27 +19,30 @@ public class Client extends User
 
 	// Methods
 	/** Adds application to user library **/
-	public void buy(Purchase aPurchase)
+	public Purchase buy(Bag aShoppingBag, Calendar aCalendar)
 	{
-		purchases.add(aPurchase);
-		for (App app : aPurchase.getPurchaseBag().getAppsInBag())
-		{
-			addApp(app);
-		}	
-		updateSpendings(aPurchase.getPurchaseBag().valueInBag());
+		Purchase purchase = new Purchase(this, aShoppingBag, aCalendar.getTime());
+		
+		this.purchases.add(purchase);
+		
+		super.addShoppingBagToAppsBought(aShoppingBag); // Update applications owned
+
+		this.updateSpendings(aShoppingBag);
+		
+		return purchase;
 	}
 	
 	/** Updates value spent **/
-	private void updateSpendings(Double aValue)
+	private void updateSpendings(Bag aShoppingBag)
 	{	
-		spendings += aValue;
+		spendings += aShoppingBag.valueInBag();
 	}
 	
 	/** Allows Client to give a score to an application **/
 	public void giveScore(App aApp, double aScoreValue, String aComment, AppStore aStore)
 	{
 		/* Verify if user bought the application so he can score it */
-		if(super.getApps().contains(aApp) && !super.getAppsScored().contains(aApp))
+		if(super.getApps().containsKey(aApp) && !super.getAppsScored().contains(aApp))
 		{
 			Score score = new Score(this, aApp, aScoreValue, aComment);
 			

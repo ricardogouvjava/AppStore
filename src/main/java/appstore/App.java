@@ -111,27 +111,23 @@ public class App
 	    return salesPreviousWeek;
 	}
 	
-	/** **/
-	private int timesSoldLastWeek(int currentweek)
+		
+	/** Update times sold last Week**/
+	public void updateTimesSoldLastWeek(Week aWeek)
 	{
+		timesSoldLastWeek = aWeek.;
 		Calendar cal = Calendar.getInstance();
-		int sold = 0;
+
 		for(Map.Entry<Date, Integer> entry : sales.entrySet())
 		{
 			 cal.setTime(entry.getKey());
 			 int soldWeek = cal.get(Calendar.WEEK_OF_YEAR);
+		
 			 if(soldWeek == (currentweek -1)) 
 			 {
-				 sold += entry.getValue();
+				 timesSoldLastWeek += entry.getValue();
 			 }
 		}
-		return sold;
-	}
-	
-	/** Update times sold last Week**/
-	public void updateTimesSoldLastWeek(int currentweek)
-	{
-		timesSoldLastWeek = timesSoldLastWeek(currentweek);
 	}
 	
 	
