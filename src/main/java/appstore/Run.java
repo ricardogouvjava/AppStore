@@ -9,7 +9,7 @@ public class Run
 	{
 		storeRequalificar = new AppStore("Requalificar App Store");
 		storeMenu = new Menu(storeRequalificar);
-		storeRequalificar.addUser("Administrator", "Admin", "000", 0);
+		storeRequalificar.addUser("Administrator", "admin", "admin", 0);
 		storeMenu.menuMain();
 	}	
 }

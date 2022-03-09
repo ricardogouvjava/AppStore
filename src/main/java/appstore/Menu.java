@@ -31,9 +31,9 @@ public class Menu
 	
 	/* Several menu options area:
 	 * 1. Main menu
-	 * 2. Manager menu
-	 * 3. User menu
-	 * 4. Buy Application menu
+	 * 2. Client menu
+	 * 3. Programmer menu
+	 * 4. Administrator Menu
 	 */
 
 	/** Main menu options **/
@@ -45,6 +45,7 @@ public class Menu
 				+ "\n (0) Exit "
 				+ "\n (1) User Login {Client Client Premium Programer Admin}"
 				+ "\n (2) User Creation"
+				+ "\n (3) List apps options"
 				+ "\n"
 				+ "\n input:");
 	
@@ -66,7 +67,7 @@ public class Menu
 			if(user instanceof Client || user instanceof ClientPremium) 
 			{
 				// Access User options
-				menuUser((Client) user);
+				menuClient((Client) user);
 			}
 			
 			else if(user instanceof Programmer) 
@@ -88,6 +89,12 @@ public class Menu
 			userCreation();
 			menuMain();
 			break;
+			
+		case 3:
+			// Allows listing of applications
+			menuListApps();
+			menuMain();
+			break;
 		
 		default:
 			System.out.print("Please introduze a correct option");
@@ -96,7 +103,7 @@ public class Menu
 	}
 	
 	/** User menu options **/
-	private void menuUser(Client aClient) 
+	private void menuClient(Client aClient) 
 	{	
 		System.out.print("\n"
 				+ "User Options:"
@@ -105,17 +112,8 @@ public class Menu
 				+ "\n  (2) Buy Apps"
 				+ "\n  (3) Give Score"
 				+ "\n  (4) List application that score was given"
-				+ ""
-				+ " List AppStore applications by Type"
-				+ "\n  (2) List AppStore applications by Name"
-				+ "\n  (3) List AppStore applications by times Sold"
-				+ "\n  (4) List AppStore applications by Score"
-				+ "\n  (5) "
-				+ "\n  "
-				+ "\n  (7) List application that score was not given"
-				+ "\n  (8) List Scores and Comments of an App"
-				+ "\n  (9) "
-				+ "\n (10) "
+				+ "\n  (5) List application that scores were not given"
+				+ "\n  (6) List scores given to app"
 				+ "\n"
 				+ "\n input:");
 	
@@ -131,13 +129,13 @@ public class Menu
 			// List Application owned by user
 			System.out.println("Owned applications:");
 			printList(aClient.getApps());
-			menuUser(aClient);
+			menuClient(aClient);
 			break;
 		
 		case 2:
 			// Buy application
 			buyAppMenu(aClient);
-			menuUser(aClient);
+			menuClient(aClient);
 			break;
 			
 			
@@ -160,74 +158,41 @@ public class Menu
 			// Creates a score
 			aClient.giveScore(appToScore, score, comment, store);
 			System.out.println("\nThe score was added to the database");
-			menuUser(aClient);
+			menuClient(aClient);
 			break;
 		
 		case 4:
 			// Lists applications that score was given by client
 			System.out.print("\nAppScored: ");
 			printList(aClient.getAppsScored());
-			menuUser(aClient);
+			menuClient(aClient);
 			break;
-		
-		
-		
-		case 11:
-			// List Application by type
-			menuUserListByType(aClient);
-			menuUser(aClient);
-			break;
-	
-		case 12:
-			// List Application by name 
-			store.listAppsBy("Name");
-			menuUser(aClient);
-			break;
-	
-		case 13:
-			// List Application by quantity sold 
-			store.listAppsBy("Sold");
-			menuUser(aClient);
-			break;
-	
-		case 14:
-			// List Application by Score
-			store.listAppsBy("Score");
-			menuUser(aClient);
-			break;
-	
-
-	
-		
-
-		case 7:
+			
+		case 5:
 			// Lists applications that score was given by user
 			System.out.print("\nAppNotScored: ");
 			printList(aClient.getAppsNotScored());
-			menuUser(aClient);
+			menuClient(aClient);
 			break;
 		
-		case 8:
+		case 6:
 			// List scores and comments of application
-			System.out.print("\nAppName: ");
-			String appName = scanText.nextLine();
-			store.listAppScores(appName);
-			menuUser(aClient);
+			App app = askForAppNameValidatesAndReturnsApp();
+			printList(app.getScores());
+			menuClient(aClient);
 			break;
-			
-		case 9:
-			
-	
+					
+
 	
 		default:
 			// Ask again for input!!
 			System.out.print("\nPlease introduze a correct option");
-			menuUser(aClient);
+			menuClient(aClient);
 			break;
 		}
 	}
 	
-	/** Programmer Menu **/
+	/** Programmer menu options **/
 	private void menuProgrammer(Programmer aProgrammer)
 	{
 		System.out.print("\n"
@@ -268,7 +233,6 @@ public class Menu
 		}
 	
 	}
-	
 	
 	/** Manager menu options **/
 	private void menuAdministrator(Administrator aAdministrator) 
@@ -446,7 +410,7 @@ public class Menu
 	
 		case 0:
 			shoppingBag = null;
-			menuUser(aClient);
+			menuClient(aClient);
 			break;
 	
 		case 1:
@@ -470,13 +434,13 @@ public class Menu
 		case 3:
 			store.checkout(aClient, shoppingBag);
 			System.out.println("Sucessful buy of: " + shoppingBag );
-			menuUser(aClient);
+			menuClient(aClient);
 			break;		
 		}
 	}
 
 	/** Lists the applications by Type **/
-	private void menuUserListByType(Client aClient)
+	private void menuListAppsByType()
 	{
 		// List Application by type 
 		System.out.print("\n"
@@ -498,7 +462,7 @@ public class Menu
 		if(menuText.equals("0") || menuText == "Return")
 		{
 			// Returns to User menu
-			menuUser(aClient);
+			menuListApps();
 		}
 
 		else if(menuText.equals("1") || menuText.equals(AppType.GAMES.name()))
@@ -546,20 +510,69 @@ public class Menu
 		}
 
 		// Refresh the menu options
-		menuUserListByType(aClient);
+		menuListAppsByType();
 	}
 
+	
+	/** Several  **/
+	private void menuListApps() 
+	{
+		System.out.print("\n------ Menu ------"
+				+ "\n (0) Return"
+				+ "\n (1) List AppStore applications by Name"
+				+ "\n (2) List AppStore applications by times Sold"
+				+ "\n (3) List AppStore applications by Score"
+				+ "\n "
+				+ "\n input:");
+	
+		//asks for input, verifies it and uses it in the switch
+		switch (askInputIntAndValidate(0,7)) 
+		{
+		case 0:
+			// Returns to main menu
+			menuMain();
+			break;
+	
+		case 1:
+			// List Application by name 
+			System.out.println("Apps Listed by Name:");
+			printList(store.orderAppsBy("Name"));
+			menuListApps();
+			break;
+	
+		case 2:
+			// List Application by times sold 
+			System.out.println("Apps listed by times sold:");
+			printList(store.orderAppsBy("Sold"));
+			menuListApps();
+			break;
+	
+		case 3:
+			// List Application by Score
+			System.out.println("\nApps listed by score:");
+			printList(store.orderAppsBy("Score"));
+			menuListApps();
+			break;
+		
+		case 4:
+			// List Application by type
+			menuListAppsByType();
+			menuListApps();
+			break;
+
+		}
+	}
+	
+	
 	/*
 	 * Several methods for input & validation :
 	 * 1. Menu option input validation
 	 * 2. User login
 	 * 3. User creation
 	 * 4. Score Validation
-	 * 5. App Name Validation
+	 * 5. Application Name Validation
 	 * */
-	
-	/** Ask user for input and validates parameter **/
-	
+		
 	/** Ask for user menu input and verifies its validity **/
 	private int askInputIntAndValidate(int min, int max) 
 	{	
@@ -587,7 +600,6 @@ public class Menu
 		return choice;
 	}
 
-	/** User login verifications **/
 	/** Ask user for data and validates for login **/
 	private User userLogin() 
 	{
@@ -722,7 +734,6 @@ public class Menu
 		return true;
 	}
 	
-	/** Asks and validates an user Score **/
 	/** Asks user for score value and validates **/
 	private double askForScoreAndValidates()
 	{
@@ -766,7 +777,7 @@ public class Menu
 		return app;
 	}
 
-	/** Ask for an application, verifies if exists and returns application object **/
+	/** Ask for an User name, verifies if exists and returns user object **/
 	private User askForUseridValidatesAndReturnsClient()
 	{
 		boolean askForId = true;

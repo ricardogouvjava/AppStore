@@ -137,59 +137,39 @@ public class AppStore
 	}
 
 	/** Prints the list of applications in AppStore ordered by {Name Sold Score} **/ 
-	public void listAppsBy(String aCase)
+	public List<App> orderAppsBy(String aCase)
 	{
+		List<App> returnList = new ArrayList<App>();
+		
 		switch (aCase)
 		{
 
 		case "Name":
-			System.out.println("\nApps Listed by Name:");
-			apps.stream()
-			.map(s -> s.getName())
-			.sorted()
-			.forEach(System.out::println);
+			Comparator<App> compareByName = Comparator
+			.comparing(App::getName)
+			.reversed();
+			returnList = apps.stream().sorted(compareByName).toList();
 			break;
 
 		case "Sold":
-			System.out.println("\nApps listed by times sold:");
 			Comparator<App> compareBySold = Comparator
-					.comparing(App::timesSold)
-					.thenComparing(App::getName)
-					.reversed();
+											.comparing(App::timesSold)
+											.thenComparing(App::getName)
+											.reversed();
 
-			apps.stream()
-			.sorted(compareBySold)
-			.forEach(s -> System.out.println(s.getName() +":" + s.timesSold()));
+			returnList = apps.stream().sorted(compareBySold).toList();
 			break;
 
 		case "Score":
-			System.out.println("\nApps listed by score:");
 			Comparator<App> compareByScore = Comparator
-					.comparing(App::getAverageScore)
-					.thenComparing(App::getName)
-					.reversed();
+												.comparing(App::getAverageScore)
+												.thenComparing(App::getName)
+												.reversed();
 
-			apps.stream()
-			.sorted(compareByScore)
-			.forEach(s -> System.out.println(s.getName() +":" + String.format("%2f",s.getAverageScore())));
+			returnList = apps.stream().sorted(compareByScore).toList();
 			break;
 		}
-	}
-
-	/** Prints list of all the scores of a given application **/
-	public void listAppScores(String aAppName)
-	{
-		for (App app : apps)
-		{
-			if (!app.getScores().isEmpty() && app.getName().equals(aAppName))
-			{
-				System.out.println("The existing scores for the aplication '" + app.getName() + "' are: ");
-				for(Score score: app.getScores())
-				{
-					System.out.println("Score: " + score.getScoreValue() + " Comment: " + String.format("%2f",score.getComment()));
-				}
-			}
-		}
+		return returnList;
 	}
 
 	/** Returns global earnings **/

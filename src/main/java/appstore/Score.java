@@ -2,14 +2,14 @@ package appstore;
 
 public class Score
 {
-	private User user;
+	private Client client;
 	private App app;
 	private double score;
 	private String comment;
 	
-	public Score(User aUser, App aApp, double aScore, String aComment)
+	public Score(Client aClient, App aApp, double aScore, String aComment)
 	{
-		user = aUser;
+		client = aClient;
 		app = aApp;
 		score = aScore;
 		comment = aComment;
@@ -18,13 +18,13 @@ public class Score
 	//Methods
 	public String toString() 
 	{
-		return user.getId() + " " + app.getName() + " " + String.format("%.2f",score) +" '"+ comment+"'";
+		return "Client: " + client.getId() + ", App: " + app.getName() + ", Score:  " + String.format("%.2f",score) +" Comment: '"+ comment+"'";
 	}
 	
 	// Getters
-	public User getUser() 
+	public User getClient() 
 	{
-		return user;
+		return client;
 	}
 
 	public App getApp() 
@@ -43,9 +43,9 @@ public class Score
 	}
 
 	// Setters
-	public void setUser(User aUser) 
+	public void setUser(Client aClient) 
 	{
-		user = aUser;
+		client = aClient;
 	}
 	
 	public void setApp(App aApp) 
