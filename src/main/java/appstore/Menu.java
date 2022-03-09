@@ -555,7 +555,7 @@ public class Menu
 			System.out.println("\nApps listed by score:");
 			for(App app : store.orderAppsBy("Score"))
 			{
-				System.out.println(app.getName() +":"+ String.format("%2f", app.getAverageScore()));
+				System.out.println(app.getName() +":"+ String.format("%,.2f", app.getAverageScore()));
 			}
 			menuListApps();
 			break;

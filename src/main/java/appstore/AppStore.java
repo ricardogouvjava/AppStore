@@ -1,14 +1,15 @@
 package appstore;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AppStore 
 {
@@ -147,7 +148,7 @@ public class AppStore
 		case "Name":
 			Comparator<App> compareByName = Comparator
 			.comparing(App::getName);
-			returnList = apps.stream().sorted(compareByName).toList();
+			returnList = apps.stream().sorted(compareByName).collect(Collectors.toList());
 			break;
 
 		case "Sold":
@@ -156,7 +157,7 @@ public class AppStore
 											.thenComparing(App::getName)
 											.reversed();
 
-			returnList = apps.stream().sorted(compareBySold).toList();
+			returnList = apps.stream().sorted(compareBySold).collect(Collectors.toList());
 			break;
 
 		case "Score":
@@ -165,7 +166,7 @@ public class AppStore
 												.thenComparing(App::getName)
 												.reversed();
 
-			returnList = apps.stream().sorted(compareByScore).toList();
+			returnList = apps.stream().sorted(compareByScore).collect(Collectors.toList());
 			break;
 		}
 		return returnList;
@@ -189,7 +190,7 @@ public class AppStore
 		for(Programmer programmer : getProgrammersList())
 		{
 			System.out.println("Programmer: '" + programmer.getId() +
-					"' earned: " + String.format("%2f",programmer.getEarnings(this)));
+					"' earned: " + String.format("%,.2f",programmer.getEarnings(this)));
 		}
 	}
 
