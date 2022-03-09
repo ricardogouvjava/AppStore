@@ -214,9 +214,9 @@ public class AppStore
 	}
 	
 	/** Returns count of all application sold made in a certain week **/
-	public HashMap<String, Integer> getAppsSoldInWeek(int aWeek)
+	public HashMap<App, Integer> getAppsSoldInWeek(int aWeek)
 	{
-		HashMap<String, Integer> weekAppSales = new HashMap<String, Integer>();
+		HashMap<App, Integer> weekAppSales = new HashMap<App, Integer>();
 		List<Purchase> weekPurchases = getWeekPurchases(aWeek);
 			
 		for(Purchase purchase : weekPurchases)
@@ -226,14 +226,14 @@ public class AppStore
 			
 			for(Map.Entry<App, Integer> entry : bag.entrySet())
 			{
-				if(!weekAppSales.containsKey(entry.getKey().getName()))
+				if(!weekAppSales.containsKey(entry.getKey()))
 				{
-					weekAppSales.putIfAbsent(entry.getKey().getName(), entry.getValue());
+					weekAppSales.putIfAbsent(entry.getKey(), entry.getValue());
 				}
 				
 				else 
 				{
-					weekAppSales.put(entry.getKey().getName(), weekAppSales.get(entry.getKey().getName()) + entry.getValue());
+					weekAppSales.put(entry.getKey(), weekAppSales.get(entry.getKey()) + entry.getValue());
 				}
 			}		
 		}
@@ -256,21 +256,21 @@ public class AppStore
 	}
 	
 	/** Finds 5 least sold applications in a determined week **/
-	public HashMap<String, Integer> checkLessSoldApps(int aWeek, int appNumber)
+	public HashMap<App, Integer> checkLessSoldApps(int aWeek, int appNumber)
 	{
-		HashMap<String, Integer> weekAppSold = getAppsSoldInWeek(aWeek);
-		HashMap<String, Integer> weekAppSales = new HashMap<String, Integer>();
+		HashMap<App, Integer> weekAppSold = getAppsSoldInWeek(aWeek);
+		HashMap<App, Integer> weekAppSales = new HashMap<App, Integer>();
 		weekAppSales.putAll(weekAppSold);
 		
 		for(App app : apps) 
 		{
-			if(!weekAppSales.containsKey(app.getName()))
+			if(!weekAppSales.containsKey(app))
 			{
-				weekAppSales.put(app.getName(), 0);
+				weekAppSales.put(app, 0);
 			}
 		}
 		
-		LinkedHashMap<String, Integer> sortedWeekAppSales = new LinkedHashMap<>();
+		LinkedHashMap<App, Integer> sortedWeekAppSales = new LinkedHashMap<>();
 	    
 		weekAppSales.entrySet().stream()
 								.sorted(Map.Entry.comparingByValue())
@@ -359,7 +359,7 @@ public class AppStore
 	/** update application discounts based on performance of previous week **/
 	private void updateAppDiscounts(int aWeek, int discountValue)
 	{
-		Map<String, Integer> lessSold = new HashMap<String, Integer>(5);
+		Map<App, Integer> lessSold = new HashMap<App, Integer>(5);
 		lessSold = checkLessSoldApps(aWeek , 5);
 		giveDiscount(lessSold.keySet(), discountValue);
 	}
@@ -390,18 +390,11 @@ public class AppStore
 	}
 	
 	/** Give discount 15% **/
-	public void giveDiscount(Set<String> aApps, int discountValue)
+	public void giveDiscount(Set<App> aApps, int discountValue)
 	{
-		for(App appToChange : apps) 
+		for(App app : aApps) 
 		{
-			for(String appNameToCompare : aApps) 
-			{
-				if(appToChange.getName().equals(appNameToCompare))
-				{
-					appToChange.setDiscount(discountValue);
-				}
-				
-			}
+			app.setDiscount(discountValue);
 		}
 	}
 	

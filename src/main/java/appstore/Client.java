@@ -34,7 +34,6 @@ public class Client extends User
 		spendings += aValue;
 	}
 	
-		
 	/** Allows Client to give a score to an application **/
 	public void giveScore(App aApp, double aScoreValue, String aComment, AppStore aStore)
 	{
@@ -54,7 +53,6 @@ public class Client extends User
 		}
 	}
 		
-	
 	// Getters 
 	public double getSpendings() 
 	{

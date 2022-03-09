@@ -17,7 +17,6 @@ abstract class User
 	private List<Score> scores;
 	private List<App> apps;
 	
-	
 	//Constructor
 	public User(String aUserId, String aPassword, int aAge) 
 	{
@@ -51,7 +50,10 @@ abstract class User
 		if (encryptor.checkPassword(userInput, encyptedPassword)) 
         {
         	passwordCorrect = true;
-        } else {
+        } 
+		
+		else 
+		{
         	passwordCorrect = false;
         }
 		
@@ -146,11 +148,9 @@ abstract class User
 		encyptedPassword = encryptPassword(aPassword);
 	}
 
-	
 	public void setEncyptedPassword(String aPassword) 
 	{
 		encyptedPassword = encryptPassword(encyptedPassword);
 	}
-
 	
 }
