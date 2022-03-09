@@ -6,15 +6,15 @@ import java.util.Date;
 
 public class Purchase 
 {
-	private String clientName;
+	private Client client;
 	private Bag purchaseBag;
 	private Date buyDate;
 	private double price;
 
 	
-	public Purchase(String aClient, Bag aBag, Date aDate)
+	public Purchase(Client aClient, Bag aBag, Date aDate)
 	{	
-		clientName = aClient;
+		client = aClient;
 		purchaseBag = aBag;
 		buyDate = aDate;
 		price = aBag.valueInBag();
@@ -26,7 +26,7 @@ public class Purchase
 	public String toString()
 	{
 		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-		return "Date: "+ formatter.format(buyDate.getTime()) + ", Client: " + clientName + 
+		return "Date: "+ formatter.format(buyDate.getTime()) + ", Client: " + client.getId() + 
 				"\nBag:"+ purchaseBag;
 	}
 	
@@ -39,9 +39,9 @@ public class Purchase
 	
 		
 	// Getters
-	public String getClientName() 
+	public Client getClientName() 
 	{
-		return clientName;
+		return client;
 	}
 	
 	public Bag getPurchaseBag() 
@@ -60,9 +60,9 @@ public class Purchase
 	}
 	
 	// Setters
-	public void setClient(String aClientName) 
+	public void setClient(Client aClientName) 
 	{
-		clientName = aClientName;
+		client = aClientName;
 	}
 	
 	public void setPurchaseBag(Bag aBag)

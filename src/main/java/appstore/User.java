@@ -1,34 +1,112 @@
 package appstore;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.jasypt.util.password.BasicPasswordEncryptor;
+import org.jasypt.util.password.PasswordEncryptor;
+
 abstract class User
 {
-	private String userId;
-	private String name;
-	private String password;
+	private String id;
+	private String encyptedPassword;
+	private PasswordEncryptor encryptor = new BasicPasswordEncryptor(); 
 	private int age;
+	private double averageScore; 
+	private List<Score> scores;
+	private List<App> apps;
 	
 	
 	//Constructor
-	public User(String aUserId, String aName, String aPassword, int aAge) 
+	public User(String aUserId, String aPassword, int aAge) 
 	{
-		userId = aUserId;
-		name = aName;
-		password = aPassword;
+		id = aUserId;
+		encyptedPassword = encryptPassword(aPassword);
 		age = aAge;
+		averageScore = 0;
+		scores = new ArrayList<Score>();
+		apps = new ArrayList<App>();
+		
 	}
 
 	//Methods
 	@Override
     public String toString() 
 	{
-		return "Id :" + userId + ", Name: " + name +", Age: " + age;	
+		return "Id :" + id + ", Age: " + age;	
+	}
+
+	/** Encrypt password  **/
+	private String encryptPassword(String aPassword) 
+	{
+	    return encryptor.encryptPassword(aPassword);
+	}
+	
+	/** Compare password **/
+	public boolean isPasswordCorrect(String userInput) 
+	{
+		boolean passwordCorrect = false;
+
+		if (encryptor.checkPassword(userInput, encyptedPassword)) 
+        {
+        	passwordCorrect = true;
+        } else {
+        	passwordCorrect = false;
+        }
+		
+        return passwordCorrect;
+	}
+	
+	/** Add application to list **/
+	public void addApp(App aApp)
+	{
+		apps.add(aApp);
+	}
+	
+	/** Add Score to list **/
+	public void addScore(Score aScore)
+	{
+		scores.add(aScore);
+		updateScore();
+	}
+	
+	/** Update average Score **/
+	private void updateScore() 
+	{
+		double sum = 0;
+		for (Score score : getScores())
+		{
+			sum += score.getScoreValue();
+		}
+		averageScore = sum / getScores().size();
+	}
+
+	/** return applications scored **/
+	public List<App> getAppsScored()
+	{
+		List<App> scoredApps = new ArrayList<App>();
+		for(Score score : scores)
+		{
+			scoredApps.add(score.getApp());
+		}
+		return scoredApps;
+	}
+	
+	/** return list of applications not scored **/
+	public List<App> getAppsNotScored()
+	{
+		List<App> appsNotScored = new ArrayList<App>(apps);
+		Collections.copy(appsNotScored, apps);
+		appsNotScored.removeAll(getAppsScored());
+		
+		return appsNotScored;
 	}
 	
 	// Getters
-	
-	public String getName()
+	public String getId()
 	{
-		return name;
+		return id;
 	}
 	
 	public int getAge()
@@ -36,38 +114,43 @@ abstract class User
 		return age;
 	}
 	
-	public String getUserId()
+	public List<Score> getScores() 
 	{
-		return userId;
+		return scores;
 	}
-	
-	public String getPassword()
+
+	public double getAverageScore() 
 	{
-		return password;
+		return averageScore;
 	}
+		
+	public List<App> getApps() 
+	{
+		return apps;
+	}
+
 	
 	// Setters
-	public void setName(String aName)
-	{
-		name = aName;	}
-	
 	public void setAge(int aAge)
 	{
 		age = aAge;
 	}
 
-
-
 	public void setUserId(String aUserId)
 	{
-		userId = aUserId;
+		id = aUserId;
 	}
 	
 	public void setPassword(String aPassword)
 	{
-		password = aPassword;
+		encyptedPassword = encryptPassword(aPassword);
 	}
 
 	
+	public void setEncyptedPassword(String aPassword) 
+	{
+		encyptedPassword = encryptPassword(encyptedPassword);
+	}
 
+	
 }

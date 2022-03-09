@@ -2,15 +2,15 @@ package appstore;
 
 public class Score
 {
-	private String userName;
-	private String appName;
+	private User user;
+	private App app;
 	private double score;
 	private String comment;
 	
-	public Score(String aUserName, String aAppName, double aScore, String aComment)
+	public Score(User aUser, App aApp, double aScore, String aComment)
 	{
-		userName = aUserName;
-		appName = aAppName;
+		user = aUser;
+		app = aApp;
 		score = aScore;
 		comment = aComment;
 	}
@@ -18,18 +18,18 @@ public class Score
 	//Methods
 	public String toString() 
 	{
-		return userName + " " + appName + " " + String.format("%.2f",score) +" '"+ comment+"'";
+		return user.getId() + " " + app.getName() + " " + String.format("%.2f",score) +" '"+ comment+"'";
 	}
 	
 	// Getters
-	public String getUserName() 
+	public User getUser() 
 	{
-		return userName;
+		return user;
 	}
 
-	public String getAppName() 
+	public App getApp() 
 	{
-		return appName;
+		return app;
 	}
 
 	public double getScoreValue() 
@@ -37,19 +37,20 @@ public class Score
 		return score;
 	}
 
-	public String getComment() {
+	public String getComment() 
+	{
 		return comment;
 	}
 
 	// Setters
-	public void setUser(String aUserName) 
+	public void setUser(User aUser) 
 	{
-		userName = aUserName;
+		user = aUser;
 	}
 	
-	public void setApp(String aAppName) 
+	public void setApp(App aApp) 
 	{
-		appName = aAppName;
+		app = aApp;
 	}
 	
 	public void setScoreValue(double aScore) 
@@ -57,7 +58,8 @@ public class Score
 		score = aScore;
 	}
 
-	public void setComment(String aComment) {
+	public void setComment(String aComment) 
+	{
 		comment = aComment;
 	}
 }

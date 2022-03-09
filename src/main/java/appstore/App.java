@@ -15,19 +15,19 @@ public class App
 	private double discount;
 	private double averageScore; // Average Score[0:5]
 	private AppType type;
-	private String programmerName;
+	private Programmer programmer;
 	private List<Score> scores; // List of Scores given to the application
 	private Map<Date, Integer> sales;
 	private int timesSoldLastWeek;
 	
 	/** Generates new application **/
-	public App(String aName, double aPrice, AppType aType, String aProgrammerName)
+	public App(String aName, double aPrice, AppType aType, Programmer aProgrammer)
 	{
 		name = aName;
 		price = aPrice;
 		discount = 0;
 		type = aType;
-		programmerName = aProgrammerName;
+		programmer = aProgrammer;
 		scores = new ArrayList<Score>();
 		sales = new HashMap<Date, Integer>();
 		timesSoldLastWeek = 0;
@@ -65,16 +65,14 @@ public class App
 	}
 	
 	/** Verify if user scored application**/
-	public boolean userScoredApp(Client client)
+	public boolean userScoredApp(Client aClient)
 	{
 		boolean userScored = false;
-		for(Score score : scores)
+		if(aClient.getAppsScored().contains(this))
 		{
-			if(score.getUserName().equals(client.getName()))
-			{
-				userScored = true;
-			}
+			userScored = true;
 		}
+		
 		return userScored;
 	}
 	
@@ -163,9 +161,9 @@ public class App
 		return type;
 	}
 
-	public String getProgrammerName()
+	public Programmer getProgrammer()
 	{
-		return programmerName;
+		return programmer;
 	}
 	
 	public List<Score> getScores() 
@@ -204,9 +202,9 @@ public class App
 		type = aType;
 	}
 	
-	public void setProgrammer(String aProgrammerName) 
+	public void setProgrammer(Programmer aProgrammer) 
 	{
-		programmerName = aProgrammerName;
+		programmer = aProgrammer;
 	}
 
 	public void setScores(List<Score> aScores) 

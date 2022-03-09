@@ -22,6 +22,7 @@ public class AppStore
 	private static Generator generator;
 	private int discountValueWeek = 15;
 	
+	
 	public AppStore(String aName)
 	{	
 		name = aName;
@@ -35,30 +36,35 @@ public class AppStore
 	}
 
 	// Methods
-
 	/** Ads new user to AppStore **/
-	public void addUser(String aType, String aFirstName, String aLastName, int aAge)
+	public void addUser(String aType, String aId, String aPassword, int aAge)
 	{
 		if (aType.equals("Client"))
 		{
-			Client client = new Client(aFirstName, aLastName, aAge);
+			Client client = new Client(aId, aPassword, aAge);
 			System.out.println("Client added: " + client);
 			users.add(client);
 		}
 		
 		else if (aType.equals("ClientPremium"))
 		{
-			ClientPremium clientPremium = new ClientPremium(aFirstName, aLastName, aAge);
+			ClientPremium clientPremium = new ClientPremium(aId, aPassword, aAge);
 			System.out.println("ClientPremium added: " + clientPremium);
 			users.add(clientPremium);	
 		}
 		
 		else if (aType.equals("Programmer"))
 		{
-			Programmer programmer = new Programmer(aFirstName, aLastName, aAge);
+			Programmer programmer = new Programmer(aId, aPassword, aAge);
 			System.out.println("Programmer: " + programmer);
-			
 			users.add(programmer);	
+		}
+		
+		else if (aType.equals("Administrator"))
+		{
+			Administrator administrator = new Administrator(aId, aPassword, aAge);
+			System.out.println("Administrator created");
+			users.add(administrator);	
 		}
 
 	}
@@ -75,26 +81,14 @@ public class AppStore
 		return new Bag();
 	}
 
-	/** Ads an application item to a give shopping bag **/
-	public void addtobag(String aName, Bag aBag, int aNumber) 
-	{
-		for (App app : apps)
-		{
-			if(app.getName().equals(aName))
-			{
-				aBag.putInBag(app, aNumber);
-			}
-		}
-	}
-
 	/** Checkouts the client with items in the shopping bag **/
-	public void checkout(String aClient, Bag shoppingBag)
+	public void checkout(Client aClient, Bag shoppingBag)
 	{	
 		Purchase purchase = new Purchase(aClient, shoppingBag, calendar.getTime());
 		
 		try 
 		{
-			chekIfClient(aClient).buy(purchase);
+			aClient.buy(purchase);
 			
 			// Register sale in applications
 			for (Map.Entry<App, Integer> entry : shoppingBag.getBagData().entrySet()) 
@@ -198,24 +192,6 @@ public class AppStore
 		}
 	}
 
-	/** Prints list of all applications of a user **/
-	public void listUserApp(String aUser)
-	{
-		for (User user : users)
-		{
-			if (user.getName().equals(aUser) && user instanceof Client)
-			{
-				System.out.println("The apps the client " + user.getName() + ","
-						+ " has bought are: " + ( (Client)user).getAppsbought());
-			}
-			else if (user.getName().equals(aUser) && user instanceof Programmer)
-			{
-				System.out.print("\nThe apps the programmer " + user.getName() + ","
-						+ "has made are: " + ( (Programmer)user).getDeveloppedApps());
-			}
-		}
-	}
-
 	/** Returns global earnings **/
 	public double totalStoreEarnings()
 	{
@@ -233,7 +209,7 @@ public class AppStore
 		System.out.println("The programmers earnings are:");
 		for(Programmer programmer : getProgrammersList())
 		{
-			System.out.println("Programmer: '" + programmer.getName() +
+			System.out.println("Programmer: '" + programmer.getId() +
 					"' earned: " + String.format("%2f",programmer.getEarnings(this)));
 		}
 	}
@@ -451,52 +427,7 @@ public class AppStore
 	}
 	
 	
-	/** Methods that verify **/
-		
-	/** Verify if user exists and is Client, returns object client **/
-	public Client chekIfClient(String aName)
-	{	
-		Client returnclient = null;
-		for (User user: users)
-		{
-			if (user.getName().equals(aName) && user instanceof Client)
-			{
-				returnclient = (Client) user;
-			}
-		}
-		return returnclient;
-	}
-	
-	/** Verify if user exists and is ClientPremium, returns object client **/
-	public ClientPremium chekIfClientPremium(String aName)
-	{	
-		ClientPremium returnclient = null;
-		for (User user: users)
-		{
-			if (user.getName().equals(aName) && user instanceof ClientPremium)
-			{
-				returnclient = (ClientPremium) user;
-			}
-		}
-		return returnclient;
-	}
-	
-	/** Verify if user exists and is a Programmer, returns object **/
-	public Programmer chekIfProgrammer(String aName)
-	{	
-		Programmer returnProgrammer = null;
-		for (User user: users)
-		{
-			if (user.getName().equals(aName) && user instanceof Programmer)
-			{
-				returnProgrammer = (Programmer) user;
-			}
-		}
-		return returnProgrammer;
-	}
-	
-	
-	/** Methods that return Lists **/
+	/* Methods that return Lists */
 	
 	/** Return Client list **/
 	public List<Client> getClientsList()
@@ -540,7 +471,24 @@ public class AppStore
 		return returnClientPremium;
 	}
 	
-	/** Methods that return variable **/
+	
+	/* Application methods */
+	
+	/** Verify if application exists **/
+	public boolean appExists(String aAppName)
+	{
+		boolean exists = false;
+		for(App app: apps) 
+		{
+			if(app.getName().equals(aAppName)) 
+			{
+				exists = true;
+			}
+		}
+		return exists;
+	}
+	
+	/** Find and return application **/
 	public App findApp(String aAppName)
 	{
 		App application = null;
@@ -553,8 +501,38 @@ public class AppStore
 	}
 	
 	
+	/* User methods */
+	
+	/** Verify if User exists **/
+	public boolean userExists(String aId)
+	{
+		boolean exists = false;
+		for(User user: users) 
+		{
+			if(user.getId().equals(aId)) 
+			{
+				exists = true;
+			}
+		}
+		return exists;
+	}
+		
+	/** Return user object **/
+	public User findUser(String aUserId)
+	{
+		User returnUser = null;
+		for(User user: users) 
+		{
+			if(user.getId().equals(aUserId)) 
+			{
+				returnUser = user;
+			}
+		}
+		return returnUser;
+	}
+	
+	
 	// Setters
-
 	public void setName(String aName) 
 	{
 		name = aName;

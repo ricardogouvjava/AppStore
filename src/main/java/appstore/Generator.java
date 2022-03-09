@@ -1,6 +1,5 @@
 package appstore;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -86,32 +85,31 @@ public class Generator
 	}
 	**/
 	
-	private List<String> generateRandomUserName()
+	private String generateRandomUserId()
 	{
-		List<String> splitedFullName = Arrays.asList(new String[]{randomNameGenerator(), randomNameGenerator()});
-		return splitedFullName;
+		return randomStringGenerator() + randomStringGenerator();
 	}
+	
+	private String generateRandomPassword()
+	{
+		return randomStringGenerator() + randomStringGenerator();
+	}
+	
+	private int generateRandomAge()
+	{
+		return rand.nextInt(72) + 18;
+	}
+	
 	
 	public void generateUser() 
 	{
-		List<String> randomName = generateRandomUserName();
-		
-		int randomAge = rand.nextInt(82) + 18;
-		
 		String randomType = userPollType[rand.nextInt(userPollType.length)];
-		
-				
-		store.addUser(randomType, randomName.get(0), randomName.get(1), randomAge);
+		store.addUser(randomType, generateRandomUserId(), generateRandomPassword(), generateRandomAge());
 	}
 	
-	
 	public void generateProgrammer() 
-	{
-		List<String> randomName = generateRandomUserName();
-		
-		int randomAge = rand.nextInt(82) + 18;
-		
-		store.addUser("Programmer", randomName.get(0), randomName.get(1), randomAge);
+	{	
+		store.addUser("Programmer", generateRandomUserId(), generateRandomPassword(), generateRandomAge());
 	}
 	
 	public void generateProgrammerDesignation()
@@ -120,7 +118,7 @@ public class Generator
 		
 		Programmer programmer = tempList.get(rand.nextInt(tempList.size()));
 		
-		store.designateProgrammer(randomNameGenerator(), randomPriceGenerator(), randomAppType(), programmer);
+		store.designateProgrammer(generateRandomUserId(), randomPriceGenerator(), randomAppType(), programmer);
 	}
 	
 	/** Generates purchases and checkout**/
@@ -129,19 +127,19 @@ public class Generator
 		Client randomClient = pickRandomClient();
 		Bag bag = generateRandomBag(3);
 		
-		store.checkout(randomClient.getName(), bag);
+		store.checkout(randomClient, bag);
 	}
 	
 	private void generateRandomScore()
 	{	
 		Client client = null;
-		String appName = null;
+		App app = null;
 		boolean findUserToScore = true;
 		while(findUserToScore)
 		{
 			client = pickRandomClient();
-			appName = pickRandomNotScoredApp(client);
-			if(appName.equals("Not Found"))
+			app = pickRandomNotScoredApp(client);
+			if(app == null)
 			{
 				findUserToScore = true;
 			}
@@ -152,11 +150,11 @@ public class Generator
 				
 				for(int i = 0; i <= (rand.nextInt(10)); i++)
 				{
-					comment += randomNameGenerator();
+					comment += randomStringGenerator();
 				}
 			
 				findUserToScore = false;
-				client.giveScore(appName, scoreValue, comment, store);
+				client.giveScore(app, scoreValue, comment, store);
 			}
 		}
 	}
@@ -196,24 +194,20 @@ public class Generator
 		return client;
 	}
 	
-	private String pickRandomNotScoredApp(Client client)
+	private App pickRandomNotScoredApp(Client client)
 	{
-		String appName = null;
-		List<String> notScoredAppNames = client.getAppsNotScored();
-		int size = notScoredAppNames.size();
+		App app = null;
+		List<App> notScoredApp = client.getAppsNotScored();
+		int size = notScoredApp.size();
 		if(size > 0)
 		{		
 			int randomIndex = rand.nextInt(size);
-			appName = notScoredAppNames.get(randomIndex);
+			app = notScoredApp.get(randomIndex);
 		}
-		else 
-		{
-			appName = "Not Found";
-		}
-		return appName;
+		return app;
 	}
 	
-	private String randomNameGenerator()
+	private String randomStringGenerator()
 	{
 		String[] Beginning = { "Kr", "Ca", "Ra", "Mrok", "Cru",
 				"Ray", "Bre", "Zed", "Drak", "Mor", "Jag", "Mer", "Jar", "Mjol",
