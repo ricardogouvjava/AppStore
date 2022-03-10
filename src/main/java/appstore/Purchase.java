@@ -16,7 +16,7 @@ public class Purchase
 		client = aClient;
 		purchaseBag = aBag;
 		buyDate = aDate;
-		price = aBag.valueInBag();
+		price = getPurchaseValue();
 
 	}
 	//Methods
@@ -30,34 +30,12 @@ public class Purchase
 
 	public double getPurchaseValue() 
 	{
-		double purchasevalue = 0;
-		if(client instanceof ClientPremium)
-		{
-			purchasevalue = purchaseBag.valueInBag() *(100- AppStore.premimumDiscount /100) ;
-		}
-		
-		else
-		{
-			purchasevalue = purchaseBag.valueInBag();
-		}
-		
-		return purchasevalue;
+		return purchaseBag.valueInBag() *(100 - client.getDiscount() /100) ;
 	}
 	
 	public double savedInPurchase()
-	{
-		double saved = 0;
-		if(client instanceof ClientPremium)
-		{
-			saved = purchaseBag.valueInBag() * (1 - AppStore.premimumDiscount / 100) ;
-		}
-		
-		else
-		{
-			saved = purchaseBag.valueInBag();
-		}
-		
-		return saved;
+	{		
+		return purchaseBag.valueInBag() * client.getDiscount()  / 100 ;
 	}
 	
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Client extends User
 {
+	private int discount;
 	private List<Purchase> purchases;
 	private double spendings;
 
@@ -14,7 +15,8 @@ public class Client extends User
 	{
 		super(aId, aPassword, aAge);
 		purchases = new ArrayList<>();
-		setSpendings(0);
+		spendings = 0;
+		discount = 0;
 	}
 
 	// Methods
@@ -37,11 +39,6 @@ public class Client extends User
 		return purchases;
 	}
 
-	// Getters
-	public double getSpendings()
-	{
-		return spendings;
-	}
 
 	/** Allows Client to give a score to an application **/
 	public void giveScore(App aApp, double aScoreValue, String aComment, AppStore aStore)
@@ -62,17 +59,32 @@ public class Client extends User
 		}
 	}
 
-	// Setters
-	public void setSpendings(double spendings) {
-		this.spendings = spendings;
-	}
-
-
+	
 
 	/** Updates value spent **/
 	private void updateSpendings(Bag aShoppingBag)
 	{
 		setSpendings(getSpendings() + aShoppingBag.valueInBag());
 	}
+	
+
+	// Getters
+	public double getSpendings()
+	{
+		return spendings;
+	}
+
+	public int getDiscount() {
+		return discount;
+	}
+
+	// Setters
+	public void setSpendings(double spendings) {
+		this.spendings = spendings;
+	}
+
+	public void setDiscount(int discount) {
+		this.discount = discount;
+		}
 }
 

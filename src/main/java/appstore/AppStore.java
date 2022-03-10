@@ -73,7 +73,7 @@ public class AppStore
 
 		else if (aType.equals("ClientPremium"))
 		{
-			ClientPremium clientPremium = new ClientPremium(aId, aPassword, aAge);
+			ClientPremium clientPremium = new ClientPremium(aId, aPassword, aAge, premimumDiscount);
 			System.out.println("ClientPremium added >> " + clientPremium);
 			users.add(clientPremium);
 		}
