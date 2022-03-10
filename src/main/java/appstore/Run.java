@@ -1,10 +1,10 @@
 package appstore;
 
 public class Run
-{	
+{
 	static AppStore storeRequalificar;
 	static Menu storeMenu;
-	
+
 	public static void main(String[] args)
 	{
 		storeRequalificar = new AppStore("Requalificar App Store");
@@ -16,5 +16,5 @@ public class Run
 		System.err.println("WeeK start:"+ storeRequalificar.getCurrentWeek().weekNumber());
 		storeRequalificar.forwardDateXDays(1);
 		storeMenu.menuMain();
-	}	
+	}
 }

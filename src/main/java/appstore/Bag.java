@@ -9,45 +9,19 @@ public class Bag
 
 	public Bag ()
 	{
-		bagItems = new HashMap<App, Integer>();
+		bagItems = new HashMap<>();
 	}
 
-	// Method 
-	@Override
-	public String toString()
+	// Getters
+	public Map<App, Integer> getBagItems()
 	{
-		String toPrint = "[<App : Price : Licences : SubTotal> Total] >> [";
-
-		for(Map.Entry<App, Integer> set : bagItems.entrySet())
-		{	
-			toPrint += " <" + set.getKey().getName() + " : " + String.format("%.2f",set.getKey().getPrice())
-			+ " : " + set.getValue() + " : " + String.format("%.2f", set.getKey().getPrice() * set.getValue()) + "> ";
-		}
-		toPrint += "> " + String.format("%.2f", valueInBag()) + "]";
-		return toPrint;
+		return bagItems;
 	}
 
 	/** Add application to bag **/
 	public void putInBag(App aApp, int aQuantity)
 	{
 		bagItems.merge(aApp, aQuantity, (v1, v2) -> v1 + v2);
-	}
-	
-	/** Calculates the value in the shopping bag **/
-	public double valueInBag()
-	{
-		double sum = 0;
-		for(Map.Entry<App, Integer> entry : bagItems.entrySet()) 
-		{
-			sum += entry.getKey().getPrice() * entry.getValue();
-		}
-		return sum;
-	}
-
-	// Getters
-	public Map<App, Integer> getBagItems() 
-	{
-		return bagItems;
 	}
 
 	// Setters
@@ -56,4 +30,31 @@ public class Bag
 		bagItems = aBagItems;
 	}
 
+
+	// Method
+	@Override
+	public String toString()
+	{
+		String toPrint = "[<App : Price : Licences : SubTotal> Total] >> [";
+
+		for(Map.Entry<App, Integer> set : bagItems.entrySet())
+		{
+			toPrint += " <" + set.getKey().getName() + " : " + String.format("%.2f",set.getKey().getPrice())
+			+ " : " + set.getValue() + " : " + String.format("%.2f", set.getKey().getPrice() * set.getValue()) + "> ";
+		}
+		toPrint += "> " + String.format("%.2f", valueInBag()) + "]";
+		return toPrint;
+	}
+
+	/** Calculates the value in the shopping bag **/
+	public double valueInBag()
+	{
+		double sum = 0;
+		for(Map.Entry<App, Integer> entry : bagItems.entrySet())
+		{
+			sum += entry.getKey().getPrice() * entry.getValue();
+		}
+		return sum;
+	}
+	
 }

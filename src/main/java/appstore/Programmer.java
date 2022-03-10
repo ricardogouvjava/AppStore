@@ -1,17 +1,17 @@
 package appstore;
 
-public class Programmer extends User 
+public class Programmer extends User
 {
 	double averageScoreReview;
 
-	
+
 	//Constructor
 	public Programmer(String aId, String aPassword, int aAge)
 	{
 		super(aId, aPassword, aAge);
 		averageScoreReview = 0;
 	}
-	
+
 	//Methods
 	public App developApp(String aAppName, double aAppPrice, AppType aAppType)
 	{
@@ -19,23 +19,23 @@ public class Programmer extends User
 		addApp(app, 0);
 		return app;
 	}
-	
-	
-			
-	public double getEarnings(AppStore aStore)
-	{	
-		double earnings = 0;
-		for(App app : getApps().keySet())
-		{
-			earnings += app.getPrice() * app.timesSold(); 
-		}
-		return earnings;
-	}
-	
+
+
+
 	// Getters
 	public double getAverageScoreReview()
 	{
 		return averageScoreReview;
+	}
+
+	public double getEarnings(AppStore aStore)
+	{
+		double earnings = 0;
+		for(App app : getApps().keySet())
+		{
+			earnings += app.getPrice() * app.timesSold();
+		}
+		return earnings;
 	}
 
 	// Setters
