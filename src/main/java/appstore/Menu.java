@@ -15,7 +15,6 @@ public class Menu
 		store =  aStore;
 	}
 
-
 	/* MENU LIST:
 	 * 1. Main menu
 	 *    1.1 User Login
@@ -67,71 +66,210 @@ public class Menu
 	 *    4.14 List applications off User
 	 */
 
-	/** Ask for an application, verifies if exists and returns application object **/
-	private App askForAppNameValidatesAndReturnsApp()
+	/** Main menu options **/
+	public void menuMain()
 	{
-		boolean askForAppName = true;
-		App app = null;
+		scanText = new Scanner(System.in);
+		System.out.print("\n------ Menu ------"
+				+ "\n (0) Exit "
+				+ "\n (1) User Login {Client Client Premium Programer Admin}"
+				+ "\n (2) User Creation"
+				+ "\n (3) List apps options"
+				+ "\n");
 
-		while(askForAppName)
+		//asks for input, verifies it and uses it in the switch
+		switch (askInputIntAndValidate(0, 3))
 		{
-			System.out.print("\nAppName: ");
-			String appName = scanText.nextLine();
+		case 0:
+			System.err.print("System will terminate ");
+			scanText.close();
+			System.exit(0);
+			System.err.print("Terminated");
+			break;
 
-			if (store.appExists(appName))
+
+		case 1:
+			// User login
+			User user = userLogin();
+
+			if(user instanceof Client || user instanceof ClientPremium)
 			{
-				askForAppName = false;
-				app = store.findApp(appName);
+				// Access User options
+				menuClient((Client) user);
 			}
-			else {
-				System.out.print("Please input a valid application name");
+
+			else if(user instanceof Programmer)
+			{
+				// Access Programmer options
+				menuProgrammer((Programmer) user);
 			}
+
+			else if(user instanceof Administrator)
+			{
+				// Access Programmer options
+				menuAdministrator((Administrator) user);
+			}
+
+			break;
+
+		case 2:
+			// Allows User creation
+			userCreation();
+			menuMain();
+			break;
+
+		case 3:
+			// Allows listing of applications
+			menuListApps();
+			menuMain();
+			break;
+
+		default:
+			System.out.print("Please introduze a correct option");
+			menuMain();
 		}
-		return app;
 	}
 
-	/** Asks user for score value and validates **/
-	private double askForScoreAndValidates()
+	/** Several ways to list applications  **/
+	private void menuListApps()
 	{
-		boolean askForScore = true;
-		double score = 0;
-		while(askForScore)
+		System.out.print("\n------ Menu ------"
+				+ "\n (0) Return"
+				+ "\n (1) List AppStore applications ordered by Name"
+				+ "\n (2) List AppStore applications ordered by times Sold"
+				+ "\n (3) List AppStore applications ordered by Score"
+				+ "\n (4) List AppStore applications ordered by chosen application type"
+				+ "\n :");
+
+		//asks for input, verifies it and uses it in the switch
+		switch (askInputIntAndValidate(0,7))
 		{
-			System.out.print("\nScore: [0:5]");
-			score = Double.valueOf(scanText.nextLine());
-			if (score >= 0 && score <= 5 )
+		case 0:
+			// Returns to main menu
+			menuMain();
+			break;
+
+		case 1:
+			// List Application by name
+			System.out.println("Apps Listed by Name:");
+			printList(store.orderAppsBy("Name"));
+			menuListApps();
+			break;
+
+		case 2:
+			// List Application by times sold
+			System.out.println("Apps listed by times sold:");
+			for(App app : store.orderAppsBy("Sold"))
 			{
-				askForScore = false;
+				System.out.println(app.getName() +":"+ app.timesSold());
 			}
-			else {
-				System.out.print("Please input a valid score [0:5]");
+			menuListApps();
+			break;
+
+		case 3:
+			// List Application by Score
+			System.out.println("\nApps listed by score:");
+			for(App app : store.orderAppsBy("Score"))
+			{
+				System.out.println(app.getName() +":"+ String.format("%,.2f", app.getScore()));
 			}
+			menuListApps();
+			break;
+
+		case 4:
+			// List Application by type
+			menuListAppsByType();
+			menuListApps();
+			break;
+
+		default:
+			// Ask again for input!!
+			System.out.println("Please introduze a correct option");
+			menuListApps();
+			break;
 		}
-		return score;
 	}
 
-	/** Ask for an User name, verifies if exists and returns user object **/
-	private User askForUserIdValidatesAndReturnsUser()
+	/** Lists the applications by Type **/
+	private void menuListAppsByType()
 	{
-		boolean askForId = true;
-		User user = null;
-		while(askForId)
+		// List Application by type
+		System.out.print("\n"
+				+ "Choose one of the type Options:"
+				+ "\n (0) Return"
+				+ "\n (1) Games"
+				+ "\n (2) Business"
+				+ "\n (3) Education"
+				+ "\n (4) Lifestyle"
+				+ "\n (5) Entertainment"
+				+ "\n (6) Utilities"
+				+ "\n (7) Travel"
+				+ "\n (8) HealthandFitness"
+				+ "\n:");
+
+		List<App> listType =  new ArrayList<>();
+
+		switch (askInputIntAndValidate(0,8))
 		{
-			System.out.print("\nUserId: ");
-			String userId = scanText.nextLine();
-			if (userId.length() > 4 && !store.userExists(userId))
-			{
-				askForId = false;
-				user = store.findUser(userId);
 
-			}
-			else {
-				System.out.print("UserId in use or not valid!");
-			}
+		case 0: // Returns to User menu
+			menuListApps();
+			break;
+
+		case 1: // Returns to User menu
+			listType = store.listAppsByType(AppType.GAMES);
+			break;
+
+		case 2:
+			listType = store.listAppsByType(AppType.BUSINESS);
+			break;
+
+		case 3:
+			listType = store.listAppsByType(AppType.EDUCATION);
+			break;
+
+		case 4:
+			listType = store.listAppsByType(AppType.LIFESTYLE);
+			break;
+
+		case 5:
+			listType = store.listAppsByType(AppType.ENTERTAINMENT);
+			break;
+
+		case 6:
+			listType = store.listAppsByType(AppType.UTILITIES);
+			break;
+
+		case 7:
+			listType = store.listAppsByType(AppType.TRAVEL);
+			break;
+
+		case 8:
+			listType = store.listAppsByType(AppType.HEALTHANDFITNESS);
+			break;
+
+		default:
+			// Ask again for input!!
+			System.out.println("Please introduze a correct option");
+			menuListAppsByType();
+			break;
+
 		}
-		return user;
-	}
 
+		// Analysis if empty
+		if(listType.isEmpty())
+		{
+			System.out.println("No applications of the chosen type");
+		}
+
+		else
+		{
+			System.out.println("The apps of type '" + listType.get(0).getType() + "' in the apps store are:");
+			printList(listType);
+		}
+
+		menuListAppsByType();
+	}
 	
 	/** Buy Applications menu **/
 	private void buyAppMenu(Client aClient , Bag shoppingBag)
@@ -194,7 +332,137 @@ public class Menu
 			break;
 		}
 	}
+	
+	/** User menu options **/
+	private void menuClient(Client aClient)
+	{
+		System.out.print("\n"
+				+ "User Options:"
+				+ "\n  (0) Return"
+				+ "\n  (1) List owned applications"
+				+ "\n  (2) Buy Applications"
+				+ "\n  (3) Give Score"
+				+ "\n  (4) List application that score was given"
+				+ "\n  (5) List application that scores was not given"
+				+ "\n  (6) List scores given to application"
+				+ "\n:");
 
+		switch (askInputIntAndValidate(0,7))
+		{
+
+		case 0:
+			// Returns to main menu
+			menuMain();
+			break;
+
+		case 1:
+			// List Application owned by user
+			System.out.println("Owned applications:");
+			printMap(aClient.getApps());
+			menuClient(aClient);
+			break;
+
+		case 2:
+			// Buy application
+			buyAppMenu(aClient, store.createShoppingBag());
+			menuClient(aClient);
+			break;
+
+
+		case 3:
+			// Allows user to give score
+			System.out.print("\nThis option allow You to input your score of an aplication."
+					+ "\nYou require to introduce:"
+					+ "\n'Owned Application Name' 'Score' and 'Comment' if wanted.");
+
+			// Asks for application name
+			App appToScore = askForAppNameValidatesAndReturnsApp();
+
+			// Asks for user score
+			double score = askForScoreAndValidates();
+
+			// Asks for user comment
+			System.out.print("\nComment: ");
+			String comment = scanText.nextLine();
+
+			// Creates a score
+			aClient.giveScore(appToScore, score, comment, store);
+			System.out.println("\nThe score was added to the database");
+			menuClient(aClient);
+			break;
+
+		case 4:
+			// Lists applications that score was given by client
+			System.out.print("\nAppScored: ");
+			printList(aClient.getAppsScored());
+			menuClient(aClient);
+			break;
+
+		case 5:
+			// Lists applications that score was given by user
+			System.out.print("\nAppNotScored: ");
+			printList(aClient.getAppsNotScored());
+			menuClient(aClient);
+			break;
+
+		case 6:
+			// List scores and comments of application
+			App app = askForAppNameValidatesAndReturnsApp();
+			printList(app.getScores());
+			menuClient(aClient);
+			break;
+
+
+
+		default:
+			// Ask again for input!!
+			System.out.print("\nPlease introduze a correct option");
+			menuClient(aClient);
+			break;
+		}
+	}
+		
+	/** Programmer menu options **/
+	private void menuProgrammer(Programmer aProgrammer)
+	{
+		System.out.print("\n"
+				+ "User Options:"
+				+ "\n (0) Return"
+				+ "\n (1) List developed applications"
+				+ "\n (2) Programmer average score"
+				+ "\n (3) Earnings"
+				+ "\n input:");
+
+		switch (askInputIntAndValidate(0,7))
+		{
+
+		case 0:
+			// Returns to main menu
+			menuMain();
+			break;
+
+		case 1:
+			// List Application owned by user
+			System.out.println("Developped applications:");
+			printList(new ArrayList<>(aProgrammer.getApps().keySet()));
+			menuProgrammer(aProgrammer);
+			break;
+
+		case 2:
+			// Programmer average score
+			System.out.println("Developped applications:" + aProgrammer.getAverageScoreReview());
+			menuProgrammer(aProgrammer);
+			break;
+
+		case 3:
+			// Programmer average score
+			System.out.println("Earnings:" + aProgrammer.getEarnings(store));
+			menuProgrammer(aProgrammer);
+			break;
+
+		}
+
+	}
 
 	/** Manager menu options **/
 	private void menuAdministrator(Administrator aAdministrator)
@@ -349,95 +617,6 @@ public class Menu
 		}
 	}
 
-	/** User menu options **/
-	private void menuClient(Client aClient)
-	{
-		System.out.print("\n"
-				+ "User Options:"
-				+ "\n  (0) Return"
-				+ "\n  (1) List owned applications"
-				+ "\n  (2) Buy Applications"
-				+ "\n  (3) Give Score"
-				+ "\n  (4) List application that score was given"
-				+ "\n  (5) List application that scores was not given"
-				+ "\n  (6) List scores given to application"
-				+ "\n:");
-
-		switch (askInputIntAndValidate(0,7))
-		{
-
-		case 0:
-			// Returns to main menu
-			menuMain();
-			break;
-
-		case 1:
-			// List Application owned by user
-			System.out.println("Owned applications:");
-			printMap(aClient.getApps());
-			menuClient(aClient);
-			break;
-
-		case 2:
-			// Buy application
-			buyAppMenu(aClient, store.createShoppingBag());
-			menuClient(aClient);
-			break;
-
-
-		case 3:
-			// Allows user to give score
-			System.out.print("\nThis option allow You to input your score of an aplication."
-					+ "\nYou require to introduce:"
-					+ "\n'Owned Application Name' 'Score' and 'Comment' if wanted.");
-
-			// Asks for application name
-			App appToScore = askForAppNameValidatesAndReturnsApp();
-
-			// Asks for user score
-			double score = askForScoreAndValidates();
-
-			// Asks for user comment
-			System.out.print("\nComment: ");
-			String comment = scanText.nextLine();
-
-			// Creates a score
-			aClient.giveScore(appToScore, score, comment, store);
-			System.out.println("\nThe score was added to the database");
-			menuClient(aClient);
-			break;
-
-		case 4:
-			// Lists applications that score was given by client
-			System.out.print("\nAppScored: ");
-			printList(aClient.getAppsScored());
-			menuClient(aClient);
-			break;
-
-		case 5:
-			// Lists applications that score was given by user
-			System.out.print("\nAppNotScored: ");
-			printList(aClient.getAppsNotScored());
-			menuClient(aClient);
-			break;
-
-		case 6:
-			// List scores and comments of application
-			App app = askForAppNameValidatesAndReturnsApp();
-			printList(app.getScores());
-			menuClient(aClient);
-			break;
-
-
-
-		default:
-			// Ask again for input!!
-			System.out.print("\nPlease introduze a correct option");
-			menuClient(aClient);
-			break;
-		}
-	}
-
 	/*
 	* Several methods for input & validation :
 	 * 1. Menu option input validation
@@ -447,269 +626,98 @@ public class Menu
 	 * 4. Score Validation
 	 * 5. Application Validation
 	 * */
-
-	/** Several ways to list applications  **/
-	private void menuListApps()
+	
+	/** Ask for user menu input and verifies its validity **/
+	private int askInputIntAndValidate(int min, int max)
 	{
-		System.out.print("\n------ Menu ------"
-				+ "\n (0) Return"
-				+ "\n (1) List AppStore applications ordered by Name"
-				+ "\n (2) List AppStore applications ordered by times Sold"
-				+ "\n (3) List AppStore applications ordered by Score"
-				+ "\n (4) List AppStore applications ordered by chosen application type"
-				+ "\n :");
-
-		//asks for input, verifies it and uses it in the switch
-		switch (askInputIntAndValidate(0,7))
+		int choice = -1;
+		boolean askforchoice = true;
+		while(askforchoice && choice < 0)
 		{
-		case 0:
-			// Returns to main menu
-			menuMain();
-			break;
-
-		case 1:
-			// List Application by name
-			System.out.println("Apps Listed by Name:");
-			printList(store.orderAppsBy("Name"));
-			menuListApps();
-			break;
-
-		case 2:
-			// List Application by times sold
-			System.out.println("Apps listed by times sold:");
-			for(App app : store.orderAppsBy("Sold"))
+			System.out.print("input: ");
+			try
 			{
-				System.out.println(app.getName() +":"+ app.timesSold());
+				int menuNumber = Integer.valueOf(scanText.nextLine());
+				if(menuNumber >= min && menuNumber <= max)
+				{
+					askforchoice = false;
+					choice = menuNumber;
+				}
+
 			}
-			menuListApps();
-			break;
-
-		case 3:
-			// List Application by Score
-			System.out.println("\nApps listed by score:");
-			for(App app : store.orderAppsBy("Score"))
+			catch (Exception e)
 			{
-				System.out.println(app.getName() +":"+ String.format("%,.2f", app.getAverageScore()));
-			}
-			menuListApps();
-			break;
-
-		case 4:
-			// List Application by type
-			menuListAppsByType();
-			menuListApps();
-			break;
-
-		default:
-			// Ask again for input!!
-			System.out.println("Please introduze a correct option");
-			menuListApps();
-			break;
-		}
-	}
-
-	/** Lists the applications by Type **/
-	private void menuListAppsByType()
-	{
-		// List Application by type
-		System.out.print("\n"
-				+ "Choose one of the type Options:"
-				+ "\n (0) Return"
-				+ "\n (1) Games"
-				+ "\n (2) Business"
-				+ "\n (3) Education"
-				+ "\n (4) Lifestyle"
-				+ "\n (5) Entertainment"
-				+ "\n (6) Utilities"
-				+ "\n (7) Travel"
-				+ "\n (8) HealthandFitness"
-				+ "\n:");
-
-		List<App> listType =  new ArrayList<>();
-
-		switch (askInputIntAndValidate(0,8))
-		{
-
-		case 0: // Returns to User menu
-			menuListApps();
-			break;
-
-		case 1: // Returns to User menu
-			listType = store.listAppsByType(AppType.GAMES);
-			break;
-
-		case 2:
-			listType = store.listAppsByType(AppType.BUSINESS);
-			break;
-
-		case 3:
-			listType = store.listAppsByType(AppType.EDUCATION);
-			break;
-
-		case 4:
-			listType = store.listAppsByType(AppType.LIFESTYLE);
-			break;
-
-		case 5:
-			listType = store.listAppsByType(AppType.ENTERTAINMENT);
-			break;
-
-		case 6:
-			listType = store.listAppsByType(AppType.UTILITIES);
-			break;
-
-		case 7:
-			listType = store.listAppsByType(AppType.TRAVEL);
-			break;
-
-		case 8:
-			listType = store.listAppsByType(AppType.HEALTHANDFITNESS);
-			break;
-
-		default:
-			// Ask again for input!!
-			System.out.println("Please introduze a correct option");
-			menuListAppsByType();
-			break;
-
-		}
-
-		// Analysis if empty
-		if(listType.isEmpty())
-		{
-			System.out.println("No applications of the chosen type");
-		}
-
-		else
-		{
-			System.out.println("The apps of type '" + listType.get(0).getType() + "' in the apps store are:");
-			printList(listType);
-		}
-
-		menuListAppsByType();
-	}
-
-	/** Main menu options **/
-	public void menuMain()
-	{
-		scanText = new Scanner(System.in);
-		System.out.print("\n------ Menu ------"
-				+ "\n (0) Exit "
-				+ "\n (1) User Login {Client Client Premium Programer Admin}"
-				+ "\n (2) User Creation"
-				+ "\n (3) List apps options"
-				+ "\n");
-
-		//asks for input, verifies it and uses it in the switch
-		switch (askInputIntAndValidate(0, 3))
-		{
-		case 0:
-			System.err.print("System will terminate ");
-			scanText.close();
-			System.exit(0);
-			System.err.print("Terminated");
-			break;
-
-
-		case 1:
-			// User login
-			User user = userLogin();
-
-			if(user instanceof Client || user instanceof ClientPremium)
-			{
-				// Access User options
-				menuClient((Client) user);
+				System.out.print("\nWrong Value, " + e.getMessage() + ""
+						+ "\nPlease introduce correct integer number!!"
+						+ "\n");
 			}
 
-			else if(user instanceof Programmer)
+
+
+		}
+		return choice;
+	}
+
+	/** Ask user for data and validates for login **/
+	private User userLogin()
+	{
+		User user = null;
+
+		boolean askForUserName = true;
+		while(askForUserName)
+		{
+			System.out.println("UserId: ");
+			String aUserId = scanText.nextLine();
+
+			if (store.userExists(aUserId))
 			{
-				// Access Programmer options
-				menuProgrammer((Programmer) user);
+				user = store.findUser(aUserId);
+				askForUserName = false;
 			}
 
-			else if(user instanceof Administrator)
+			else if(aUserId.equals("exit"))
 			{
-				// Access Programmer options
-				menuAdministrator((Administrator) user);
+				askForUserName = false;
+				menuMain();
 			}
 
-			break;
-
-		case 2:
-			// Allows User creation
-			userCreation();
-			menuMain();
-			break;
-
-		case 3:
-			// Allows listing of applications
-			menuListApps();
-			menuMain();
-			break;
-
-		default:
-			System.out.print("Please introduze a correct option");
-			menuMain();
+			else {
+				System.out.print("User Id not existente please insert correct user "
+						+ "or 'exit' to create user");
+			}
 		}
-	}
 
-	/** Programmer menu options **/
-	private void menuProgrammer(Programmer aProgrammer)
-	{
-		System.out.print("\n"
-				+ "User Options:"
-				+ "\n (0) Return"
-				+ "\n (1) List developed applications"
-				+ "\n (2) Programmer average score"
-				+ "\n (3) Earnings"
-				+ "\n input:");
-
-		switch (askInputIntAndValidate(0,7))
+		boolean askForPassoword = true;
+		int counter = 0;
+		while(askForPassoword)
 		{
 
-		case 0:
-			// Returns to main menu
-			menuMain();
-			break;
+			System.out.println("Password: ");
+			String password = scanText.nextLine();
 
-		case 1:
-			// List Application owned by user
-			System.out.println("Developped applications:");
-			printList(new ArrayList<>(aProgrammer.getApps().keySet()));
-			menuProgrammer(aProgrammer);
-			break;
+			if(user.isPasswordCorrect(password))
+			{
+				askForPassoword = false;
+			}
+			else
+			{
+				counter += 1;
+				if(counter > 3)
+				{
+					System.out.print("Failed to introduce password to many times. Exiting");
+					askForPassoword = false;
+					user = null;
+					menuMain();
+				}
 
-		case 2:
-			// Programmer average score
-			System.out.println("Developped applications:" + aProgrammer.getAverageScoreReview());
-			menuProgrammer(aProgrammer);
-			break;
+				System.out.print("Password introduced incorrect."
+						+ "\nPlease introduce correct password or 'exit' to main menu");
 
-		case 3:
-			// Programmer average score
-			System.out.println("Earnings:" + aProgrammer.getEarnings(store));
-			menuProgrammer(aProgrammer);
-			break;
-
+				askForPassoword = true;
+			}
 		}
 
-	}
-
-	/* Prints */
-	public void printList(List<?> aList)
-	{
-		for(Object obj : aList)
-		{
-			System.out.println(obj);
-		}
-	}
-
-	public <K, V> void printMap(Map<K, V>  aMap)
-	{
-		for(Map.Entry<K, V>  entry : aMap.entrySet())
-		{
-			System.out.println(entry.getKey() +" : " + entry.getValue());
-		}
+		return user;
 	}
 
 	/** Any Type of user creation **/
@@ -784,98 +792,87 @@ public class Menu
 		return true;
 	}
 	
-	/** Ask for user menu input and verifies its validity **/
-	private int askInputIntAndValidate(int min, int max)
+	/** Ask for an User name, verifies if exists and returns user object **/
+	private User askForUserIdValidatesAndReturnsUser()
 	{
-		int choice = -1;
-		boolean askforchoice = true;
-		while(askforchoice && choice < 0)
+		boolean askForId = true;
+		User user = null;
+		while(askForId)
 		{
-			System.out.print("input: ");
-			try
+			System.out.print("\nUserId: ");
+			String userId = scanText.nextLine();
+			if (userId.length() > 4 && !store.userExists(userId))
 			{
-				int menuNumber = Integer.valueOf(scanText.nextLine());
-				if(menuNumber >= min && menuNumber <= max)
-				{
-					askforchoice = false;
-					choice = menuNumber;
-				}
+				askForId = false;
+				user = store.findUser(userId);
 
 			}
-			catch (Exception e)
-			{
-				System.out.print("\nWrong Value, " + e.getMessage() + ""
-						+ "\nPlease introduce correct integer number!!"
-						+ "\n");
+			else {
+				System.out.print("UserId in use or not valid!");
 			}
-
-
-
 		}
-		return choice;
+		return user;
+	}
+	
+	/** Asks user for score value and validates **/
+	private double askForScoreAndValidates()
+	{
+		boolean askForScore = true;
+		double score = 0;
+		while(askForScore)
+		{
+			System.out.print("\nScore: [0:5]");
+			score = Double.valueOf(scanText.nextLine());
+			if (score >= 0 && score <= 5 )
+			{
+				askForScore = false;
+			}
+			else {
+				System.out.print("Please input a valid score [0:5]");
+			}
+		}
+		return score;
+	}
+	
+	/** Ask user for an application, verifies if exists and returns application object **/
+	private App askForAppNameValidatesAndReturnsApp()
+	{
+		boolean askForAppName = true;
+		App app = null;
+
+		while(askForAppName)
+		{
+			System.out.print("\nAppName: ");
+			String appName = scanText.nextLine();
+
+			if (store.appExists(appName))
+			{
+				askForAppName = false;
+				app = store.findApp(appName);
+			}
+			else {
+				System.out.print("Please input a valid application name");
+			}
+		}
+		return app;
+	}
+	
+	/* Prints */
+	public void printList(List<?> aList)
+	{
+		for(Object obj : aList)
+		{
+			System.out.println(obj);
+		}
+	}
+
+	public <K, V> void printMap(Map<K, V>  aMap)
+	{
+		for(Map.Entry<K, V>  entry : aMap.entrySet())
+		{
+			System.out.println(entry.getKey() +" : " + entry.getValue());
+		}
 	}
 
 	
-	/** Ask user for data and validates for login **/
-	private User userLogin()
-	{
-		User user = null;
-
-		boolean askForUserName = true;
-		while(askForUserName)
-		{
-			System.out.println("UserId: ");
-			String aUserId = scanText.nextLine();
-
-			if (store.userExists(aUserId))
-			{
-				user = store.findUser(aUserId);
-				askForUserName = false;
-			}
-
-			else if(aUserId.equals("exit"))
-			{
-				askForUserName = false;
-				menuMain();
-			}
-
-			else {
-				System.out.print("User Id not existente please insert correct user "
-						+ "or 'exit' to create user");
-			}
-		}
-
-		boolean askForPassoword = true;
-		int counter = 0;
-		while(askForPassoword)
-		{
-
-			System.out.println("Password: ");
-			String password = scanText.nextLine();
-
-			if(user.isPasswordCorrect(password))
-			{
-				askForPassoword = false;
-			}
-			else
-			{
-				counter += 1;
-				if(counter > 3)
-				{
-					System.out.print("Failed to introduce password to many times. Exiting");
-					askForPassoword = false;
-					user = null;
-					menuMain();
-				}
-
-				System.out.print("Password introduced incorrect."
-						+ "\nPlease introduce correct password or 'exit' to main menu");
-
-				askForPassoword = true;
-			}
-		}
-
-		return user;
-	}
-
 }

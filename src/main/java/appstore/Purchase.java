@@ -20,8 +20,8 @@ public class Purchase
 
 	}
 	//Methods
-		@Override
-		public String toString()
+	@Override
+	public String toString()
 		{
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 			return "Date: "+ formatter.format(buyDate.getTime()) + ", Client: " + client.getId() +
@@ -33,7 +33,8 @@ public class Purchase
 		return purchaseBag.valueInBag() *(100 - client.getDiscount() /100) ;
 	}
 	
-	public double savedInPurchase()
+	/* */
+	public double getPurchaseDiscountValue()
 	{		
 		return purchaseBag.valueInBag() * client.getDiscount()  / 100 ;
 	}

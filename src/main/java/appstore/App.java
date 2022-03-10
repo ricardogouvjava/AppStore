@@ -1,36 +1,32 @@
 package appstore;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class App
 {
 	private String name;
 	private double price;
-	private double discount;
-	private double averageScore; // Average Score[0:5]
+	private double weekDiscount;
+	private double score; // Average Score[0:5]
 	private AppType type;
 	private Programmer programmer;
 	private List<Score> scores; // List of Scores given to the application
-	private Map<Date, Integer> sales;
-	private int timesSoldLastWeek;
-
+	private Map<Date, Integer> sales; //all application sales
+	
 	/** Generates new application **/
 	public App(String aName, double aPrice, AppType aType, Programmer aProgrammer)
 	{
 		name = aName;
 		price = aPrice;
-		discount = 0;
+		weekDiscount = 0;
 		type = aType;
 		programmer = aProgrammer;
 		scores = new ArrayList<>();
 		sales = new HashMap<>();
-		timesSoldLastWeek = 0;
 	}
 
 	/** Adds a new score to score list and updates the average score **/
@@ -40,109 +36,32 @@ public class App
 		updateScore();
 	}
 
-	public double getAverageScore()
+	/*Methods
+	 * to String
+	 * getPrice()
+	 * registerSale
+	 * timesSold
+	 * updateScore
+	 * userScoredApp
+	 */
+	
+	/** Prints minimal application information **/
+	@Override
+	public String toString()
 	{
-		return averageScore;
+		return "App: " + name;
 	}
 
-	public double getDiscount()
-	{
-		return discount;
-	}
-
-	//Getters
-	public String getName()
-	{
-		return name;
-	}
-
+	/**Calculates price considering discount exits **/
 	public double getPrice()
 	{
-		return price * (100 - discount) / 100;
+		return price * (100 - weekDiscount) / 100;
 	}
-
-	public Programmer getProgrammer()
-	{
-		return programmer;
-	}
-
-	public List<Score> getScores()
-	{
-		return scores;
-	}
-
-	public int getTimesSoldLastWeek() {
-		return timesSoldLastWeek;
-	}
-
-	public AppType getType()
-	{
-		return type;
-	}
-
-	/** Returns previous week sales **/
-	public Map<Date, Integer> previousWeekSalesList(int currentweek)
-	{
-		Calendar cal = Calendar.getInstance();
-		Map<Date, Integer> salesPreviousWeek = new HashMap<>();
-		for(Map.Entry<Date, Integer> entry : sales.entrySet())
-		{
-			 cal.setTime(entry.getKey());
-			 int soldWeek = cal.get(Calendar.WEEK_OF_YEAR);
-			 if(soldWeek == currentweek -1)
-			 {
-				 salesPreviousWeek.put(entry.getKey(), entry.getValue());
-			 }
-		}
-
-	    return salesPreviousWeek;
-	}
-
+	
 	/** register when the application was sold and updates sales counter **/
 	public void registerSale(Date aBuyDate, int aLicences)
 	{
 		sales.put(aBuyDate , aLicences);
-	}
-
-	public void setDiscount(double aDiscount) {
-		discount = aDiscount;
-	}
-
-	// Setters
-	public void setName(String aName)
-	{
-		name = aName;
-	}
-
-	public void setPrice(double aPrice)
-	{
-		price = aPrice;
-	}
-
-	public void setProgrammer(Programmer aProgrammer)
-	{
-		programmer = aProgrammer;
-	}
-
-
-	public void setScore(int aScore)
-	{
-		averageScore = aScore;
-	}
-
-
-	public void setScores(List<Score> aScores)
-	{
-		scores = aScores;
-	}
-
-	public void setTimesSoldLastWeek(int timesSoldLastWeek) {
-		this.timesSoldLastWeek = timesSoldLastWeek;
-	}
-
-	public void setType(AppType aType)
-	{
-		type = aType;
 	}
 
 	/** calculates times sold **/
@@ -156,13 +75,6 @@ public class App
 		return timesSold;
 	}
 
-	//Methods
-	@Override
-	public String toString()
-	{
-		return "App: " + name;
-	}
-
 	/** updates the application average score using the score list **/
 	private void updateScore()
 	{
@@ -171,7 +83,7 @@ public class App
 		{
 			sum += score.getScoreValue();
 		}
-		averageScore = sum / scores.size();
+		score = sum / scores.size();
 	}
 
 	/** Verify if user scored application**/
@@ -186,9 +98,59 @@ public class App
 		return userScored;
 	}
 
-	/** Returns sold date list set **/
-	public Set<Date> whenSold()
+	//Getters
+	public String getName()
 	{
-		return sales.keySet();
+		return name;
 	}
+	public Programmer getProgrammer()
+	{
+		return programmer;
+	}	
+	public AppType getType()
+	{
+		return type;
+	}	
+	public double getScore()
+	{
+		return score;
+	}
+	public List<Score> getScores()
+	{
+		return scores;
+	}
+	public double getDiscount()
+	{
+		return weekDiscount;
+	}
+	
+	// Setters
+	public void setName(String aName)
+	{
+		name = aName;
+	}
+	public void setPrice(double aPrice)
+	{
+		price = aPrice;
+	}
+	public void setProgrammer(Programmer aProgrammer)
+	{
+		programmer = aProgrammer;
+	}
+	public void setType(AppType aType)
+	{
+		type = aType;
+	}	
+	public void setScore(int aScore)
+	{
+		score = aScore;
+	}
+	public void setScores(List<Score> aScores)
+	{
+		scores = aScores;
+	}
+	public void setDiscount(double aDiscount) {
+		weekDiscount = aDiscount;
+	}	
+	
 }
