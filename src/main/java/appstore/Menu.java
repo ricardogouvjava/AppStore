@@ -3,33 +3,19 @@ package appstore;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Scanner;
 
 public class Menu
 {
 	private AppStore store; 
-	private static Scanner scanInt, scanText;
-	private int menuNumber;
+	private static Scanner scanText;
 	
 	public Menu(AppStore aStore) 
 	{
 		store =  aStore;
 	}
 	
-	private void startScanners() 
-	{
-		scanInt = new Scanner(System.in);
-		scanText = new Scanner(System.in);	
-	}
-	
-	private void stopScanners() 
-	{
-		scanInt.close();
-		scanText.close();
-		
-	}
-	
+
 	/* MENU LIST:
 	 * 1. Main menu
 	 *    1.1 User Login
@@ -83,9 +69,8 @@ public class Menu
 
 	/** Main menu options **/
 	public void menuMain()
-	{
-		startScanners();
-		
+	{	
+		scanText = new Scanner(System.in);
 		System.out.print("\n------ Menu ------"
 				+ "\n (0) Exit "
 				+ "\n (1) User Login {Client Client Premium Programer Admin}"
@@ -98,8 +83,8 @@ public class Menu
 		switch (askInputIntAndValidate(0, 3)) 
 		{
 		case 0:
-			stopScanners();
 			System.err.print("System will terminate ");
+			scanText.close();
 			System.exit(0);
 			System.err.print("Terminated");
 			break;
@@ -290,7 +275,7 @@ public class Menu
 				+ "\n  (3) Earnings by programmer"
 				+ "\n  (4) Applications with discount"
 				+ "\n  (5) Times an app was sold"
-				+ "\n  (6) List applications sold last week"
+				+ "\n  (6) All app sales by week"
 				+ "\n  (7) Less sold apps in a given week"
 				+ "\n  (8) List all purchases"
 				+ "\n  (9) List purchases by week"	
@@ -346,24 +331,23 @@ public class Menu
 			break;
 			
 		case 6:
-			// Lists applications sold last week
-			System.out.println("The applications sold last week are: ");
-			for(Entry<App, Integer> entry : store.listAppsSoldLastWeek().entrySet()) 
-			{
-				System.out.println(entry.getKey() + " >> sold:" + entry.getValue());
-			}
+			// Prints application sales by week
+			System.out.println("Wanted week: ");
+			int week =  askInputIntAndValidate(0, store.getCurrentWeek().weekNumber());
+			System.out.println("The sold applications are: ");
+			printMap(store.getWeekSales(week));
 			menuAdministrator(aAdministrator);
 			break;
 			
 		case 7:
 			// finds less sold applications in a defined week	
 			System.out.println("Wanted week: ");
-			int week =  askInputIntAndValidate(0, store.getCurrentWeeK());
+			week =  askInputIntAndValidate(0, store.getCurrentWeek().weekNumber());
 			System.out.println("Number of Apps: ");
-			int appnumber =  askInputIntAndValidate(0, store.getAppsSoldInWeek(week).size());
+			int appnumber =  askInputIntAndValidate(0, store.returnWeekObject(week).getAppSales().size());
 						
 			System.out.println("The less sold applications are: ");
-			printMap(store.checkLessSoldApps(week, appnumber));
+			printMap(store.getWeekLessSoldApps(week, appnumber));
 			menuAdministrator(aAdministrator);
 			break;
 		
@@ -382,7 +366,7 @@ public class Menu
 		case 9:
 			// Lists all purchases in a certain week of the year
 			System.out.println("Wanted week: ");
-			int weekNumber =  askInputIntAndValidate(0, store.getCurrentWeeK());
+			int weekNumber =  askInputIntAndValidate(0, store.getCurrentWeek().weekNumber());
 			List<Purchase> purchaseList = store.getWeekPurchases(weekNumber);
 			for(Purchase purchase : purchaseList)
 			{
@@ -655,7 +639,7 @@ public class Menu
 		{
 			try
 			{
-				menuNumber = scanInt.nextInt();
+				int menuNumber = Integer.valueOf(scanText.nextLine());
 				if(menuNumber >= min && menuNumber <= max)
 				{
 					askforchoice = false;
@@ -669,6 +653,9 @@ public class Menu
 						+ "\nPlease introduce correct integer number"
 						+ "\n: ");
 			}
+			
+			
+			
 		}
 		return choice;
 	}
@@ -790,7 +777,7 @@ public class Menu
 		while(askForAge)
 		{
 			System.out.print("\nUser Age: ");
-			userAge = scanInt.nextInt();
+			userAge = Integer.valueOf(scanText.nextLine());
 			if(userAge < 100 && userAge > 18)
 			{
 				askForAge = false;
@@ -837,7 +824,7 @@ public class Menu
 		while(askForScore)
 		{
 			System.out.print("\nScore: [0:5]");
-			score = Double.valueOf(scanInt.nextLine());
+			score = Double.valueOf(scanText.nextLine());
 			if (score >= 0 && score <= 5 )
 			{
 				askForScore = false;

@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,9 +15,10 @@ public class AppStore
 	private String name;								// Store name
 	private static Calendar calendar;					// running calendar
 	private List<App> apps;								// Applications in the store
-	private List<Purchase> purchases; 					// Purchases made in the store
-	private Week week; 									
+	private Week currentWeek; 
+	private List<Week> weeks;
 	private List<User> users;							// List of all users in the store
+	private List<Purchase> purchases; 					// Purchases made in the store
 	private List<Score> scores; 						// List of all scores given to the applications
 	private static Generator generator;
 	private int discountValueWeek = 15;
@@ -29,9 +29,10 @@ public class AppStore
 		name = aName;
 		calendar = Calendar.getInstance();
 		apps = new ArrayList<App>();
-		purchases = new ArrayList<Purchase>();
-		week = new Week(calendar);
+		currentWeek = new Week(calendar);
+		weeks = new ArrayList<Week>();
 		users = new ArrayList<User>();
+		purchases = new ArrayList<Purchase>();
 		scores = new ArrayList<Score>();
 		generator = new Generator(this);
 	}
@@ -54,15 +55,15 @@ public class AppStore
 		{
 			
 			// when in new week updates discounts
-			if(calendar.get(Calendar.WEEK_OF_YEAR) != week.weekNumber())
+			if(calendar.get(Calendar.WEEK_OF_YEAR) != currentWeek.weekNumber())
 			{
-				week.setWeek(calendar);
+				weeks.add(currentWeek);
+				
+				currentWeek = new Week(calendar);
 				
 				System.err.println("Week:" + calendar.get(Calendar.WEEK_OF_YEAR));
 				
-				updateAppsSoldPreviousWeekCounter();
-				updateAppDiscounts(tempWeek , discountValueWeek);
-				week.resetWeek(calendar);
+				updateAppDiscounts(discountValueWeek);
 				
 			}
 
@@ -135,6 +136,7 @@ public class AppStore
 			
 			System.out.println("Purchase made: " + purchase);
 			purchases.add(purchase);
+			currentWeek.addPurchase(purchase);
 		}
 		
 		catch (NullPointerException e) 
@@ -173,9 +175,53 @@ public class AppStore
 	}
 
 		
-	/* Purchase Methods */
+	/* Week Methods */
+	/** Returns week object **/
+	public Week returnWeekObject(int aWeekNumber)
+	{
+		Week returnWeek = null;
+		for(Week week: weeks)
+		{
+			if(week.weekNumber() == aWeekNumber) 
+			{
+				returnWeek = week;
+			}
+		}
+		return returnWeek;
+	}
+	
+	/** returns list purchases done in X week **/
+	public List<Purchase> getWeekPurchases(int aWeekNumber)
+	{
+		return returnWeekObject(aWeekNumber).getWeekPurchases();
+		
+	}
+	
+	/** returns list application sales done in X week **/
+	public Map<App, Integer> getWeekSales(int aWeekNumber)
+	{
+		return returnWeekObject(aWeekNumber).getAppSales();
+		
+	}
+	
+	/** returns list of less sold application X week **/
+	public HashMap<App, Integer> getWeekLessSoldApps(int aWeekNumber, int aNumberOfApps)
+	{
+		return returnWeekObject(aWeekNumber).weekLessSoldApps(apps, aNumberOfApps);
+	}
 	
 		
+	/** update application discounts based on performance of previous week **/
+	private void updateAppDiscounts(int discountValue)
+	{
+		resetAllAppDiscounts();
+		giveDiscount(this.getWeekLessSoldApps(currentWeek.weekNumber() -1 , 5).keySet(), discountValue);
+	}
+		
+	
+	
+	/* Purchase Methods */
+			
 	/** Returns all Purchases made in a time period **/
 	public List<Purchase> listPurchasesTimePeriod(Date aStart, Date aEnds)
 	{
@@ -302,116 +348,7 @@ public class AppStore
 		return listType;
 	}
 	
-	
-	/* Application Sold Methods & analysis */
-	
-	
-	
-	/** update application discounts based on performance of previous week **/
-	private void updateAppDiscounts(int aWeek, int discountValue)
-	{
-		Map<App, Integer> lessSold = new HashMap<App, Integer>(5);
-		lessSold = checkLessSoldApps(aWeek , 5);
-		giveDiscount(lessSold.keySet(), discountValue);
-	}
 		
-	
-	/** Finds 5 least sold applications in a determined week **/
-	public HashMap<App, Integer> checkLessSoldApps(int aWeek, int appNumber)
-	{
-		HashMap<App, Integer> weekAppSold = getAppsSoldInWeek(aWeek);
-		HashMap<App, Integer> weekAppSales = new HashMap<App, Integer>();
-		weekAppSales.putAll(weekAppSold);
-		
-		for(App app : apps) 
-		{
-			if(!weekAppSales.containsKey(app))
-			{
-				weekAppSales.put(app, 0);
-			}
-		}
-		
-		LinkedHashMap<App, Integer> sortedWeekAppSales = new LinkedHashMap<>();
-	    
-		weekAppSales.entrySet().stream()
-								.sorted(Map.Entry.comparingByValue())
-								.limit(appNumber)
-								.forEachOrdered(x -> sortedWeekAppSales.put(x.getKey(), x.getValue()));
-	     
-		return sortedWeekAppSales;
-		
-		/**
-		 * 	System.out.println("\nApps listed by times sold:");
-			Comparator<App> compareBySold = Comparator
-					.comparing(App::timesSold)
-					.thenComparing(App::getName)
-					.reversed();
-
-			apps.stream()
-			.sorted(compareBySold)
-			.forEach(s -> System.out.println(s.getName() +":" + s.timesSold()));
-			break;
-		 */
-
-	}
-	
-	/** Returns list of what each application sold last Week  **/
-	public Map<App, Integer> listAppsSoldLastWeek()
-	{	
-		//SortedMap<App, Integer> soldLastWeek = new TreeMap<App, Integer>( new LessSoldAppComparator());
-		
-		Map<App, Integer> soldLastWeek = new HashMap<App, Integer>();
-		
-		
-		for(App app : apps)
-		{
-			soldLastWeek.put(app, app.getTimesSoldLastWeek());
-		}
-		return soldLastWeek;
-		
-	}
-	
-	/** 5 Less sold applications **/
-	public List<String> lessSoldApps() 
-	{
-		Map<App, Integer> soldLastWeek = listAppsSoldLastWeek();
-		List<String> lessSoldAppsLastWeek = new ArrayList<String>(5);
-		soldLastWeek.entrySet().stream()
-				.sorted(Map.Entry.comparingByValue())
-				.limit(5)
-				.forEachOrdered(x -> lessSoldAppsLastWeek.add(x.getKey().getName()));
-		return lessSoldAppsLastWeek;
-	}
-	
-	/** Returns count of all application sold made in a certain week **/
-	public HashMap<App, Integer> getAppsSoldInWeek(int aWeek)
-	{
-		HashMap<App, Integer> weekAppSales = new HashMap<App, Integer>();
-		List<Purchase> weekPurchases = getWeekPurchases(aWeek);
-			
-		for(Purchase purchase : weekPurchases)
-		{
-			//Map of bag items
-			Map<App, Integer> bag = purchase.getPurchaseBag().getBagItems();
-			
-			for(Map.Entry<App, Integer> entry : bag.entrySet())
-			{
-				if(!weekAppSales.containsKey(entry.getKey()) && entry.getValue() > 0)
-				{
-					weekAppSales.putIfAbsent(entry.getKey(), entry.getValue());
-				}
-				
-				else 
-				{
-					weekAppSales.put(entry.getKey(), weekAppSales.get(entry.getKey()) + entry.getValue());
-				}
-			}		
-		}
-		return weekAppSales;
-	
-	}
-	
-	
 	/* User methods */
 	
 	/** Verify if User exists **/
@@ -484,9 +421,6 @@ public class AppStore
 		return returnClientPremium;
 	}
 	
-	
-	
-	
 	// Setters
 	public void setName(String aName) 
 	{
@@ -503,16 +437,10 @@ public class AppStore
 		users = aUsers;
 	}
 
-	public void setPurchases(List<Purchase> aPurchases) 
-	{
-		purchases = aPurchases;
-	}
-
 	public void setScores(List<Score> aScores) 
 	{
 		scores = aScores;
 	}
-
 
 	// Getters
 	public String getName() 
@@ -529,7 +457,7 @@ public class AppStore
 	{
 		return users;
 	}
-
+	
 	public List<Purchase> getPurchases()
 	{
 		return purchases;
@@ -540,10 +468,18 @@ public class AppStore
 		return scores;
 	}
 
-	public Week getWeek()
+	
+	public Week getCurrentWeek() 
 	{
-		return week;
+		return currentWeek;
 	}
 
+	
+	public List<Week> getWeeks() 
+	{
+		return weeks;
+	}
+
+	
 }
 

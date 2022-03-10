@@ -110,27 +110,7 @@ public class App
 		
 	    return salesPreviousWeek;
 	}
-	
 		
-	/** Update times sold last Week**/
-	public void updateTimesSoldLastWeek(Week aWeek)
-	{
-		timesSoldLastWeek = aWeek.;
-		Calendar cal = Calendar.getInstance();
-
-		for(Map.Entry<Date, Integer> entry : sales.entrySet())
-		{
-			 cal.setTime(entry.getKey());
-			 int soldWeek = cal.get(Calendar.WEEK_OF_YEAR);
-		
-			 if(soldWeek == (currentweek -1)) 
-			 {
-				 timesSoldLastWeek += entry.getValue();
-			 }
-		}
-	}
-	
-	
 	//Getters
 	public String getName()
 	{

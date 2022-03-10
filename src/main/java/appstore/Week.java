@@ -3,42 +3,44 @@ package appstore;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class Week 
 {
 	private int week;
 	private List<Purchase> weekPurchases;
-	private Map<App, Integer> appSales;
+	private Map<App, Integer> weekAppSales;
 	
 	public Week(Calendar aCalendar)
 	{
 		week = aCalendar.get(Calendar.WEEK_OF_YEAR);
-		
 		weekPurchases = new ArrayList<Purchase>();
-		appSales = new HashMap<App, Integer>();
+		weekAppSales = new HashMap<App, Integer>();
 	}
 
 	// Methods
 	public void addPurchase(Purchase aPurchase)
 	{
 		weekPurchases.add(aPurchase);
+		updateWeekAppSales(aPurchase);
 	}
 	
-	public void updateAppWeekSales(Purchase aPurchase)
+	private void updateWeekAppSales(Purchase aPurchase)
 	{
 		// Checks if key exists and sums value
 		for(Map.Entry<App, Integer> entry : aPurchase.getPurchaseBag().getBagItems().entrySet())
 		{
-			appSales.merge(entry.getKey(), entry.getValue(), (vOld, vNew) -> vOld + vNew);
+			weekAppSales.merge(entry.getKey(), entry.getValue(), (vOld, vNew) -> vOld + vNew);
 		}
 	}
 	
 	public int appSoldValue(App aApp) 
 	{
 		int sold = 0;
-		for(Map.Entry<App, Integer> entry : appSales.entrySet())
+		for(Map.Entry<App, Integer> entry : weekAppSales.entrySet())
 		{
 			if(entry.getKey().equals(aApp))
 			{
@@ -48,12 +50,36 @@ public class Week
 		return sold;
 	}
 	
-	public void resetWeek(Calendar aCalendar) 
+	public HashMap<App, Integer> weekLessSoldApps(List<App> aAppsInStore, int aNumber)
 	{
-		weekPurchases.clear();
-		setWeek(aCalendar);
+		// adds applications absent from list
+		for(App app : aAppsInStore)
+		{
+			weekAppSales.putIfAbsent(app, 0);
+		}
+		
+		// Sort map by value and limits number
+		LinkedHashMap<App, Integer> sortedWeekAppSales = new LinkedHashMap<>();
+	    weekAppSales.entrySet().stream()
+								.sorted(Map.Entry.comparingByValue())
+								.limit(aNumber)
+								.forEachOrdered(x -> sortedWeekAppSales.put(x.getKey(), x.getValue()));
+	     
+	   // finds the highest sold number after filter
+	   int maxSoldFromLess = sortedWeekAppSales.entrySet().stream()
+			   .max((Entry<App, Integer> e1, Entry<App, Integer> e2) -> e1.getValue().compareTo(e2.getValue())).get().getValue();
+			   
+	   // finds applications with similar value and adds to list 
+	   for(Map.Entry<App, Integer> entry : weekAppSales.entrySet())
+	    {
+	    	if(entry.getValue().equals(maxSoldFromLess))
+	    	{
+	    		sortedWeekAppSales.putIfAbsent(entry.getKey(), entry.getValue());
+	    	}
+	    }
+	    
+		return sortedWeekAppSales;
 	}
-	
 	
 	// Getter
 	public int weekNumber()
@@ -66,16 +92,12 @@ public class Week
 		return weekPurchases;
 	}
 	
-
-	public Map<App, Integer> getAppSales() {
-		return appSales;
+	public Map<App, Integer> getAppSales() 
+	{
+		return weekAppSales;
 	}
 
 	// Setters
-	public void setWeek(Calendar aCalendar)
-	{
-		week = aCalendar.get(Calendar.WEEK_OF_YEAR);
-	}
-		
+	
 	
 }
