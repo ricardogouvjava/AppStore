@@ -3,6 +3,7 @@ package appstore;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Bag
 {
@@ -10,84 +11,68 @@ public class Bag
 
 	public Bag ()
 	{
-		bagItems = new HashMap<App, Integer>();
+		bagItems = new HashMap<>();
 	}
 
-	// Method 
+	// Method
+	/** Prints returns string of all bag data **/
 	@Override
 	public String toString()
 	{
-		String toPrint = "[<App : Price : Licences : SubTotal> Total] >> [";
+		String toPrint = "[<App : Price : Licences : SubTotal> -> Total]\n[";
 
 		for(Map.Entry<App, Integer> set : bagItems.entrySet())
-		{	
-			toPrint += " <" + set.getKey().getName() + " : " + String.format("%.2f",set.getKey().getPrice())
-			+ " : " + set.getValue() + " : " + String.format("%.2f", set.getKey().getPrice() * set.getValue()) + "> ";
+		{
+			toPrint += "<" + set.getKey() + " : " + set.getValue() + 
+					" : " + String.format("%.2f", set.getKey().getPrice() * set.getValue()) + ">";
 		}
-		toPrint += "> " + String.format("%.2f", valueInBag()) + "]";
+		toPrint += "> -> " + String.format("%.2f", valueInBag()) + "]";
 		return toPrint;
 	}
 
 	/** Add application to bag **/
 	public void putInBag(App aApp, int aQuantity)
 	{
-		if(!bagItems.containsKey(aApp))
-		{
-			bagItems.putIfAbsent(aApp, aQuantity);
-		}
-		
-		else 
-		{
-			bagItems.put(aApp, bagItems.get(aApp) + aQuantity);
-		}
-	}
-
-	/** Check if application already in bag **/
-	public boolean isAppInBag(App aApp)
-	{
-		boolean appInBag = false;
-		
-		
-		
-		for(App app : bagItems.keySet())
-		{
-			if(app.getName().equals(aApp.getName()))
-			{
-				appInBag = true;
-			}
-		}
-		
-		return appInBag;
+		bagItems.merge(aApp, aQuantity, (v1, v2) -> v1 + v2);
 	}
 	
-	/** Returns list of applications in the bag **/ 
-	public List<App> getAppsInBag()
+	/** Add application to bag **/
+	public void removeAppInBag(App aApp)
 	{
-		return List.copyOf(bagItems.keySet());
-		
+		bagItems.remove(aApp);
+	}
+	
+	/** Alter value of licenses **/
+	public void alterValue(App aApp, int aLicenses)
+	{
+		bagItems.put(aApp, aLicenses);
 	}
 	
 	/** Calculates the value in the shopping bag **/
 	public double valueInBag()
 	{
 		double sum = 0;
-		for(Map.Entry<App, Integer> set : bagItems.entrySet()) 
+		for(Map.Entry<App, Integer> entry : bagItems.entrySet())
 		{
-			sum += set.getKey().getPrice() * set.getValue();
+			sum += entry.getKey().getPrice() * entry.getValue();
 		}
 		return sum;
 	}
-
+	
+	/** Returns list of bag Applications **/
+	public List<App> getAppsInBag()
+	{
+		return bagItems.keySet().stream().collect(Collectors.toList());
+	}
+	
 	// Getters
-	public Map<App, Integer> getBagItems() 
+	public Map<App, Integer> getBagItems()
 	{
 		return bagItems;
 	}
-
 	// Setters
 	public void setBag(Map<App, Integer> aBagItems)
 	{
 		bagItems = aBagItems;
 	}
-
 }

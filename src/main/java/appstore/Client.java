@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class Client extends User 
+public class Client extends User
 {
+	private int discount;
 	private List<Purchase> purchases;
 	private double spendings;
 
@@ -13,8 +14,9 @@ public class Client extends User
 	public Client(String aId, String aPassword, int aAge)
 	{
 		super(aId, aPassword, aAge);
-		purchases = new ArrayList<Purchase>();
+		purchases = new ArrayList<>();
 		spendings = 0;
+		discount = 0;
 	}
 
 	// Methods
@@ -22,22 +24,22 @@ public class Client extends User
 	public Purchase buy(Bag aShoppingBag, Calendar aCalendar)
 	{
 		Purchase purchase = new Purchase(this, aShoppingBag, aCalendar.getTime());
-		
-		this.purchases.add(purchase);
-		
-		super.addShoppingBagToAppsBought(aShoppingBag); // Update applications owned
 
-		this.updateSpendings(aShoppingBag);
-		
+		this.purchases.add(purchase);
+
+		super.addApps(aShoppingBag); // Update applications list
+
+		updateSpendings(aShoppingBag);
+
 		return purchase;
 	}
-	
-	/** Updates value spent **/
-	private void updateSpendings(Bag aShoppingBag)
-	{	
-		spendings += aShoppingBag.valueInBag();
+
+	public List<Purchase> getPurchases()
+	{
+		return purchases;
 	}
-	
+
+
 	/** Allows Client to give a score to an application **/
 	public void giveScore(App aApp, double aScoreValue, String aComment, AppStore aStore)
 	{
@@ -45,7 +47,7 @@ public class Client extends User
 		if(super.getApps().containsKey(aApp) && !super.getAppsScored().contains(aApp))
 		{
 			Score score = new Score(this, aApp, aScoreValue, aComment);
-			
+
 			aApp.addScore(score);					// Add Score to Application list
 			aStore.addScore(score); 				// Add Score to Store list
 			addScore(score); 						// Add Score to client list and updates average
@@ -56,19 +58,33 @@ public class Client extends User
 			System.out.println("\nThis user is not allowed to score this application: " + aApp.getName());
 		}
 	}
-		
-	// Getters 
-	public double getSpendings() 
+
+	
+
+	/** Updates value spent **/
+	private void updateSpendings(Bag aShoppingBag)
+	{
+		setSpendings(getSpendings() + aShoppingBag.valueInBag());
+	}
+	
+
+	// Getters
+	public double getSpendings()
 	{
 		return spendings;
 	}
 
-	public List<Purchase> getPurchases()
-	{
-		return purchases;
+	public int getDiscount() {
+		return discount;
 	}
-		
-	// Setters 
-	
+
+	// Setters
+	public void setSpendings(double spendings) {
+		this.spendings = spendings;
+	}
+
+	public void setDiscount(int discount) {
+		this.discount = discount;
+		}
 }
 
