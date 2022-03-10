@@ -1,7 +1,9 @@
 package appstore;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Bag
 {
@@ -12,10 +14,20 @@ public class Bag
 		bagItems = new HashMap<>();
 	}
 
-	// Getters
-	public Map<App, Integer> getBagItems()
+	// Method
+	/** Prints returns string of all bag data **/
+	@Override
+	public String toString()
 	{
-		return bagItems;
+		String toPrint = "[<App : Price : Licences : SubTotal> -> Total]\n[";
+
+		for(Map.Entry<App, Integer> set : bagItems.entrySet())
+		{
+			toPrint += "<" + set.getKey() + " : " + set.getValue() + 
+					" : " + String.format("%.2f", set.getKey().getPrice() * set.getValue()) + ">";
+		}
+		toPrint += "> -> " + String.format("%.2f", valueInBag()) + "]";
+		return toPrint;
 	}
 
 	/** Add application to bag **/
@@ -23,29 +35,19 @@ public class Bag
 	{
 		bagItems.merge(aApp, aQuantity, (v1, v2) -> v1 + v2);
 	}
-
-	// Setters
-	public void setBag(Map<App, Integer> aBagItems)
+	
+	/** Add application to bag **/
+	public void removeAppInBag(App aApp)
 	{
-		bagItems = aBagItems;
+		bagItems.remove(aApp);
 	}
-
-
-	// Method
-	@Override
-	public String toString()
+	
+	/** Alter value of licenses **/
+	public void alterValue(App aApp, int aLicenses)
 	{
-		String toPrint = "[<App : Price : Licences : SubTotal> Total] >> [";
-
-		for(Map.Entry<App, Integer> set : bagItems.entrySet())
-		{
-			toPrint += " <" + set.getKey().getName() + " : " + String.format("%.2f",set.getKey().getPrice())
-			+ " : " + set.getValue() + " : " + String.format("%.2f", set.getKey().getPrice() * set.getValue()) + "> ";
-		}
-		toPrint += "> " + String.format("%.2f", valueInBag()) + "]";
-		return toPrint;
+		bagItems.put(aApp, aLicenses);
 	}
-
+	
 	/** Calculates the value in the shopping bag **/
 	public double valueInBag()
 	{
@@ -57,4 +59,20 @@ public class Bag
 		return sum;
 	}
 	
+	/** Returns list of bag Applications **/
+	public List<App> getAppsInBag()
+	{
+		return bagItems.keySet().stream().collect(Collectors.toList());
+	}
+	
+	// Getters
+	public Map<App, Integer> getBagItems()
+	{
+		return bagItems;
+	}
+	// Setters
+	public void setBag(Map<App, Integer> aBagItems)
+	{
+		bagItems = aBagItems;
+	}
 }

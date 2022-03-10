@@ -10,20 +10,21 @@ public class Menu
 	private static Scanner scanText;
 	private AppStore store;
 
+	// Constructor
 	public Menu(AppStore aStore)
 	{
 		store =  aStore;
 	}
 
 	/* MENU LIST:
-	 * 1. Main menu
+	 * 1. Main menu | menuMain()
 	 *    1.1 User Login
 	 *    1.2 User Creation
-	 *    1.3 List AppsMenu
+	 *    1.3 List AppsMenu | menuListApps()
 	 *        1.3.1 By Name
 	 *        1.3.2 By Times Sold
-	 *        1.3.3 By Score
-	 *        1.3.3 By chosen application type
+	 *        1.3.3 By Score    
+	 *        1.3.3 By chosen application type | menuListAppsByType()
 	 *              1.3.3.1 Games
 	 *              1.3.3.2 Business
 	 *              1.3.3.3 Education
@@ -31,25 +32,27 @@ public class Menu
 	 *              1.3.3.5 Entertainment
 	 *              1.3.3.6 Utilities
 	 *              1.3.3.7 Travel
-	 *              1.3.3.8 HealthandFitness"
+	 *              1.3.3.8 HealthandFitness
 	 *
-	 * 2. Client menu
+	 * 2. Client menu | menuClient(Client aClient)
 	 *    2.1 List owned applications
-	 *    2.2 Buy Applications
+	 *    2.2 Buy Applications | buyAppMenu(Client aClient, Bag shoppingBag)
 	 *        2.2.1 Add application to shopping bag
-	 *        2.2.2 Check value of shopping bag
-	 *        2.2.3 Checkout"
+	 *        2.2.2 Alter number application bag
+	 *        2.2.3 Remove application from bag
+	 *        2.2.4 Check value of shopping bag
+	 *        2.2.5 Checkout
 	 *    2.3 Give Score
 	 *    2.4 List application that score was given
 	 *    2.5 List application that scores was not given
 	 *    2.6 List scores given to application
 	 *
-	 * 3. Programmer menu
+	 * 3. Programmer menu | menuProgrammer(Programmer aProgrammer
 	 *    3.1 List developed applications
 	 *    3.2 Programmer average score
 	 *    3.3 Earnings
 	 *
-	 * 4. Administrator Menu
+	 * 4. Administrator Menu | menuAdministrator(Administrator aAdministrator)
 	 *    4.1 Move Time Forward
 	 *    4.2 Total earnings
 	 *    4.3 Earnings by programmer
@@ -81,10 +84,10 @@ public class Menu
 		switch (askInputIntAndValidate(0, 3))
 		{
 		case 0:
-			System.err.print("System will terminate ");
+			System.err.println("System will terminate ");
 			scanText.close();
 			System.exit(0);
-			System.err.print("Terminated");
+			System.err.println("Terminated");
 			break;
 
 
@@ -139,7 +142,7 @@ public class Menu
 				+ "\n (2) List AppStore applications ordered by times Sold"
 				+ "\n (3) List AppStore applications ordered by Score"
 				+ "\n (4) List AppStore applications ordered by chosen application type"
-				+ "\n :");
+				+ "\n");
 
 		//asks for input, verifies it and uses it in the switch
 		switch (askInputIntAndValidate(0,7))
@@ -271,73 +274,11 @@ public class Menu
 		menuListAppsByType();
 	}
 	
-	/** Buy Applications menu **/
-	private void buyAppMenu(Client aClient , Bag shoppingBag)
-	{
-		// Create new shopping bag
-		if (shoppingBag == null)
-		{
-			shoppingBag = store.createShoppingBag();
-		}
-
-		System.out.print("\n"
-				+ "Buy Options:"
-				+ "\n (0) Return"
-				+ "\n (1) Add application to shopping bag"
-				+ "\n (2) Check value of shopping bag"
-				+ "\n (3) Checkout"
-				+ "\n ");
-
-		// asks for user menu input and verifies its validity
-		switch (askInputIntAndValidate(0,3))
-		{
-
-		case 0:
-			shoppingBag = null;
-			menuClient(aClient);
-			break;
-
-		case 1:
-			System.out.println("Apps in the Store [AppName:Price]: " + store.getAppsList());
-			System.out.println("Apps in the Bag: " +  shoppingBag);
-			App app = askForAppNameValidatesAndReturnsApp();
-
-			System.out.println("\nNumber of licences: ");
-			int numberOfLicences = askInputIntAndValidate(0, Integer.MAX_VALUE);
-
-			// Adds application to bag
-			shoppingBag.putInBag(app, numberOfLicences);
-			buyAppMenu(aClient, shoppingBag);
-			break;
-
-		case 2:
-			System.out.println("The value of goods in the bag is:" + String.format("%.2f", shoppingBag.valueInBag()));
-			System.out.println("Value to pay: " + String.format("%.2f", store.valueInBag(shoppingBag, aClient)));
-			buyAppMenu(aClient, shoppingBag);
-			break;
-
-		case 3:
-			Purchase purchase = store.checkout(aClient, shoppingBag);	
-			if(store.savedInPurchase(purchase)!=0)
-			{
-				System.out.println("Premium Saved:" + 	 String.format("%.2f",store.savedInPurchase(purchase)));			
-			}
-			menuClient(aClient);
-			break;
-
-		default:
-			// Ask again for input!!
-			System.out.println("Please introduze a correct option");
-			buyAppMenu(aClient, shoppingBag);
-			break;
-		}
-	}
-	
 	/** User menu options **/
 	private void menuClient(Client aClient)
 	{
 		System.out.print("\n"
-				+ "User Options:"
+				+ "Client Options:"
 				+ "\n  (0) Return"
 				+ "\n  (1) List owned applications"
 				+ "\n  (2) Buy Applications"
@@ -345,7 +286,7 @@ public class Menu
 				+ "\n  (4) List application that score was given"
 				+ "\n  (5) List application that scores was not given"
 				+ "\n  (6) List scores given to application"
-				+ "\n:");
+				+ "\n");
 
 		switch (askInputIntAndValidate(0,7))
 		{
@@ -376,7 +317,7 @@ public class Menu
 					+ "\n'Owned Application Name' 'Score' and 'Comment' if wanted.");
 
 			// Asks for application name
-			App appToScore = askForAppNameValidatesAndReturnsApp();
+			App appToScore = askForAppNameValidatesAndReturnsApp(store.getAppsList());
 
 			// Asks for user score
 			double score = askForScoreAndValidates();
@@ -407,7 +348,7 @@ public class Menu
 
 		case 6:
 			// List scores and comments of application
-			App app = askForAppNameValidatesAndReturnsApp();
+			App app = askForAppNameValidatesAndReturnsApp(store.getAppsList());
 			printList(app.getScores());
 			menuClient(aClient);
 			break;
@@ -422,6 +363,125 @@ public class Menu
 		}
 	}
 		
+	/** Buy Applications menu **/
+	private void buyAppMenu(Client aClient , Bag shoppingBag)
+	{
+		// Create new shopping bag
+		if (shoppingBag == null)
+		{
+			shoppingBag = store.createShoppingBag();
+		}
+
+		System.out.print("\n"
+				+ "Buy Options:"
+				+ "\n (0) Return"
+				+ "\n (1) Add application to shopping bag"
+				+ "\n (2) Alter number application licenses in the bag"
+				+ "\n (3) Remove application from bag"
+				+ "\n (4) Check value of shopping bag"
+				+ "\n (5) Checkout"
+				+ "\n ");
+
+		// asks for user menu input and verifies its validity
+		switch (askInputIntAndValidate(0,5))
+		{
+
+		case 0:
+			shoppingBag = null;
+			menuClient(aClient);
+			break;
+
+		case 1:
+			// Informs applications in store
+			System.out.println("Apps in the Store: [AppName:Price]");
+			printList(store.getAppsList());
+			
+			//If not empty informs of applications in the bag 
+			if(shoppingBag.getBagItems().size() > 0)
+			{
+				System.out.println("\nContents of Bag: "
+						+ "\n" +  shoppingBag);
+			}
+			System.out.println("\nChoose");
+			// Asks for application name to add to bag
+			App app = askForAppNameValidatesAndReturnsApp(store.getAppsList());
+			
+			// Ask for number of licenses to add and validates
+			System.out.println("Number of licences: ");
+			int numberOfLicences = askInputIntAndValidate(0, Integer.MAX_VALUE);
+
+			// Adds application to bag
+			shoppingBag.putInBag(app, numberOfLicences);
+			
+			// Returns to buy menu
+			buyAppMenu(aClient, shoppingBag);
+			break;
+
+		case 2:
+			//Checks if bag is empty
+			if(shoppingBag.getBagItems().size() > 0)
+			{
+				// Asks for application to remove and compares with store
+				App appTocheck = askForAppNameValidatesAndReturnsApp(shoppingBag.getAppsInBag());
+				
+				// Asks for the number to change to
+				System.out.println("Number of licences: ");
+				int numberOfLicencesTochange = askInputIntAndValidate(0, Integer.MAX_VALUE);
+				
+				// Overrides the value in the bag
+				shoppingBag.alterValue(appTocheck, numberOfLicencesTochange);
+			}
+			else
+			{
+				System.out.println("App not in the bag: ");	
+			}
+			buyAppMenu(aClient, shoppingBag);
+			break;
+					
+		case 3:
+			//Checks if bag is empty
+			if(shoppingBag.getBagItems().size() > 0)
+			{
+				// Asks for application to remove and compares with store
+				App appToRemove = askForAppNameValidatesAndReturnsApp(shoppingBag.getAppsInBag());
+				
+				shoppingBag.removeAppInBag(appToRemove);
+			}
+			else
+			{
+				System.out.println("App not in the bag: ");	
+			}
+			buyAppMenu(aClient, shoppingBag);
+			break;
+				
+		case 4:
+			// Informs total value in the bag
+			System.out.println("The value of goods in the bag is:" + String.format("%.2f", shoppingBag.valueInBag()));
+			
+			// Checks if user has discount and informs value to pay
+			System.out.println("Value to pay: " + String.format("%.2f", store.valueInBag(shoppingBag, aClient)));
+			
+			// Returns to options menu
+			buyAppMenu(aClient, shoppingBag);
+			break;
+
+		case 5:
+			Purchase purchase = store.checkout(aClient, shoppingBag);	
+			if(store.savedInPurchase(purchase)!=0)
+			{
+				System.out.println("Premium Saved:" + String.format("%.2f",store.savedInPurchase(purchase)));			
+			}
+			menuClient(aClient);
+			break;
+
+		default:
+			// Ask again for input!!
+			System.out.println("Please introduze a correct option");
+			buyAppMenu(aClient, shoppingBag);
+			break;
+		}
+	}
+			
 	/** Programmer menu options **/
 	private void menuProgrammer(Programmer aProgrammer)
 	{
@@ -473,7 +533,7 @@ public class Menu
 				+ "\n  (1) Move Time Forward"
 				+ "\n  (2) Total earnings"
 				+ "\n  (3) Earnings by programmer"
-				+ "\n  (4) Applications with discount"
+				+ "\n  (4) Applications with weekly discount"
 				+ "\n  (5) Times an app was sold"
 				+ "\n  (6) All app sales by week"
 				+ "\n  (7) Less sold apps in a given week"
@@ -484,9 +544,10 @@ public class Menu
 				+ "\n (12) List all ClientPremium"
 				+ "\n (13) List all Programmers"
 				+ "\n (14) List applications off User"
+				+ "\n (15) Applications with Monthly discount / Type"
 				+ "\n");
 
-		switch (askInputIntAndValidate(0, 14))
+		switch (askInputIntAndValidate(0, 15))
 		{
 
 		case 0:
@@ -516,15 +577,15 @@ public class Menu
 
 		case 4:
 			// Check applications with discounts
-			System.out.println("Apps with discount: ");
-			printList(store.checkAppsWithDiscounts());
+			System.out.println("Apps with Weekly discount: ");
+			printList(store.checkAppsWithWeeklyDiscounts());
 			menuAdministrator(aAdministrator);
 			break;
 
 
 		case 5:
 			// Prints the times an application was sold
-			App app = askForAppNameValidatesAndReturnsApp();
+			App app = askForAppNameValidatesAndReturnsApp(store.getAppsList());
 			System.out.println("The app " + app.getName() + " was sold " + app.timesSold() + " times.");
 			menuAdministrator(aAdministrator);
 			break;
@@ -607,6 +668,13 @@ public class Menu
 			printMap(askForUserIdValidatesAndReturnsUser().getApps());
 			menuAdministrator(aAdministrator);
 			break;
+		
+		case 15:
+			// Check applications with discounts
+			System.out.println("Apps with Monthly discount: " + store.getAppTypeWithDiscount());
+			printList(store.checkAppsWithMonthlyDiscounts());
+			menuAdministrator(aAdministrator);
+			break;
 
 
 		default:
@@ -619,12 +687,12 @@ public class Menu
 
 	/*
 	* Several methods for input & validation :
-	 * 1. Menu option input validation
-	 * 2. User login
-	 * 3. User creation
-	 * 4. User validation
-	 * 4. Score Validation
-	 * 5. Application Validation
+	 * 1. Integer input validation | askInputIntAndValidate(int min, int max)
+	 * 2. User login | serLogin()
+	 * 3. User creation | userCreation()
+	 * 4. User validation | askForUserIdValidatesAndReturnsUser()
+	 * 4. Score Validation | askForScoreAndValidates()
+	 * 5. Application Validation | askForAppNameValidatesAndReturnsApp()
 	 * */
 	
 	/** Ask for user menu input and verifies its validity **/
@@ -666,7 +734,7 @@ public class Menu
 		boolean askForUserName = true;
 		while(askForUserName)
 		{
-			System.out.println("UserId: ");
+			System.out.println("\nUserId: ");
 			String aUserId = scanText.nextLine();
 
 			if (store.userExists(aUserId))
@@ -835,7 +903,7 @@ public class Menu
 	}
 	
 	/** Ask user for an application, verifies if exists and returns application object **/
-	private App askForAppNameValidatesAndReturnsApp()
+	private App askForAppNameValidatesAndReturnsApp(List<App> aAppList)
 	{
 		boolean askForAppName = true;
 		App app = null;
@@ -845,17 +913,48 @@ public class Menu
 			System.out.print("\nAppName: ");
 			String appName = scanText.nextLine();
 
-			if (store.appExists(appName))
+			if (appExists(appName, aAppList))
 			{
 				askForAppName = false;
-				app = store.findApp(appName);
+				app = findApp(appName, aAppList);
+			}
+			else if(appName.equals("exit"))
+			{
+				return null;
 			}
 			else {
-				System.out.print("Please input a valid application name");
+				System.out.print("Please input a valid application name or 'exit'");
 			}
 		}
 		return app;
 	}
+	
+	/** Verify if application exists **/
+	public boolean appExists(String aAppName, List<App> aAppList)
+	{
+		boolean exists = false;
+		for(App app: aAppList)
+		{
+			if(app.getName().equals(aAppName))
+			{
+				exists = true;
+			}
+		}
+		return exists;
+	}
+	
+	/** Find and return application **/
+	public App findApp(String aAppName, List<App> aAppList)
+	{
+		App application = null;
+		for(App app : aAppList)
+		{
+			if(app.getName().equals(aAppName));
+			application = app;
+		}
+		return application;
+	}
+
 	
 	/* Prints */
 	public void printList(List<?> aList)
@@ -874,5 +973,4 @@ public class Menu
 		}
 	}
 
-	
 }

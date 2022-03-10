@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class Generator
 {
-	private Random rand;
+	private static Random rand;
 	private AppStore store;
 	private String[] userPollType = {"Client", "ClientPremium"};
 
@@ -144,23 +144,6 @@ public class Generator
 		}
 	}
 
-	/**
-	private List<String> chooseUserNameFromFile(String aFileNames)
-	{
-		List<String> users = FileReaderTxt.convertTxtDataNamesToMap(aFileNames);
-
-		namePollSize = users.size();
-
-		int randomIndex = rand.nextInt(namePollSize);
-		String fullname = users.get(randomIndex);
-
-		List<String> splitedFullName = Arrays.asList(fullname.split(" "));
-
-		users.remove(randomIndex);
-
-		return splitedFullName;
-	}
-	**/
 
 	private String generateRandomUserId()
 	{
@@ -212,7 +195,7 @@ public class Generator
 		return app;
 	}
 
-	private AppType randomAppType()
+	public static AppType randomAppType()
 	{
 		return AppType.values()[rand.nextInt(AppType.values().length)];
 	}
@@ -221,8 +204,6 @@ public class Generator
 	{
 		return rand.nextDouble() * rand.nextInt(100) + 1;
 	}
-
-
 
 	private String randomStringGenerator()
 	{

@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class Week
+public class WeekAnalyst
 {
 	private int week;
 	private List<Purchase> weekPurchases;
 	private Map<App, Integer> weekAppSales;
 
-	public Week(Calendar aCalendar)
+	public WeekAnalyst(Calendar aCalendar)
 	{
 		week = aCalendar.get(Calendar.WEEK_OF_YEAR);
 		weekPurchases = new ArrayList<>();

@@ -11,6 +11,7 @@ public class App
 	private String name;
 	private double price;
 	private double weekDiscount;
+	private double monthDiscount;
 	private double score; // Average Score[0:5]
 	private AppType type;
 	private Programmer programmer;
@@ -23,17 +24,11 @@ public class App
 		name = aName;
 		price = aPrice;
 		weekDiscount = 0;
+		monthDiscount = 0;
 		type = aType;
 		programmer = aProgrammer;
 		scores = new ArrayList<>();
 		sales = new HashMap<>();
-	}
-
-	/** Adds a new score to score list and updates the average score **/
-	public void addScore(Score aScore)
-	{
-		scores.add(aScore);
-		updateScore();
 	}
 
 	/*Methods
@@ -41,6 +36,7 @@ public class App
 	 * getPrice()
 	 * registerSale
 	 * timesSold
+	 * addScore
 	 * updateScore
 	 * userScoredApp
 	 */
@@ -49,13 +45,13 @@ public class App
 	@Override
 	public String toString()
 	{
-		return "App: " + name;
+		return name + " : " + String.format("%.2f",getPrice());
 	}
 
 	/**Calculates price considering discount exits **/
 	public double getPrice()
 	{
-		return price * (100 - weekDiscount) / 100;
+		return price * (100 - weekDiscount) / 100 *  (100 - monthDiscount) / 100;
 	}
 	
 	/** register when the application was sold and updates sales counter **/
@@ -75,6 +71,13 @@ public class App
 		return timesSold;
 	}
 
+	/** Adds a new score to score list and updates the average score **/
+	public void addScore(Score aScore)
+	{
+		scores.add(aScore);
+		updateScore();
+	}
+	
 	/** updates the application average score using the score list **/
 	private void updateScore()
 	{
@@ -119,11 +122,17 @@ public class App
 	{
 		return scores;
 	}
-	public double getDiscount()
-	{
+		
+	public double getWeekDiscount() {
 		return weekDiscount;
 	}
+
+	public double getMonthDiscount() {
+		return monthDiscount;
+	}
+
 	
+
 	// Setters
 	public void setName(String aName)
 	{
@@ -149,8 +158,13 @@ public class App
 	{
 		scores = aScores;
 	}
-	public void setDiscount(double aDiscount) {
-		weekDiscount = aDiscount;
-	}	
+	
+	public void setWeekDiscount(double weekDiscount) {
+		this.weekDiscount = weekDiscount;
+	}
+	
+	public void setMonthDiscount(double monthDiscount) {
+		this.monthDiscount = monthDiscount;
+	}
 	
 }

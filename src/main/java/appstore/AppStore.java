@@ -14,29 +14,37 @@ public class AppStore
 {
 	private static Calendar calendar;					// running calendar
 	private static Generator generator;
-	private int discountValueWeek = 15;
-	private static int premimumDiscount = 40;
+	private int discountValueWeek;
+	private int premimumDiscount = 40;
+	private int discountValueMonth = 5;
+	private AppType appTypeWithDiscount;
 	private String name;								// Store name
 	private List<App> apps;								// Applications in the store
-	private Week currentWeek;
+	private WeekAnalyst currentWeek;
+	private int currentMonth;
 	private List<User> users;							// List of all users in the store
 	private List<Purchase> purchases; 					// Purchases made in the store
 	private List<Score> scores; 						// List of all scores given to the applications
-	private List<Week> weeks;
+	private List<WeekAnalyst> weeks;
 
 	// Constructor
 	public AppStore(String aName)
 	{
 		name = aName;
 		calendar = Calendar.getInstance();
+		calendar.setTime(new Date());
 		apps = new ArrayList<>();
-		currentWeek = new Week(calendar);
+		currentWeek = new WeekAnalyst(calendar);
+		currentMonth = calendar.get(Calendar.MONTH);
 		weeks = new ArrayList<>();
 		users = new ArrayList<>();
 		purchases = new ArrayList<>();
 		scores = new ArrayList<>();
 		generator = new Generator(this);
 		discountValueWeek = 15;
+		premimumDiscount = 40;
+		discountValueMonth = 5;
+		appTypeWithDiscount = Generator.randomAppType();
 	}
 
 	/* - Methods -
@@ -62,17 +70,29 @@ public class AppStore
 	{
 		for(int i = 1; i <= aDays; i++)
 		{
+			// when in new Month updates discounts
+			if(calendar.get(Calendar.MONTH) != currentMonth)
+			{
+				
+				appTypeWithDiscount = Generator.randomAppType();
+
+				updateAppMonthlyDiscounts(discountValueMonth);
+				
+				currentMonth = calendar.get(Calendar.MONTH);
+			
+				System.err.println("Month:" + calendar.get(Calendar.MONTH));
+			}
 
 			// when in new week updates discounts
 			if(calendar.get(Calendar.WEEK_OF_YEAR) != currentWeek.weekNumber())
 			{
 				weeks.add(currentWeek);
 
-				currentWeek = new Week(calendar);
+				currentWeek = new WeekAnalyst(calendar);
 
 				System.err.println("Week:" + calendar.get(Calendar.WEEK_OF_YEAR));
 
-				updateAppDiscounts(discountValueWeek);
+				updateAppWeeklyDiscounts(discountValueWeek);
 
 			}
 
@@ -83,7 +103,7 @@ public class AppStore
 			generator.generateDaysData(); // Generates random data for a day
 		}
 	}
-
+	
 	/* AppStore Methods */
 	/** Ads new user to AppStore **/
 	public void addUser(String aType, String aId, String aPassword, int aAge)
@@ -160,16 +180,14 @@ public class AppStore
 
 	}
 
-
-	
-	/** Check applications with discounts **/
-	public List<App> checkAppsWithDiscounts()
+	/** Check applications with Weekly discounts **/
+	public List<App> checkAppsWithWeeklyDiscounts()
 	{
 		List<App> appsWithDiscount = new ArrayList<>();
 
 		for(App app : apps)
 		{
-			if(app.getDiscount() != 0)
+			if(app.getWeekDiscount() != 0)
 			{
 				appsWithDiscount.add(app);
 			}
@@ -177,13 +195,29 @@ public class AppStore
 		return appsWithDiscount;
 	}
 
+	/** Check applications with Monthly discounts **/
+	public List<App> checkAppsWithMonthlyDiscounts()
+	{
+		List<App> appsWithDiscount = new ArrayList<>();
+
+		for(App app : apps)
+		{
+			if(app.getMonthDiscount() != 0)
+			{
+				appsWithDiscount.add(app);
+			}
+		}
+		return appsWithDiscount;
+	}
+
+	
 	/** Value in bag **/
 	public double valueInBag(Bag tempBag, Client aClient)
 	{
 		double purchasevalue = 0;
 		if(aClient instanceof ClientPremium)
 		{
-			purchasevalue = tempBag.valueInBag() * AppStore.premimumDiscount / 100 ;
+			purchasevalue = tempBag.valueInBag() * premimumDiscount / 100 ;
 		}
 		else
 		{
@@ -198,7 +232,6 @@ public class AppStore
 	{
 		return aPurchase.getPurchaseDiscountValue();
 	}
-	
 	
 	
 	/** Designates programmer to develop an application **/
@@ -218,9 +251,6 @@ public class AppStore
 		}
 	}
 
-
-	
-
 	/* Find Methods */
 	/** Verify if User exists **/
 	public boolean userExists(String aId)
@@ -235,19 +265,7 @@ public class AppStore
 		}
 		return exists;
 	}
-	/** Verify if application exists **/
-	public boolean appExists(String aAppName)
-	{
-		boolean exists = false;
-		for(App app: apps)
-		{
-			if(app.getName().equals(aAppName))
-			{
-				exists = true;
-			}
-		}
-		return exists;
-	}
+	
 	/** Returns user object **/
 	public User findUser(String aUserId)
 	{
@@ -261,44 +279,14 @@ public class AppStore
 		}
 		return returnUser;
 	}
-	/** Find and return application **/
-	public App findApp(String aAppName)
-	{
-		App application = null;
-		for(App app : apps)
-		{
-			if(app.getName().equals(aAppName));
-			application = app;
-		}
-		return application;
-	}
-
-
-	/* Application methods */
-
-		
-	
-	
-	
-	
 
 	/** returns list of less sold application X week **/
 	public HashMap<App, Integer> getWeekLessSoldApps(int aWeekNumber, int aNumberOfApps)
 	{
 		return returnWeekObject(aWeekNumber).weekLessSoldApps(apps, aNumberOfApps);
 	}
-
 	
 	
-	/** Give discount to applications**/
-	public void giveDiscount(Set<App> aApps, int discountValue)
-	{
-		for(App app : aApps)
-		{
-			app.setDiscount(discountValue);
-		}
-	}
-
 	/** Returns the list of applications of one chosen Type **/
 	public List<App> listAppsByType(AppType aType)
 	{
@@ -363,15 +351,6 @@ public class AppStore
 		return returnList;
 	}
 
-	/** Reset application discounts of applications **/
-	public void resetAllAppDiscounts()
-	{
-		for(App app : apps)
-		{
-			app.setDiscount(0);
-		}
-	}
-
 	/** Returns global earnings **/
 	public double totalStoreEarnings()
 	{
@@ -383,22 +362,59 @@ public class AppStore
 		return sum;
 	}
 
-	/** update application discounts based on performance of previous week **/
-	private void updateAppDiscounts(int discountValue)
+	
+	/** Give discount to applications**/
+	public void giveWeeklyDiscount(Set<App> aApps, int discountValue)
 	{
-		resetAllAppDiscounts();
-		giveDiscount(this.getWeekLessSoldApps(currentWeek.weekNumber() -1 , 5).keySet(), discountValue);
+		for(App app : aApps)
+		{
+			app.setWeekDiscount(discountValue);
+		}
+	}
+	
+	/** update application discounts based on performance of previous week **/
+	private void updateAppWeeklyDiscounts(int discountValue)
+	{
+		resetAllWeeklyAppDiscounts();
+		giveWeeklyDiscount(this.getWeekLessSoldApps(currentWeek.weekNumber() -1 , 5).keySet(), discountValue);
+	}
+	
+	/** update application discounts based App type Month **/
+	private void updateAppMonthlyDiscounts(int discountValue)
+	{
+		resetAllMonthlyAppDiscounts();
+		for(App app : apps)
+		{
+			if(app.getType() == appTypeWithDiscount) 
+			{
+				app.setMonthDiscount(discountValue);
+			}
+		}
 	}
 
-	
-	
+	/** Reset application discounts of applications **/
+	public void resetAllWeeklyAppDiscounts()
+	{
+		for(App app : apps)
+		{
+			app.setWeekDiscount(0);
+		}
+	}
+	/** Reset application discounts of applications **/
+	public void resetAllMonthlyAppDiscounts()
+	{
+		for(App app : apps)
+		{
+			app.setMonthDiscount(0);
+		}
+	}
 	
 	/* Week Methods */
 	/** Returns week object **/
-	public Week returnWeekObject(int aWeekNumber)
+	public WeekAnalyst returnWeekObject(int aWeekNumber)
 	{
-		Week returnWeek = null;
-		for(Week week: weeks)
+		WeekAnalyst returnWeek = null;
+		for(WeekAnalyst week: weeks)
 		{
 			if(week.weekNumber() == aWeekNumber)
 			{
@@ -413,6 +429,7 @@ public class AppStore
 		return returnWeekObject(aWeekNumber).getWeekPurchases();
 
 	}
+
 
 	
 	// Setters
@@ -436,6 +453,16 @@ public class AppStore
 	{
 		discountValueWeek = aDdiscountValueWeek;
 	}
+	public void setDiscountValueMonth(int discountValueMonth) {
+		this.discountValueMonth = discountValueMonth;
+	}
+	public void setAppTypeWithDiscount(AppType appTypeWithDiscount) {
+		this.appTypeWithDiscount = appTypeWithDiscount;
+	}
+	public void setCurrentMonth(int currentMonth) {
+		this.currentMonth = currentMonth;
+	}
+
 	//Getters
 	public String getName()
 	{
@@ -460,13 +487,25 @@ public class AppStore
 	public int getDiscountValueWeek() {
 		return discountValueWeek;
 	}
-	public Week getCurrentWeek()
+	public int getPremimumDiscount() {
+		return premimumDiscount;
+	}
+	public int getDiscountValueMonth() {
+		return discountValueMonth;
+	}
+	public WeekAnalyst getCurrentWeek()
 	{
 		return currentWeek;
 	}	
-	public List<Week> getWeeks()
+	public int getCurrentMonth() {
+		return currentMonth;
+	}
+	public List<WeekAnalyst> getWeeks()
 	{
 		return weeks;
+	}
+	public AppType getAppTypeWithDiscount() {
+		return appTypeWithDiscount;
 	}
 	/** Returns ClientPremium list **/
 	public List<Programmer> getProgrammersList()
