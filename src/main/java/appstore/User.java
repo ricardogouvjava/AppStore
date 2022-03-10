@@ -63,25 +63,13 @@ abstract class User
 	
 	/** Add application to list **/
 	public void addApp(App aApp, int aQuantity)
-	{
-		
-		if(!apps.containsKey(aApp))
-		{
-			apps.putIfAbsent(aApp, aQuantity);
-		}
-		
-		else 
-		{
-			apps.put(aApp, apps.get(aApp) + aQuantity);
-		}
+	{	
+		apps.merge(aApp, aQuantity, (v1 , v2) -> v1 + v2 );
 	}
 	
-	public void addShoppingBagToAppsBought(Bag aBag)
+	public void addApps(Bag aBag)
 	{
-		for (Map.Entry<App, Integer> entry : aBag.getBagItems().entrySet())
-		{
-			addApp(entry.getKey(), entry.getValue());
-		}	
+		aBag.getBagItems().forEach((key, value) -> addApp(key , value));
 	}
 	
 	/** Add Score to list **/

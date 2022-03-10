@@ -1,6 +1,7 @@
 package appstore;
 
-public class ClientPremium extends Client{
+public class ClientPremium extends Client
+{
 
 	public ClientPremium(String aFirstName, String aLastName, int aAge)
 	{
@@ -8,5 +9,11 @@ public class ClientPremium extends Client{
 
 	}
 	
+	
+	/** Updates value spent **/
+	public void updateSpendings(Bag aShoppingBag)
+	{	
+		setSpendings(getSpendings() + aShoppingBag.valueInBag() * AppStore.getPremimumDiscount());
+	}
 	
 }

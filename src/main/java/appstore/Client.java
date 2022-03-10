@@ -14,7 +14,7 @@ public class Client extends User
 	{
 		super(aId, aPassword, aAge);
 		purchases = new ArrayList<Purchase>();
-		spendings = 0;
+		setSpendings(0);
 	}
 
 	// Methods
@@ -25,9 +25,9 @@ public class Client extends User
 		
 		this.purchases.add(purchase);
 		
-		super.addShoppingBagToAppsBought(aShoppingBag); // Update applications owned
+		super.addApps(aShoppingBag); // Update applications list
 
-		this.updateSpendings(aShoppingBag);
+		updateSpendings(aShoppingBag);
 		
 		return purchase;
 	}
@@ -35,7 +35,7 @@ public class Client extends User
 	/** Updates value spent **/
 	private void updateSpendings(Bag aShoppingBag)
 	{	
-		spendings += aShoppingBag.valueInBag();
+		setSpendings(getSpendings() + aShoppingBag.valueInBag());
 	}
 	
 	/** Allows Client to give a score to an application **/
@@ -67,8 +67,12 @@ public class Client extends User
 	{
 		return purchases;
 	}
+
+	
 		
 	// Setters 
-	
+	public void setSpendings(double spendings) {
+		this.spendings = spendings;
+	}
 }
 

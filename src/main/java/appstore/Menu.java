@@ -446,8 +446,8 @@ public class Menu
 			break;
 	
 		case 1:
-			System.out.print("\nApps in the Store [AppName:Price]: " + store.getAppsList());
-			System.out.print("\nApps in the Bag: " +  shoppingBag);
+			System.out.println("Apps in the Store [AppName:Price]: " + store.getAppsList());
+			System.out.println("Apps in the Bag: " +  shoppingBag.getBagItems().entrySet());
 			App app = askForAppNameValidatesAndReturnsApp();
 			
 			System.out.println("\nNumber of licences: ");
@@ -460,6 +460,7 @@ public class Menu
 	
 		case 2:
 			System.out.println("The value of goods in the bag is:" + shoppingBag.valueInBag());
+			System.out.println("With premium:" + shoppingBag.valueInBag() * AppStore.getPremimumDiscount());
 			buyAppMenu(aClient);
 			break;
 	

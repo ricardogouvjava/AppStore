@@ -21,7 +21,8 @@ public class AppStore
 	private List<Purchase> purchases; 					// Purchases made in the store
 	private List<Score> scores; 						// List of all scores given to the applications
 	private static Generator generator;
-	private int discountValueWeek = 15;
+	private static int discountValueWeek = 15;
+	private static int premimumDiscount = 40;
 	
 	
 	public AppStore(String aName)
@@ -35,6 +36,8 @@ public class AppStore
 		purchases = new ArrayList<Purchase>();
 		scores = new ArrayList<Score>();
 		generator = new Generator(this);
+		discountValueWeek = 15;
+		premimumDiscount = 40;
 	}
 
 	/* Methods :
@@ -51,7 +54,7 @@ public class AppStore
 	/** Moves local date X amount of days forward **/
 	public void forwardDateXDays(int aDays) 
 	{		
-		for(int i = 0; i <= aDays; i++)
+		for(int i = 1; i <= aDays; i++)
 		{
 			
 			// when in new week updates discounts
@@ -81,28 +84,28 @@ public class AppStore
 		if (aType.equals("Client"))
 		{
 			Client client = new Client(aId, aPassword, aAge);
-			System.out.println("Client added: " + client);
+			System.out.println("Client added >> " + client);
 			users.add(client);
 		}
 		
 		else if (aType.equals("ClientPremium"))
 		{
 			ClientPremium clientPremium = new ClientPremium(aId, aPassword, aAge);
-			System.out.println("ClientPremium added: " + clientPremium);
+			System.out.println("ClientPremium added >> " + clientPremium);
 			users.add(clientPremium);	
 		}
 		
 		else if (aType.equals("Programmer"))
 		{
 			Programmer programmer = new Programmer(aId, aPassword, aAge);
-			System.out.println("Programmer: " + programmer);
+			System.out.println("Programmer added >>: " + programmer);
 			users.add(programmer);	
 		}
 		
 		else if (aType.equals("Administrator"))
 		{
 			Administrator administrator = new Administrator(aId, aPassword, aAge);
-			System.out.println("Administrator created");
+			System.out.println("Administrator added >>");
 			users.add(administrator);	
 		}
 
@@ -134,7 +137,8 @@ public class AppStore
 				entry.getKey().registerSale(calendar.getTime(), entry.getValue());
 			}
 			
-			System.out.println("Purchase made: " + purchase);
+			System.out.println("\nPurchase made: "
+							+ "\n" + purchase);
 			purchases.add(purchase);
 			currentWeek.addPurchase(purchase);
 		}
@@ -172,6 +176,7 @@ public class AppStore
 	public void addScore(Score aScore)
 	{
 		scores.add(aScore);
+		System.out.println("\nScore added:" + aScore);
 	}
 
 		
@@ -218,7 +223,6 @@ public class AppStore
 		giveDiscount(this.getWeekLessSoldApps(currentWeek.weekNumber() -1 , 5).keySet(), discountValue);
 	}
 		
-	
 	
 	/* Purchase Methods */
 			
@@ -442,6 +446,16 @@ public class AppStore
 		scores = aScores;
 	}
 
+	
+	
+	public static void setDiscountValueWeek(int discountValueWeek) {
+		AppStore.discountValueWeek = discountValueWeek;
+	}
+
+	public static void setPremimumDiscount(int premimumDiscount) {
+		AppStore.premimumDiscount = premimumDiscount;
+	}
+
 	// Getters
 	public String getName() 
 	{
@@ -478,6 +492,15 @@ public class AppStore
 	public List<Week> getWeeks() 
 	{
 		return weeks;
+	}
+
+	
+	public static int getDiscountValueWeek() {
+		return discountValueWeek;
+	}
+
+	public static int getPremimumDiscount() {
+		return premimumDiscount;
 	}
 
 	

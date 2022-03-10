@@ -19,6 +19,8 @@ public class Programmer extends User
 		addApp(app, 0);
 		return app;
 	}
+	
+	
 			
 	public double getEarnings(AppStore aStore)
 	{	

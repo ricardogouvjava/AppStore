@@ -1,7 +1,6 @@
 package appstore;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Bag
@@ -31,49 +30,16 @@ public class Bag
 	/** Add application to bag **/
 	public void putInBag(App aApp, int aQuantity)
 	{
-		if(!bagItems.containsKey(aApp))
-		{
-			bagItems.putIfAbsent(aApp, aQuantity);
-		}
-		
-		else 
-		{
-			bagItems.put(aApp, bagItems.get(aApp) + aQuantity);
-		}
-	}
-
-	/** Check if application already in bag **/
-	public boolean isAppInBag(App aApp)
-	{
-		boolean appInBag = false;
-		
-		
-		
-		for(App app : bagItems.keySet())
-		{
-			if(app.getName().equals(aApp.getName()))
-			{
-				appInBag = true;
-			}
-		}
-		
-		return appInBag;
-	}
-	
-	/** Returns list of applications in the bag **/ 
-	public List<App> getAppsInBag()
-	{
-		return List.copyOf(bagItems.keySet());
-		
+		bagItems.merge(aApp, aQuantity, (v1, v2) -> v1 + v2);
 	}
 	
 	/** Calculates the value in the shopping bag **/
 	public double valueInBag()
 	{
 		double sum = 0;
-		for(Map.Entry<App, Integer> set : bagItems.entrySet()) 
+		for(Map.Entry<App, Integer> entry : bagItems.entrySet()) 
 		{
-			sum += set.getKey().getPrice() * set.getValue();
+			sum += entry.getKey().getPrice() * entry.getValue();
 		}
 		return sum;
 	}
