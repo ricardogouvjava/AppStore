@@ -41,16 +41,7 @@ public class WeekAnalyst
 		return sold;
 	}
 
-	public Map<App, Integer> getAppSales()
-	{
-		return weekAppSales;
-	}
-
-	public List<Purchase> getWeekPurchases()
-	{
-		return weekPurchases;
-	}
-
+	
 	private void updateWeekAppSales(Purchase aPurchase)
 	{
 		// Checks if key exists and sums value
@@ -92,9 +83,18 @@ public class WeekAnalyst
 	}
 
 	// Getter
-	public int weekNumber()
+	public int getWeekNumber()
 	{
 		return week;
+	}
+	public Map<App, Integer> getAppSales()
+	{
+		return weekAppSales;
+	}
+
+	public List<Purchase> getWeekPurchases()
+	{
+		return weekPurchases;
 	}
 
 	// Setters

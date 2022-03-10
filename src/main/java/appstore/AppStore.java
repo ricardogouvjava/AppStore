@@ -84,7 +84,7 @@ public class AppStore
 			}
 
 			// when in new week updates discounts
-			if(calendar.get(Calendar.WEEK_OF_YEAR) != currentWeek.weekNumber())
+			if(calendar.get(Calendar.WEEK_OF_YEAR) != currentWeek.getWeekNumber())
 			{
 				weeks.add(currentWeek);
 
@@ -376,7 +376,7 @@ public class AppStore
 	private void updateAppWeeklyDiscounts(int discountValue)
 	{
 		resetAllWeeklyAppDiscounts();
-		giveWeeklyDiscount(this.getWeekLessSoldApps(currentWeek.weekNumber() -1 , 5).keySet(), discountValue);
+		giveWeeklyDiscount(this.getWeekLessSoldApps(currentWeek.getWeekNumber() -1 , 5).keySet(), discountValue);
 	}
 	
 	/** update application discounts based App type Month **/
@@ -416,7 +416,7 @@ public class AppStore
 		WeekAnalyst returnWeek = null;
 		for(WeekAnalyst week: weeks)
 		{
-			if(week.weekNumber() == aWeekNumber)
+			if(week.getWeekNumber() == aWeekNumber)
 			{
 				returnWeek = week;
 			}

@@ -593,7 +593,7 @@ public class Menu
 		case 6:
 			// Prints application sales by week
 			System.out.println("Wanted week: ");
-			int week =  askInputIntAndValidate(0, store.getCurrentWeek().weekNumber());
+			int week =  askInputIntAndValidate(0, store.getCurrentWeek().getWeekNumber());
 			System.out.println("The sold applications are: ");
 			printMap(store.getWeekSales(week));
 			menuAdministrator(aAdministrator);
@@ -602,7 +602,7 @@ public class Menu
 		case 7:
 			// finds less sold applications in a defined week
 			System.out.println("Wanted week: ");
-			week =  askInputIntAndValidate(0, store.getCurrentWeek().weekNumber());
+			week =  askInputIntAndValidate(0, store.getCurrentWeek().getWeekNumber() -1);
 			System.out.println("Number of Apps: ");
 			int appnumber =  askInputIntAndValidate(0, store.returnWeekObject(week).getAppSales().size());
 
@@ -626,7 +626,7 @@ public class Menu
 		case 9:
 			// Lists all purchases in a certain week of the year
 			System.out.println("Wanted week: ");
-			int weekNumber =  askInputIntAndValidate(0, store.getCurrentWeek().weekNumber());
+			int weekNumber =  askInputIntAndValidate(0, store.getCurrentWeek().getWeekNumber());
 			List<Purchase> purchaseList = store.getWeekPurchases(weekNumber);
 			for(Purchase purchase : purchaseList)
 			{
