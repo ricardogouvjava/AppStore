@@ -30,16 +30,28 @@ public class Purchase
 
 	public double getPurchaseValue() 
 	{
-		return purchaseBag.valueInBag() *(100 - client.getDiscount() /100) ;
+		return purchaseBag.valueInBag() *(100 - getClientDiscount() /100) ;
 	}
 	
 	/* */
 	public double getPurchaseDiscountValue()
 	{		
-		return purchaseBag.valueInBag() * client.getDiscount()  / 100 ;
+		return purchaseBag.valueInBag() * getClientDiscount()  / 100 ;
 	}
 	
 
+	public double getClientDiscount() 
+	{
+		double discount = client.getAccountDiscount();
+		
+		// checks state of incentive discount
+		if (client.hasIncentiveDiscount())
+		{
+			discount += AppStore.userIcentiveDiscount;
+		}
+		return discount;
+	}
+	
 	// Getters
 	public Client getClientName()
 	{

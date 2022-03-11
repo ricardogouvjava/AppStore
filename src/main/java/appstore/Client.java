@@ -6,9 +6,11 @@ import java.util.List;
 
 public class Client extends User
 {
-	private int discount;
+	private int accountDiscount;
 	private List<Purchase> purchases;
 	private double spendings;
+	private boolean hasIncentiveDiscount; //when true applies incentive discount for having brought a new user
+	private List<Client> invitedClients;
 
 	// Constructor
 	public Client(String aId, String aPassword, int aAge)
@@ -16,7 +18,9 @@ public class Client extends User
 		super(aId, aPassword, aAge);
 		purchases = new ArrayList<>();
 		spendings = 0;
-		discount = 0;
+		accountDiscount = 0;
+		hasIncentiveDiscount = false;
+		invitedClients = new ArrayList<Client>();
 	}
 
 	// Methods
@@ -24,21 +28,21 @@ public class Client extends User
 	public Purchase buy(Bag aShoppingBag, Calendar aCalendar)
 	{
 		Purchase purchase = new Purchase(this, aShoppingBag, aCalendar.getTime());
-
+		
+		// adds purchase to list
 		this.purchases.add(purchase);
 
-		super.addApps(aShoppingBag); // Update applications list
+		// Update applications bought list
+		super.addApps(aShoppingBag); 
 
-		updateSpendings(aShoppingBag);
-
+		// updates spending made by client
+		updateSpending(purchase.getPurchaseValue());
+		
+		// removes incentive discount
+		setHasIncentiveDiscount(false);
+		
 		return purchase;
 	}
-
-	public List<Purchase> getPurchases()
-	{
-		return purchases;
-	}
-
 
 	/** Allows Client to give a score to an application **/
 	public void giveScore(App aApp, double aScoreValue, String aComment, AppStore aStore)
@@ -59,32 +63,73 @@ public class Client extends User
 		}
 	}
 
-	
-
 	/** Updates value spent **/
-	private void updateSpendings(Bag aShoppingBag)
+	private void updateSpending(double aValue)
 	{
-		setSpendings(getSpendings() + aShoppingBag.valueInBag());
+		setSpendings(getSpendings() + aValue);
+	}
+
+	/** Allow User to refer a client to Application store  and gain a bonus discount**/
+	public void inviteClient(AppStore aAppstore)
+	{		
+		// Creates a random user for functionality
+		// alternatively go to user menu creation
+		invitedClients.add(AppStore.generator.generateReturnClient());
+		
+		// incentive bonus discount to true
+		setHasIncentiveDiscount(true);
 	}
 	
-
+	
 	// Getters
 	public double getSpendings()
 	{
 		return spendings;
 	}
 
-	public int getDiscount() {
-		return discount;
+	public boolean hasIncentiveDiscount()
+	{
+		return hasIncentiveDiscount;
 	}
 
+	public int getAccountDiscount() 
+	{
+		return accountDiscount;
+	}
+
+	public List<Purchase> getPurchases()
+	{
+		return purchases;
+	}
+	
+	public List<Client> getInvitedClients() {
+		return invitedClients;
+	}
+
+
 	// Setters
+	
+
 	public void setSpendings(double spendings) {
 		this.spendings = spendings;
 	}
 
-	public void setDiscount(int discount) {
-		this.discount = discount;
+	public void setPurchases(List<Purchase> purchases) {
+		this.purchases = purchases;
+	}
+
+	public void setAccountDiscount(int discount)
+	{
+		this.accountDiscount = discount;
 		}
+
+	public void setHasIncentiveDiscount(boolean aHasIncentiveDiscount) 
+	{
+		this.hasIncentiveDiscount = aHasIncentiveDiscount;
+	}
+
+	public void setInvitedClients(List<Client> invitedClients) {
+		this.invitedClients = invitedClients;
+	}
 }
 

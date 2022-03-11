@@ -21,6 +21,7 @@ public class Generator
 
 	public void generateDaysData()
 	{
+		/** User Generation **/
 		if(store.getUsersList().size() < 1000)
 		{
 			int generateClients = rand.nextInt(3) + 1;
@@ -30,7 +31,18 @@ public class Generator
 
 			}
 		}
-
+		
+		/** User invite **/ 
+		if(store.getUsersList().size() < 1000)
+		{
+			int generateClients = rand.nextInt(3) + 1;
+			for(int i = 0 ; i <=  generateClients ; i++)
+			{
+				pickRandomClient().inviteClient(store);
+			}
+		}
+				
+		/** Programmer Generation **/ 
 		if(store.getProgrammersList().size() < 100)
 		{
 			int generateProgrammers = rand.nextInt(2) + 1;
@@ -39,6 +51,8 @@ public class Generator
 				generateProgrammer();
 			}
 		}
+
+		/** Application Generation **/
 		if (store.getAppsList().size() < 100)
 		{
 			int generateApps = rand.nextInt(store.getProgrammersList().size() % 5 + 1);
@@ -48,14 +62,14 @@ public class Generator
 			}
 		}
 
-
-
+		/** Purchase Generation **/
 		int generatePurchases = (int) (rand.nextInt(store.getUsersList().size()) * 0.08 + 1);
 		for(int i = 0 ; i <=  generatePurchases ; i++)
 		{
 			generatePurchase();
 		}
 
+		/** Score Generation **/
 		if(store.getScores().size() < store.getPurchases().size() * 0.25)
 		{
 			int generateScores = (int) (store.getPurchases().size() * 0.2);
@@ -67,11 +81,79 @@ public class Generator
 
 	}
 
+	/** User Generator **/
+	public void generateUser()
+	{
+		String randomType = userPollType[rand.nextInt(userPollType.length)];
+		store.addUser(randomType, generateRandomUserId(), generateRandomPassword(), generateRandomAge());
+	}
+	
+	/** Generates client and returns object 
+	 * @return **/
+	public Client generateReturnClient()
+	{
+		Client client = null;
+		while(client == null)
+		{
+		
+			String randomType = userPollType[rand.nextInt(userPollType.length)];
+			
+			if(randomType.equals("Client"))
+			{
+				client = new Client(generateRandomUserId(), generateRandomPassword(), generateRandomAge());
+			}
+			else if((randomType.equals("ClientPremium")))
+				{
+				client = new ClientPremium(generateRandomUserId(), generateRandomPassword(), generateRandomAge(), store.getPremimumDiscount());
+				}
+		}	
+		System.out.print(client);
+		return client;		
+	}
+	
+
+	/** Programmer Generator**/
 	public void generateProgrammer()
 	{
 		store.addUser("Programmer", generateRandomUserId(), generateRandomPassword(), generateRandomAge());
 	}
+	
+	/** UserId Generator**/
+	private String generateRandomUserId()
+	{
+		return randomStringGenerator() + randomStringGenerator();
+	}
 
+	/** Random String Generator **/
+	private String randomStringGenerator()
+	{
+		String[] Beginning = { "Kr", "Ca", "Ra", "Mrok", "Cru",
+				"Ray", "Bre", "Zed", "Drak", "Mor", "Jag", "Mer", "Jar", "Mjol",
+				"Zork", "Mad", "Cry", "Zur", "Creo", "Azak", "Azur", "Rei", "Cro",
+				"Mar", "Luk" };
+		String[] Middle = { "air", "ir", "mi", "sor", "mee", "clo",
+				"red", "cra", "ark", "arc", "miri", "lori", "cres", "mur", "zer",
+				"marac", "zoir", "slamar", "salmar", "urak" };
+		String[] End = { "d", "ed", "ark", "arc", "es", "er", "der",
+				"tron", "med", "ure", "zur", "cred", "mur" };
+
+		return Beginning[rand.nextInt(Beginning.length)] + Middle[rand.nextInt(Middle.length)] +
+				   End[rand.nextInt(End.length)];
+	}
+
+	/** Random Age Generator **/
+	private int generateRandomAge()
+	{
+		return rand.nextInt(72) + 18;
+	}
+
+	/** Random Password Generator **/
+	private String generateRandomPassword()
+	{
+		return randomStringGenerator() + randomStringGenerator();
+	}
+
+	/** Application Generator **/
 	public void generateProgrammerDesignation()
 	{
 		List<Programmer> tempList = store.getProgrammersList();
@@ -81,7 +163,7 @@ public class Generator
 		store.designateProgrammer(generateRandomUserId(), randomPriceGenerator(), randomAppType(), programmer);
 	}
 
-	/** Generates purchases and checkout**/
+	/** Purchases Generator **/
 	public void generatePurchase()
 	{
 		Client randomClient = pickRandomClient();
@@ -90,12 +172,7 @@ public class Generator
 		store.checkout(randomClient, bag);
 	}
 
-
-	private int generateRandomAge()
-	{
-		return rand.nextInt(72) + 18;
-	}
-
+	/** Purchase Bag Generator **/
 	private Bag generateRandomBag(int maxPurchaseItems)
 	{
 		int numberApps = rand.nextInt(maxPurchaseItems) + 1;
@@ -110,11 +187,30 @@ public class Generator
 		return tempBag;
 	}
 
-	private String generateRandomPassword()
+	/** Random application chooser **/
+	private App pickRandomApp()
 	{
-		return randomStringGenerator() + randomStringGenerator();
+		return store.getAppsList().get(rand.nextInt(store.getAppsList().size()));
+
 	}
 
+	/** Random Client chooser **/
+	private Client pickRandomClient()
+	{
+		Client client= null;
+		try
+		{
+			int randomClientIndex = rand.nextInt(store.getClientsList().size());
+			client = store.getClientsList().get(randomClientIndex);
+		}
+		catch(Exception e)
+		{
+			System.out.print("No client found" + e.getMessage());
+		}
+		return client;
+	}
+
+	/** Score Generator **/
 	private void generateRandomScore()
 	{
 		Client client = null;
@@ -144,44 +240,7 @@ public class Generator
 		}
 	}
 
-
-	private String generateRandomUserId()
-	{
-		return randomStringGenerator() + randomStringGenerator();
-	}
-
-	public void generateUser()
-	{
-		String randomType = userPollType[rand.nextInt(userPollType.length)];
-		store.addUser(randomType, generateRandomUserId(), generateRandomPassword(), generateRandomAge());
-	}
-
-	//Getter & Setters
-	public AppStore getStore() {
-		return store;
-	}
-
-	private App pickRandomApp()
-	{
-		return store.getAppsList().get(rand.nextInt(store.getAppsList().size()));
-
-	}
-
-	private Client pickRandomClient()
-	{
-		Client client= null;
-		try
-		{
-			int randomClientIndex = rand.nextInt(store.getClientsList().size());
-			client = store.getClientsList().get(randomClientIndex);
-		}
-		catch(Exception e)
-		{
-			System.out.print("No client found" + e.getMessage());
-		}
-		return client;
-	}
-
+	/** Random RandomNotScoredApp chooser **/
 	private App pickRandomNotScoredApp(Client client)
 	{
 		App app = null;
@@ -195,35 +254,24 @@ public class Generator
 		return app;
 	}
 
+	/** Random AppType chooser **/
 	public static AppType randomAppType()
 	{
 		return AppType.values()[rand.nextInt(AppType.values().length)];
 	}
 
+	/** Random Price Generator **/
 	private double randomPriceGenerator()
 	{
 		return rand.nextDouble() * rand.nextInt(100) + 1;
 	}
 
-	private String randomStringGenerator()
-	{
-		String[] Beginning = { "Kr", "Ca", "Ra", "Mrok", "Cru",
-				"Ray", "Bre", "Zed", "Drak", "Mor", "Jag", "Mer", "Jar", "Mjol",
-				"Zork", "Mad", "Cry", "Zur", "Creo", "Azak", "Azur", "Rei", "Cro",
-				"Mar", "Luk" };
-		String[] Middle = { "air", "ir", "mi", "sor", "mee", "clo",
-				"red", "cra", "ark", "arc", "miri", "lori", "cres", "mur", "zer",
-				"marac", "zoir", "slamar", "salmar", "urak" };
-		String[] End = { "d", "ed", "ark", "arc", "es", "er", "der",
-				"tron", "med", "ure", "zur", "cred", "mur" };
-
-		return Beginning[rand.nextInt(Beginning.length)] + Middle[rand.nextInt(Middle.length)] +
-				   End[rand.nextInt(End.length)];
+	//Getter & Setters
+	public AppStore getStore() {
+		return store;
 	}
-
 	public void setStore(AppStore store) {
 		this.store = store;
 	}
-
 
 }

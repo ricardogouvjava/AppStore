@@ -67,6 +67,8 @@ public class Menu
 	 *    4.12 List all ClientPremium
 	 *    4.13 List all Programmers
 	 *    4.14 List applications off User
+	 *    4.16 Users with 'Incentive' Discount
+	 *    4.17 Clients invited by Client
 	 */
 
 	/** Main menu options **/
@@ -286,6 +288,7 @@ public class Menu
 				+ "\n  (4) List application that score was given"
 				+ "\n  (5) List application that scores was not given"
 				+ "\n  (6) List scores given to application"
+				+ "\n  (7) Pass to Premium"
 				+ "\n");
 
 		switch (askInputIntAndValidate(0,7))
@@ -352,8 +355,48 @@ public class Menu
 			printList(app.getScores());
 			menuClient(aClient);
 			break;
-
-
+		
+		case 7:
+			// Pass to premium
+			
+			/** Como converter de uma classe para outra? **/
+			
+			boolean askForPassword = true;
+			String userPassword = "";
+			while(askForPassword)
+			{
+				System.out.print("\nPassword: ");
+				userPassword = scanText.nextLine();
+				if (aClient.isPasswordCorrect(userPassword))
+				{
+					askForPassword = false;
+					break;
+				}
+				else if(userPassword.equals("exit"))
+				{
+					menuClient(aClient);
+				}
+				else
+				{
+					System.out.print("Password not coorect!"
+							+ "Input password or 'exit'");
+				}
+			}
+			String id = aClient.getId();
+			int age = aClient.getAge();
+			List<Purchase> purchases = aClient.getPurchases();
+			List<Client> invitedclients = aClient.getInvitedClients();
+			double spendings = aClient.getSpendings();
+			
+			store.getUsersList().remove(aClient);
+			
+			store.addUser("ClientPremium", id, userPassword, age);
+			
+			ClientPremium clientPremium = (ClientPremium) store.findUser(id);
+			clientPremium.setInvitedClients(invitedclients);
+			clientPremium.setSpendings(spendings);
+			clientPremium.setPurchases(purchases);
+			
 
 		default:
 			// Ask again for input!!
@@ -545,9 +588,11 @@ public class Menu
 				+ "\n (13) List all Programmers"
 				+ "\n (14) List applications off User"
 				+ "\n (15) Applications with Monthly discount / Type"
+				+ "\n (16) Users with 'Incentive' Discount"
+				+ "\n (17) Clients invited by client"
 				+ "\n");
 
-		switch (askInputIntAndValidate(0, 15))
+		switch (askInputIntAndValidate(0, 17))
 		{
 
 		case 0:
@@ -610,8 +655,6 @@ public class Menu
 			printMap(store.getWeekLessSoldApps(week, appnumber));
 			menuAdministrator(aAdministrator);
 			break;
-
-
 
 		case 8:
 			// Lists all the purchases in the AppStore
@@ -676,6 +719,35 @@ public class Menu
 			menuAdministrator(aAdministrator);
 			break;
 
+		case 16:
+			System.out.println("Clients with Incentive discount: ");
+			if (store.clienstWithIncentiveDiscount().size() > 0)
+			{
+				printList(store.clienstWithIncentiveDiscount());
+			}
+			else
+			{
+				System.out.println("None");
+			}
+			menuAdministrator(aAdministrator);
+			break;
+			
+		case 17:
+			// prints clients invited by client
+			System.out.println("Find clients invited introduce: ");
+			Client user = (Client) askForUserIdValidatesAndReturnsUser();
+			
+			System.out.println("Clients invited: ");
+			if (store.clientsInvited(user).size() > 0)
+			{
+				printList(store.clientsInvited(user));
+			}
+			else
+			{
+				System.out.println("None");
+			}
+			menuAdministrator(aAdministrator);
+			break;
 
 		default:
 			// Ask again for input!!
@@ -828,9 +900,9 @@ public class Menu
 		boolean askForPassword = true;
 		while(askForPassword)
 		{
-			System.out.print("\nUserId: ");
+			System.out.print("\nPassword: ");
 			userPassword = scanText.nextLine();
-			if (userId.length() > 4 && !store.userExists(userId))
+			if (userPassword.length() > 4 )
 			{
 				askForPassword = false;
 			}
@@ -869,14 +941,14 @@ public class Menu
 		{
 			System.out.print("\nUserId: ");
 			String userId = scanText.nextLine();
-			if (userId.length() > 4 && !store.userExists(userId))
+			if (store.userExists(userId))
 			{
 				askForId = false;
 				user = store.findUser(userId);
 
 			}
 			else {
-				System.out.print("UserId in use or not valid!");
+				System.out.print("UserId not valid!");
 			}
 		}
 		return user;

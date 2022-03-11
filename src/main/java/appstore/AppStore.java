@@ -12,11 +12,12 @@ import java.util.stream.Collectors;
 
 public class AppStore
 {
-	private static Calendar calendar;					// running calendar
-	private static Generator generator;
-	private int discountValueWeek;
-	private int premimumDiscount = 40;
-	private int discountValueMonth = 5;
+	static Calendar calendar;					// running calendar
+	static Generator generator;
+	static int discountValueWeek = 15;
+	static int userIcentiveDiscount = 5;
+	static int premimumDiscount = 40;
+	static int discountValueMonth = 5;
 	private AppType appTypeWithDiscount;
 	private String name;								// Store name
 	private List<App> apps;								// Applications in the store
@@ -41,9 +42,6 @@ public class AppStore
 		purchases = new ArrayList<>();
 		scores = new ArrayList<>();
 		generator = new Generator(this);
-		discountValueWeek = 15;
-		premimumDiscount = 40;
-		discountValueMonth = 5;
 		appTypeWithDiscount = Generator.randomAppType();
 	}
 
@@ -379,7 +377,7 @@ public class AppStore
 		giveWeeklyDiscount(this.getWeekLessSoldApps(currentWeek.getWeekNumber() -1 , 5).keySet(), discountValue);
 	}
 	
-	/** update application discounts based App type Month **/
+	/** update application discounts based Application type Month **/
 	private void updateAppMonthlyDiscounts(int discountValue)
 	{
 		resetAllMonthlyAppDiscounts();
@@ -431,6 +429,29 @@ public class AppStore
 	}
 
 
+	/** Clients with Incentive Discount */
+	public List<Client> clienstWithIncentiveDiscount()
+	{
+		List<Client> clientsWithIcentive = new ArrayList<Client>();
+		for(User user: users)
+		{
+			if(user instanceof Client)
+			{
+				if(((Client) user).hasIncentiveDiscount())
+				{
+					clientsWithIcentive.add((Client)user);	
+				}
+			}
+		}
+		return clientsWithIcentive;
+	}
+	
+	/** Clients Invited by Client **/
+	public List<Client> clientsInvited(Client aClient)
+	{
+		return aClient.getInvitedClients();
+	}
+	
 	
 	// Setters
 	public void setName(String aName)
@@ -445,17 +466,6 @@ public class AppStore
 	{
 		users = aUsers;
 	}
-	public void setPremimumDiscount(int aPremimumDiscount)
-	{
-		premimumDiscount = aPremimumDiscount;
-	}
-	public void setDiscountValueWeek(int aDdiscountValueWeek)
-	{
-		discountValueWeek = aDdiscountValueWeek;
-	}
-	public void setDiscountValueMonth(int discountValueMonth) {
-		this.discountValueMonth = discountValueMonth;
-	}
 	public void setAppTypeWithDiscount(AppType appTypeWithDiscount) {
 		this.appTypeWithDiscount = appTypeWithDiscount;
 	}
@@ -463,6 +473,7 @@ public class AppStore
 		this.currentMonth = currentMonth;
 	}
 
+	
 	//Getters
 	public String getName()
 	{

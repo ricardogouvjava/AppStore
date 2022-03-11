@@ -47,23 +47,7 @@ abstract class User
 		scores.add(aScore);
 		updateScore();
 	}
-
-	/** Encrypt password  **/
-	private String encryptPassword(String aPassword)
-	{
-	    return encryptor.encryptPassword(aPassword);
-	}
-
-	public int getAge()
-	{
-		return age;
-	}
-
-	public Map<App, Integer> getApps()
-	{
-		return apps;
-	}
-
+	
 	/** return list of applications not scored **/
 	public List<App> getAppsNotScored()
 	{
@@ -84,21 +68,12 @@ abstract class User
 		return scoredApps;
 	}
 
-	public double getAverageScore()
+	/** Encrypt password  **/
+	private String encryptPassword(String aPassword)
 	{
-		return averageScore;
+	    return encryptor.encryptPassword(aPassword);
 	}
 
-	// Getters
-	public String getId()
-	{
-		return id;
-	}
-
-	public List<Score> getScores()
-	{
-		return scores;
-	}
 
 	/** Compare password **/
 	public boolean isPasswordCorrect(String userInput)
@@ -118,27 +93,6 @@ abstract class User
         return passwordCorrect;
 	}
 
-	// Setters
-	public void setAge(int aAge)
-	{
-		age = aAge;
-	}
-
-	public void setEncyptedPassword(String aPassword)
-	{
-		encyptedPassword = encryptPassword(encyptedPassword);
-	}
-
-
-	public void setPassword(String aPassword)
-	{
-		encyptedPassword = encryptPassword(aPassword);
-	}
-
-	public void setUserId(String aUserId)
-	{
-		id = aUserId;
-	}
 
 	//Methods
 	@Override
@@ -158,4 +112,46 @@ abstract class User
 		averageScore = sum / getScores().size();
 	}
 
+	
+	// Getters
+	public String getId()
+	{
+		return id;
+	}
+	public int getAge()
+	{
+		return age;
+	}
+	public Map<App, Integer> getApps()
+	{
+		return apps;
+	}
+	public double getAverageScore()
+	{
+		return averageScore;
+	}
+	public List<Score> getScores()
+	{
+		return scores;
+	}
+	
+	// Setters
+	public void setAge(int aAge)
+	{
+		age = aAge;
+	}
+	public void setEncyptedPassword(String aPassword)
+	{
+		encyptedPassword = encryptPassword(encyptedPassword);
+	}
+	public void setPassword(String aPassword)
+	{
+		encyptedPassword = encryptPassword(aPassword);
+	}
+	public void setUserId(String aUserId)
+	{
+		id = aUserId;
+	}
+
+	
 }

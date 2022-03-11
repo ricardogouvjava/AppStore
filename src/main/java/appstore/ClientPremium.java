@@ -5,7 +5,7 @@ public class ClientPremium extends Client
 	public ClientPremium(String aFirstName, String aLastName, int aAge, int aDiscount)
 	{
 		super(aFirstName, aLastName, aAge);
-		this.setDiscount(aDiscount);
+		this.setAccountDiscount(aDiscount);
 	}
 
 
