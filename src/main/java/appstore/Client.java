@@ -109,7 +109,6 @@ public class Client extends User
 
 	// Setters
 	
-
 	public void setSpendings(double spendings) {
 		this.spendings = spendings;
 	}

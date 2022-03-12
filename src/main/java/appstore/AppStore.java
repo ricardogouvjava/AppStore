@@ -207,7 +207,6 @@ public class AppStore
 		}
 		return appsWithDiscount;
 	}
-
 	
 	/** Value in bag **/
 	public double valueInBag(Bag tempBag, Client aClient)
@@ -230,8 +229,7 @@ public class AppStore
 	{
 		return aPurchase.getPurchaseDiscountValue();
 	}
-	
-	
+		
 	/** Designates programmer to develop an application **/
 	public void designateProgrammer(String aAppName, double aPrice, AppType aAppType, Programmer programmer)
 	{
@@ -283,7 +281,6 @@ public class AppStore
 	{
 		return returnWeekObject(aWeekNumber).weekLessSoldApps(apps, aNumberOfApps);
 	}
-	
 	
 	/** Returns the list of applications of one chosen Type **/
 	public List<App> listAppsByType(AppType aType)
@@ -359,7 +356,6 @@ public class AppStore
 		}
 		return sum;
 	}
-
 	
 	/** Give discount to applications**/
 	public void giveWeeklyDiscount(Set<App> aApps, int discountValue)
@@ -450,6 +446,20 @@ public class AppStore
 	public List<Client> clientsInvited(Client aClient)
 	{
 		return aClient.getInvitedClients();
+	}
+	
+	
+	/* Change subscription */
+	/** Upgrades the normal client to Premium **/
+	public ClientPremium changeToPremium(Client aClient)
+	{
+		return null;
+	}
+	
+	/** Downgrades the premium client to normal client **/
+	public Client changeToClient(ClientPremium aClientPremium)
+	{
+		return null;
 	}
 	
 	
