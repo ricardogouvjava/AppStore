@@ -15,7 +15,7 @@ public class Run
 		storeRequalificar.addUser("Programmer", "programmer", "0", 0);
 		System.err.println("Month start:"+ storeRequalificar.getCurrentMonth());
 		System.err.println("WeeK start:"+ storeRequalificar.getCurrentWeek().getWeekNumber());
-		storeRequalificar.forwardDateXDays(1);
+		storeRequalificar.forwardDateXDays(10);
 		storeMenu.menuMain();
 	}
 }

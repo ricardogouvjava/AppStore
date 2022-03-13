@@ -1,5 +1,7 @@
 package appstore;
 
+import java.util.Date;
+
 public class Programmer extends User
 {
 	double averageScoreReview;
@@ -13,15 +15,17 @@ public class Programmer extends User
 	}
 
 	//Methods
-	public App developApp(String aAppName, double aAppPrice, AppType aAppType)
+	/** Allows programmer to add application to add store**/
+	public App developApp(String aAppName, double aAppPrice, AppType aAppType, Date aCurentDate)
 	{
-		App app = new App(aAppName, aAppPrice, aAppType, this);
-		addApp(app, 0);
+		App app = new App(aAppName, aAppPrice, aAppType, aCurentDate, this);
+
+		addApp(app, 0); // adds application to programmer list of applications
+		
 		return app;
 	}
-
-
-
+	
+	
 	// Getters
 	public double getAverageScoreReview()
 	{

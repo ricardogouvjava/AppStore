@@ -10,9 +10,9 @@ public class ClientPremium extends Client
 
 
 	/** Updates value spent **/
-	public void updateSpendings(Purchase aPurchase)
+	public void updateSpendings(PurchaseApps aPurchase)
 	{
-		setSpendings(getSpendings() + aPurchase.getPurchaseValue());
+		setSpendings(getSpendings() + aPurchase.getValue());
 	}
 
 }

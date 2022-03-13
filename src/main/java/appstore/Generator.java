@@ -53,9 +53,9 @@ public class Generator
 		}
 
 		/** Application Generation **/
-		if (store.getAppsList().size() < 100)
+		if (store.getAppsList().size() < 500)
 		{
-			int generateApps = rand.nextInt(store.getProgrammersList().size() % 5 + 1);
+			int generateApps = rand.nextInt(store.getProgrammersList().size() / 5 + 1) + 1;
 			for(int i = 0 ; i <=  generateApps ; i++)
 			{
 				generateProgrammerDesignation();
@@ -70,15 +70,23 @@ public class Generator
 		}
 
 		/** Score Generation **/
-		if(store.getScores().size() < store.getPurchases().size() * 0.25)
+		if(store.getScores().size() < store.getPurchases().size() * 0.5)
 		{
-			int generateScores = (int) (store.getPurchases().size() * 0.2);
+			int generateScores = (int) ((store.getPurchases().size() * 0.2) + 1);
 			for(int i = 0 ; i <=  generateScores ; i++)
 			{
 				generateRandomScore();
 			}
 		}
-
+		
+		if(store.getAppsList().size() > 3)
+		{
+			/** Pick free weekly application generation **/
+			Client clientWantsFreeApp = pickRandomClient();
+			App appWanted =  pickRandomApp();
+			clientWantsFreeApp.addChoosenFreeApp(appWanted);
+		}
+		
 	}
 
 	/** User Generator **/
@@ -111,7 +119,6 @@ public class Generator
 		return client;		
 	}
 	
-
 	/** Programmer Generator**/
 	public void generateProgrammer()
 	{
@@ -160,7 +167,16 @@ public class Generator
 
 		Programmer programmer = tempList.get(rand.nextInt(tempList.size()));
 
-		store.designateProgrammer(generateRandomUserId(), randomPriceGenerator(), randomAppType(), programmer);
+		try
+		{
+			App app = store.designateProgrammer(generateRandomUserId(), randomPriceGenerator(), randomAppType(), programmer);
+			System.out.println("App added >> " + app);
+		}
+		
+		catch(Exception e)
+		{
+			System.out.println("Fail to generate app");
+		}
 	}
 
 	/** Purchases Generator **/
@@ -213,9 +229,11 @@ public class Generator
 	/** Score Generator **/
 	private void generateRandomScore()
 	{
+		Score score = null;
 		Client client = null;
 		App app = null;
 		boolean findUserToScore = true;
+			
 		while(findUserToScore)
 		{
 			client = pickRandomClient();
@@ -235,9 +253,11 @@ public class Generator
 				}
 
 				findUserToScore = false;
-				client.giveScore(app, scoreValue, comment, store);
+				score = client.giveScore(app, scoreValue, comment, store);
 			}
 		}
+	
+		System.out.print("Score aded: " + score);
 	}
 
 	/** Random RandomNotScoredApp chooser **/

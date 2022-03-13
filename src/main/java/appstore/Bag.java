@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 public class Bag
 {
 	private Map<App, Integer> bagItems;
-
+	
 	public Bag ()
 	{
 		bagItems = new HashMap<>();
@@ -19,12 +19,12 @@ public class Bag
 	@Override
 	public String toString()
 	{
-		String toPrint = "[<App : Price : Licences : SubTotal> -> Total]\n[";
+		String toPrint = "[<App : Licences = SubTotal> -> Total]\n[";
 
 		for(Map.Entry<App, Integer> set : bagItems.entrySet())
 		{
-			toPrint += "<" + set.getKey() + " : " + set.getValue() + 
-					" : " + String.format("%.2f", set.getKey().getPrice() * set.getValue()) + ">";
+			toPrint += "<" + set.getKey().getName() + " : " + set.getValue() + 
+					" = " + String.format("%.2f", set.getKey().getPrice() * set.getValue()) + ">";
 		}
 		toPrint += "> -> " + String.format("%.2f", valueInBag()) + "]";
 		return toPrint;
@@ -37,18 +37,25 @@ public class Bag
 	}
 	
 	/** Add application to bag **/
-	public void removeAppInBag(App aApp)
+	public void removeFromBag(App aApp)
 	{
 		bagItems.remove(aApp);
 	}
 	
 	/** Alter value of licenses **/
-	public void alterValue(App aApp, int aLicenses)
+	public void alterAppValueInBag(App aApp, int aLicenses)
 	{
 		bagItems.put(aApp, aLicenses);
 	}
+
 	
-	/** Calculates the value in the shopping bag **/
+	/** Returns list of bag Applications **/
+	public List<App> getAppsInBag()
+	{
+		return bagItems.keySet().stream().collect(Collectors.toList());
+	}
+	
+	/** Calculates the value in the shopping bag with application current discount prices**/
 	public double valueInBag()
 	{
 		double sum = 0;
@@ -58,18 +65,26 @@ public class Bag
 		}
 		return sum;
 	}
-	
-	/** Returns list of bag Applications **/
-	public List<App> getAppsInBag()
+		
+	/** Calculates the value in the shopping bag with application base prices **/
+	public double calculateValueInBagWithBasePrices()
 	{
-		return bagItems.keySet().stream().collect(Collectors.toList());
+		double sum = 0;
+		for(Map.Entry<App, Integer> entry : bagItems.entrySet())
+		{
+			sum += entry.getKey().getBasePrice() * entry.getValue();
+		}
+		return sum;
 	}
+
 	
 	// Getters
 	public Map<App, Integer> getBagItems()
 	{
 		return bagItems;
 	}
+	
+	
 	// Setters
 	public void setBag(Map<App, Integer> aBagItems)
 	{
