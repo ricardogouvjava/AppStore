@@ -7,16 +7,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AppStore
 {
-	private static Calendar calendar;					// running calendar
-	private static Generator generator;
-	private int discountValueWeek;
-	private int premimumDiscount = 40;
-	private int discountValueMonth = 5;
+	static Calendar calendar;					// running calendar
+	static Generator generator;
+	static int discountValueWeek = 15;
+	static int userIcentiveDiscount = 5;
+	static int premimumDiscount = 40;
+	static int discountValueMonth = 5;
 	private AppType appTypeWithDiscount;
 	private String name;								// Store name
 	private List<App> apps;								// Applications in the store
@@ -26,25 +26,24 @@ public class AppStore
 	private List<Purchase> purchases; 					// Purchases made in the store
 	private List<Score> scores; 						// List of all scores given to the applications
 	private List<WeekAnalyst> weeks;
-
+	private List<Subscription> subscriptions;
+	
 	// Constructor
 	public AppStore(String aName)
 	{
 		name = aName;
 		calendar = Calendar.getInstance();
 		calendar.setTime(new Date());
-		apps = new ArrayList<>();
+		apps = new ArrayList<App>();
 		currentWeek = new WeekAnalyst(calendar);
 		currentMonth = calendar.get(Calendar.MONTH);
-		weeks = new ArrayList<>();
-		users = new ArrayList<>();
-		purchases = new ArrayList<>();
-		scores = new ArrayList<>();
+		weeks = new ArrayList<WeekAnalyst>();
+		users = new ArrayList<User>();
+		purchases = new ArrayList<Purchase>();
+		scores = new ArrayList<Score>();
 		generator = new Generator(this);
-		discountValueWeek = 15;
-		premimumDiscount = 40;
-		discountValueMonth = 5;
 		appTypeWithDiscount = Generator.randomAppType();
+		subscriptions = new ArrayList<Subscription>();
 	}
 
 	/* - Methods -
@@ -92,7 +91,7 @@ public class AppStore
 
 				System.err.println("Week:" + calendar.get(Calendar.WEEK_OF_YEAR));
 
-				updateAppWeeklyDiscounts(discountValueWeek);
+				updateWeeklyDiscounts();
 
 			}
 
@@ -100,6 +99,9 @@ public class AppStore
 
 			System.err.println("New Day");
 
+			// check subscriptions
+			
+			updateSubs();
 			generator.generateDaysData(); // Generates random data for a day
 		}
 	}
@@ -152,9 +154,9 @@ public class AppStore
 	}
 
 	/** Checkouts the client with items in the shopping bag **/
-	public Purchase checkout(Client aClient, Bag shoppingBag)
+	public PurchaseApps checkout(Client aClient, Bag shoppingBag)
 	{
-		Purchase purchase = null;
+		PurchaseApps purchase = null;
 		try
 		{
 			purchase = aClient.buy(shoppingBag, calendar);
@@ -179,7 +181,29 @@ public class AppStore
 		return purchase;
 
 	}
+		
+	/** Checkouts the client with items in the shopping bag **/
+	public boolean checkoutSubscription(Client aClient, Bag shoppingBag)
+	{
+		Subscription subscription = null;
+		try
+		{
+			// Register subscriptions of applications
+			for (Map.Entry<App, Integer> entry : shoppingBag.getBagItems().entrySet())
+			{
+				subscription = aClient.subscribe(entry.getKey(), calendar);
+				subscriptions.add(subscription);
+			}
+		}
 
+		catch (NullPointerException e)
+		{
+			System.out.println(e.getMessage());
+		}
+		
+		return true;
+	}	
+	
 	/** Check applications with Weekly discounts **/
 	public List<App> checkAppsWithWeeklyDiscounts()
 	{
@@ -187,7 +211,7 @@ public class AppStore
 
 		for(App app : apps)
 		{
-			if(app.getWeekDiscount() != 0)
+			if(app.getWeeklyDiscount() != 0)
 			{
 				appsWithDiscount.add(app);
 			}
@@ -202,15 +226,14 @@ public class AppStore
 
 		for(App app : apps)
 		{
-			if(app.getMonthDiscount() != 0)
+			if(app.getMonthlyAppTypeDiscount() != 0)
 			{
 				appsWithDiscount.add(app);
 			}
 		}
 		return appsWithDiscount;
 	}
-
-	
+		
 	/** Value in bag **/
 	public double valueInBag(Bag tempBag, Client aClient)
 	{
@@ -227,17 +250,18 @@ public class AppStore
 		return purchasevalue;
 	}
 	
-	/** Value in bag **/
-	public double savedInPurchase(Purchase aPurchase)
+	/** Value saved in purchase **/
+	public double savedInPurchase(PurchaseApps aPurchase)
 	{
-		return aPurchase.getPurchaseDiscountValue();
+		return aPurchase.getSavedValue();
 	}
-	
-	
+		
 	/** Designates programmer to develop an application **/
-	public void designateProgrammer(String aAppName, double aPrice, AppType aAppType, Programmer programmer)
+	public App designateProgrammer(String aAppName, double aPrice, AppType aAppType, Programmer programmer)
 	{
-		apps.add(programmer.developApp(aAppName, aPrice, aAppType));
+		App app = programmer.developApp(aAppName, aPrice, aAppType, calendar.getTime());
+		apps.add(app);
+		return app;
 	}
 
 	/** Prints earnings by programmer **/
@@ -280,13 +304,7 @@ public class AppStore
 		return returnUser;
 	}
 
-	/** returns list of less sold application X week **/
-	public HashMap<App, Integer> getWeekLessSoldApps(int aWeekNumber, int aNumberOfApps)
-	{
-		return returnWeekObject(aWeekNumber).weekLessSoldApps(apps, aNumberOfApps);
-	}
-	
-	
+		
 	/** Returns the list of applications of one chosen Type **/
 	public List<App> listAppsByType(AppType aType)
 	{
@@ -357,29 +375,12 @@ public class AppStore
 		double sum = 0;
 		for(Purchase purchase : purchases)
 		{
-			sum += purchase.getPrice();
+			sum += purchase.calculateValue();
 		}
 		return sum;
 	}
-
 	
-	/** Give discount to applications**/
-	public void giveWeeklyDiscount(Set<App> aApps, int discountValue)
-	{
-		for(App app : aApps)
-		{
-			app.setWeekDiscount(discountValue);
-		}
-	}
-	
-	/** update application discounts based on performance of previous week **/
-	private void updateAppWeeklyDiscounts(int discountValue)
-	{
-		resetAllWeeklyAppDiscounts();
-		giveWeeklyDiscount(this.getWeekLessSoldApps(currentWeek.getWeekNumber() -1 , 5).keySet(), discountValue);
-	}
-	
-	/** update application discounts based App type Month **/
+	/** update application discounts based Application type Month **/
 	private void updateAppMonthlyDiscounts(int discountValue)
 	{
 		resetAllMonthlyAppDiscounts();
@@ -387,25 +388,17 @@ public class AppStore
 		{
 			if(app.getType() == appTypeWithDiscount) 
 			{
-				app.setMonthDiscount(discountValue);
+				app.setMonthlyAppTypeDiscount(discountValue);
 			}
 		}
 	}
-
-	/** Reset application discounts of applications **/
-	public void resetAllWeeklyAppDiscounts()
-	{
-		for(App app : apps)
-		{
-			app.setWeekDiscount(0);
-		}
-	}
+	
 	/** Reset application discounts of applications **/
 	public void resetAllMonthlyAppDiscounts()
 	{
 		for(App app : apps)
 		{
-			app.setMonthDiscount(0);
+			app.setMonthlyAppTypeDiscount(0);
 		}
 	}
 	
@@ -423,6 +416,7 @@ public class AppStore
 		}
 		return returnWeek;
 	}
+	
 	/** returns list purchases done in X week **/
 	public List<Purchase> getWeekPurchases(int aWeekNumber)
 	{
@@ -430,10 +424,171 @@ public class AppStore
 
 	}
 
+	/** returns list of less sold application X week **/
+	public HashMap<App, Integer> getWeekLessSoldApps(int aWeekNumber, int aNumberOfApps)
+	{
+		return returnWeekObject(aWeekNumber).lessSoldApps(this, aNumberOfApps);
+	}
 
+	/** finds last week less sold applications and applies discounts **/
+	public void updateWeeklyDiscounts() 
+	{
+		// find previous week number
+		int previousWeek = currentWeek.getWeekNumber() - 1;
+		
+		// get less sold applications previous week
+		HashMap<App, Integer> appsToDiscount = getWeekLessSoldApps(previousWeek, 5);
+		
+		// apply discounts
+		currentWeek.updateAppWeeklyDiscounts(this, appsToDiscount, discountValueMonth);
+	}
+	
+	
+	/** Clients with Incentive Discount */
+	public List<Client> clienstWithIncentiveDiscount()
+	{
+		List<Client> clientsWithIcentive = new ArrayList<Client>();
+		for(User user: users)
+		{
+			if(user instanceof Client)
+			{
+				if(((Client) user).hasIncentiveDiscount())
+				{
+					clientsWithIcentive.add((Client)user);	
+				}
+			}
+		}
+		return clientsWithIcentive;
+	}
+	
+	/** Clients Invited by Client **/
+	public List<Client> clientsInvited(Client aClient)
+	{
+		return aClient.getInvitedClients();
+	}
+		
+	/* Change subscription */
+	/** Upgrades the normal client to Premium 
+	 * Transfers the data to a new Client object**/
+	public ClientPremium changeToPremium(Client aClient, String userPassword)
+	{
+		
+		String id = aClient.getId();
+		int age = aClient.getAge();
+		double averageScore = aClient.getAverageScore();
+		double spendings = aClient.getSpendings();
+				
+		List<Purchase> purchases = aClient.getPurchases();
+		List<Client> invitedclients = aClient.getInvitedClients();
+		List<Score> scoresGiven = aClient.getScores();
+		Map<App, Integer> appsbought = aClient.getApps();
+		
+		getUsersList().remove(aClient);
+		
+		addUser("ClientPremium", id, userPassword, age);
+		
+		ClientPremium clientPremium = (ClientPremium) findUser(id);
+		clientPremium.setAverageScore(averageScore);
+		clientPremium.setSpendings(spendings);
+		
+		clientPremium.setPurchases(purchases);
+		clientPremium.setInvitedClients(invitedclients);
+		clientPremium.setApps(appsbought);
+		clientPremium.setScores(scoresGiven);
+		
+		return clientPremium;
+	}
+	
+	/** Downgrades the premium client to normal client 
+	 * Transfers the data to a new Client object**/
+	public Client changeToClient(ClientPremium aClientPremium, String userPassword)
+	{
+		String id = aClientPremium.getId();
+		int age = aClientPremium.getAge();
+		double averageScore = aClientPremium.getAverageScore();
+		double spendings = aClientPremium.getSpendings();
+			
+		List<Purchase> purchases = aClientPremium.getPurchases();
+		List<Client> invitedclients = aClientPremium.getInvitedClients();
+		List<Score> scoresGiven = aClientPremium.getScores();
+		Map<App, Integer> appsbought = aClientPremium.getApps();
+		
+		getUsersList().remove(aClientPremium);
+		
+		addUser("Client", id, userPassword, age);
+		
+		Client client = (ClientPremium) findUser(id);
+		client.setAverageScore(averageScore);
+		client.setInvitedClients(invitedclients);
+		client.setApps(appsbought);
+		client.setScores(scoresGiven);
+		client.setSpendings(spendings);
+		client.setPurchases(purchases);
+		
+		return client;
+	}
+	
+	
+	/** Returns free applications chosen by users  **/
+	public Map<Client, List<App>> freeAppsChosenByClients()
+	{
+		Map<Client, List<App>> freeAppsList = new HashMap<Client, List<App>>();
+		for(Client client : getClientsList())
+		{
+			if(!client.getFreeApps().isEmpty())
+			{
+				freeAppsList.put(client, client.getFreeApps());
+			}
+		}
+		return freeAppsList;
+	}
+	
+	
+	/** Check subscriptions date **/
+	private List<Subscription> checkSubsOutDate()
+	{
+		List<Subscription> subsOutOfDate = new ArrayList<Subscription>();
+		
+		// find out of date subs
+		for(Subscription sub : subscriptions)
+		{
+			if(!sub.isSubscriptionValid(calendar))
+			{
+				subsOutOfDate.add(sub);
+			}
+		}
+		
+		return subsOutOfDate;
+	}
+	
+	/** Remove out of date subscriptions from subscriptions list and from user **/
+	private boolean processOutOfDateSubscriptions(List<Subscription> aSubsOutOfDate)
+	{
+		try 
+		{
+			for(Subscription sub : aSubsOutOfDate)
+			{
+				sub.cancelSubscription(this);
+			}
+			return true;
+		}
+		catch(Exception e)
+		{
+			e.getStackTrace();
+			return false;
+		}
+	
+	}
+	
+	/** Remove out of date subscriptions from subscriptions list and from user **/
+	private boolean updateSubs()
+	{
+		return processOutOfDateSubscriptions(checkSubsOutDate());
+	}
+	
 	
 	// Setters
-	public void setName(String aName)
+ 	public void setName(String aName)
 	{
 		name = aName;
 	}
@@ -445,17 +600,6 @@ public class AppStore
 	{
 		users = aUsers;
 	}
-	public void setPremimumDiscount(int aPremimumDiscount)
-	{
-		premimumDiscount = aPremimumDiscount;
-	}
-	public void setDiscountValueWeek(int aDdiscountValueWeek)
-	{
-		discountValueWeek = aDdiscountValueWeek;
-	}
-	public void setDiscountValueMonth(int discountValueMonth) {
-		this.discountValueMonth = discountValueMonth;
-	}
 	public void setAppTypeWithDiscount(AppType appTypeWithDiscount) {
 		this.appTypeWithDiscount = appTypeWithDiscount;
 	}
@@ -463,6 +607,7 @@ public class AppStore
 		this.currentMonth = currentMonth;
 	}
 
+	
 	//Getters
 	public String getName()
 	{
@@ -507,6 +652,10 @@ public class AppStore
 	public AppType getAppTypeWithDiscount() {
 		return appTypeWithDiscount;
 	}
+	public List<Subscription> getSubscriptions() {
+		return subscriptions;
+	}
+
 	/** Returns ClientPremium list **/
 	public List<Programmer> getProgrammersList()
 	{

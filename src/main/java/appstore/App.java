@@ -9,24 +9,27 @@ import java.util.Map;
 public class App
 {
 	private String name;
-	private double price;
-	private double weekDiscount;
-	private double monthDiscount;
-	private double score; // Average Score[0:5]
+	private double basePrice;
 	private AppType type;
+	private Date buildDate;
 	private Programmer programmer;
+	private double weeklyDiscount;
+	private double monthlyAppTypeDiscount;
+	private double score; // Average Score[0:5]
 	private List<Score> scores; // List of Scores given to the application
 	private Map<Date, Integer> sales; //all application sales
 	
 	/** Generates new application **/
-	public App(String aName, double aPrice, AppType aType, Programmer aProgrammer)
+	public App(String aName, double aPrice, AppType aType, Date aBuildDate,Programmer aProgrammer)
 	{
 		name = aName;
-		price = aPrice;
-		weekDiscount = 0;
-		monthDiscount = 0;
+		basePrice = aPrice;
+		buildDate = aBuildDate;
 		type = aType;
 		programmer = aProgrammer;
+
+		weeklyDiscount = 0;
+		monthlyAppTypeDiscount = 0;
 		scores = new ArrayList<>();
 		sales = new HashMap<>();
 	}
@@ -45,13 +48,19 @@ public class App
 	@Override
 	public String toString()
 	{
-		return name + " : " + String.format("%.2f",getPrice());
+		return name + " : " + String.format("%.2f", getPrice());
 	}
 
 	/**Calculates price considering discount exits **/
 	public double getPrice()
 	{
-		return price * (100 - weekDiscount) / 100 *  (100 - monthDiscount) / 100;
+		return basePrice * (100 - weeklyDiscount - monthlyAppTypeDiscount) / 100;
+	}
+	
+	/** Calculate Application current discounts **/
+	public double getDiscounts()
+	{
+		return weeklyDiscount + monthlyAppTypeDiscount;
 	}
 	
 	/** register when the application was sold and updates sales counter **/
@@ -106,13 +115,20 @@ public class App
 	{
 		return name;
 	}
-	public Programmer getProgrammer()
+	public double getBasePrice()
 	{
-		return programmer;
-	}	
+		return basePrice;
+	}
 	public AppType getType()
 	{
 		return type;
+	}	
+	public Date getBuildDate() {
+		return buildDate;
+	}
+	public Programmer getProgrammer()
+	{
+		return programmer;
 	}	
 	public double getScore()
 	{
@@ -122,34 +138,34 @@ public class App
 	{
 		return scores;
 	}
-		
-	public double getWeekDiscount() {
-		return weekDiscount;
+	public double getWeeklyDiscount()
+	{
+		return weeklyDiscount;
 	}
-
-	public double getMonthDiscount() {
-		return monthDiscount;
+	public double getMonthlyAppTypeDiscount() {
+		return monthlyAppTypeDiscount;
 	}
-
-	
 
 	// Setters
 	public void setName(String aName)
 	{
 		name = aName;
 	}
-	public void setPrice(double aPrice)
+	public void setBasePrice(double aPrice)
 	{
-		price = aPrice;
-	}
-	public void setProgrammer(Programmer aProgrammer)
-	{
-		programmer = aProgrammer;
+		basePrice = aPrice;
 	}
 	public void setType(AppType aType)
 	{
 		type = aType;
 	}	
+	public void setBuildDate(Date buildDate) {
+		this.buildDate = buildDate;
+	}
+	public void setProgrammer(Programmer aProgrammer)
+	{
+		programmer = aProgrammer;
+	}
 	public void setScore(int aScore)
 	{
 		score = aScore;
@@ -158,13 +174,13 @@ public class App
 	{
 		scores = aScores;
 	}
-	
-	public void setWeekDiscount(double weekDiscount) {
-		this.weekDiscount = weekDiscount;
+	public void setWeeklyDiscount(double aWeeklyDiscount) 
+	{
+		this.weeklyDiscount = aWeeklyDiscount;
 	}
-	
-	public void setMonthDiscount(double monthDiscount) {
-		this.monthDiscount = monthDiscount;
+	public void setMonthlyAppTypeDiscount(double aMonthlyAppTypeDiscount) 
+	{
+		this.monthlyAppTypeDiscount = aMonthlyAppTypeDiscount;
 	}
 	
 }

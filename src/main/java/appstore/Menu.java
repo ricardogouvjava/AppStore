@@ -67,6 +67,8 @@ public class Menu
 	 *    4.12 List all ClientPremium
 	 *    4.13 List all Programmers
 	 *    4.14 List applications off User
+	 *    4.16 Users with 'Incentive' Discount
+	 *    4.17 Clients invited by Client
 	 */
 
 	/** Main menu options **/
@@ -274,7 +276,7 @@ public class Menu
 		menuListAppsByType();
 	}
 	
-	/** User menu options **/
+	/** Client menu options **/
 	private void menuClient(Client aClient)
 	{
 		System.out.print("\n"
@@ -282,13 +284,18 @@ public class Menu
 				+ "\n  (0) Return"
 				+ "\n  (1) List owned applications"
 				+ "\n  (2) Buy Applications"
-				+ "\n  (3) Give Score"
-				+ "\n  (4) List application that score was given"
-				+ "\n  (5) List application that scores was not given"
-				+ "\n  (6) List scores given to application"
+				+ "\n  (3) Subscribe to app"
+				+ "\n  (4) Give Score"
+				+ "\n  (5) List application that score was given"
+				+ "\n  (6) List application that scores was not given"
+				+ "\n  (7) List scores given to application"
+				+ "\n  (8) Subscribe Premium (Normal Client Only)"
+				+ "\n  (9) Cancel Premium (Premium Only)"
+				+ "\n (10) Choose Weekly free app"
+				+ "\n ("
 				+ "\n");
 
-		switch (askInputIntAndValidate(0,7))
+		switch (askInputIntAndValidate(0, 10))
 		{
 
 		case 0:
@@ -308,17 +315,25 @@ public class Menu
 			buyAppMenu(aClient, store.createShoppingBag());
 			menuClient(aClient);
 			break;
-
-
+			
 		case 3:
+			buySubscritionMenu(aClient, store.createShoppingBag());		
+			menuClient(aClient);
+			break;
+		case 4:
 			// Allows user to give score
 			System.out.print("\nThis option allow You to input your score of an aplication."
 					+ "\nYou require to introduce:"
 					+ "\n'Owned Application Name' 'Score' and 'Comment' if wanted.");
 
 			// Asks for application name
-			App appToScore = askForAppNameValidatesAndReturnsApp(store.getAppsList());
-
+			App appToScore = askForAppNameValidatesAndReturnsApp(aClient.getAppsNotScored());
+			
+			if(appToScore.equals(null)) 
+			{
+				menuClient(aClient);
+			}
+			
 			// Asks for user score
 			double score = askForScoreAndValidates();
 
@@ -327,32 +342,101 @@ public class Menu
 			String comment = scanText.nextLine();
 
 			// Creates a score
-			aClient.giveScore(appToScore, score, comment, store);
+			aClient.giveScore(appToScore, score, comment, store); // already verified if can score
 			System.out.println("\nThe score was added to the database");
 			menuClient(aClient);
 			break;
 
-		case 4:
+		case 5:
 			// Lists applications that score was given by client
 			System.out.print("\nAppScored: ");
 			printList(aClient.getAppsScored());
 			menuClient(aClient);
 			break;
 
-		case 5:
+		case 6:
 			// Lists applications that score was given by user
 			System.out.print("\nAppNotScored: ");
 			printList(aClient.getAppsNotScored());
 			menuClient(aClient);
 			break;
 
-		case 6:
+		case 7:
 			// List scores and comments of application
 			App app = askForAppNameValidatesAndReturnsApp(store.getAppsList());
 			printList(app.getScores());
 			menuClient(aClient);
 			break;
-
+		
+		case 8:
+			// Pass to premium
+			
+			/** Como converter de uma classe para outra? **/
+			
+			String pswdC = reconfirmPassword(aClient);
+			
+			if (pswdC != null)
+				{
+					ClientPremium clientPremium = store.changeToPremium(aClient, pswdC);
+					System.out.println("Subscrition sucessuful");
+					menuClient(clientPremium);
+					break;
+				}
+			else
+				{
+					System.out.print("Canceled action");
+				}
+			
+			menuClient(aClient);
+			break;
+			
+		case 9:
+			// Cancel premium
+			String pswdCP = reconfirmPassword(aClient);
+			
+			if (pswdCP != null)
+				{
+					Client client = store.changeToPremium(aClient, pswdCP);
+					System.out.println("Cancelation sucessuful");
+					menuClient(client);
+					break;
+				}
+			else
+				{
+					System.out.print("Canceled action");
+				}
+			
+			menuClient(aClient);
+			break;
+			
+		case 10:
+			if(aClient.hasChoosenFreeWeeklyApp())
+			{
+				System.out.print("Cannot choose an other app this week");
+			}
+			else
+			{
+				// list all applications with discount ?? weekly or also monthly
+				System.out.print("Can add one free aplication this week,"
+						+ "\nChoose one of the following:");
+				List<App> appsToChoose = store.checkAppsWithWeeklyDiscounts();
+				printList(appsToChoose);
+				
+				// allows to choose an application
+				App appchoosen = askForAppNameValidatesAndReturnsApp(appsToChoose);
+				
+				if(!aClient.pickFreeAppSucess(appchoosen))
+				{
+					System.out.print("Application was already choosen in weekly free apps");
+				}
+				else 
+				{
+					System.out.print("Applicaton added to applications list: " + appchoosen.getName());
+				}
+			}
+			menuClient(aClient);
+			break;
+		
 
 
 		default:
@@ -391,7 +475,8 @@ public class Menu
 			menuClient(aClient);
 			break;
 
-		case 1:
+		case 1: // Add Application
+			
 			// Informs applications in store
 			System.out.println("Apps in the Store: [AppName:Price]");
 			printList(store.getAppsList());
@@ -417,7 +502,8 @@ public class Menu
 			buyAppMenu(aClient, shoppingBag);
 			break;
 
-		case 2:
+		case 2: // Alter number application licenses in the bag
+				
 			//Checks if bag is empty
 			if(shoppingBag.getBagItems().size() > 0)
 			{
@@ -429,7 +515,7 @@ public class Menu
 				int numberOfLicencesTochange = askInputIntAndValidate(0, Integer.MAX_VALUE);
 				
 				// Overrides the value in the bag
-				shoppingBag.alterValue(appTocheck, numberOfLicencesTochange);
+				shoppingBag.alterAppValueInBag(appTocheck, numberOfLicencesTochange);
 			}
 			else
 			{
@@ -438,14 +524,15 @@ public class Menu
 			buyAppMenu(aClient, shoppingBag);
 			break;
 					
-		case 3:
+		case 3: // Remove application from bag
+				
 			//Checks if bag is empty
 			if(shoppingBag.getBagItems().size() > 0)
 			{
 				// Asks for application to remove and compares with store
 				App appToRemove = askForAppNameValidatesAndReturnsApp(shoppingBag.getAppsInBag());
 				
-				shoppingBag.removeAppInBag(appToRemove);
+				shoppingBag.removeFromBag(appToRemove);
 			}
 			else
 			{
@@ -454,19 +541,22 @@ public class Menu
 			buyAppMenu(aClient, shoppingBag);
 			break;
 				
-		case 4:
+		case 4: // Check value of shopping bag"
+			
 			// Informs total value in the bag
 			System.out.println("The value of goods in the bag is:" + String.format("%.2f", shoppingBag.valueInBag()));
 			
 			// Checks if user has discount and informs value to pay
-			System.out.println("Value to pay: " + String.format("%.2f", store.valueInBag(shoppingBag, aClient)));
+			System.out.println("Value to pay (With Client Discounts): " + String.format("%.2f", store.valueInBag(shoppingBag, aClient)));
 			
 			// Returns to options menu
 			buyAppMenu(aClient, shoppingBag);
 			break;
 
-		case 5:
-			Purchase purchase = store.checkout(aClient, shoppingBag);	
+		case 5: // Checkout
+			
+			PurchaseApps purchase = store.checkout(aClient, shoppingBag);	
+			
 			if(store.savedInPurchase(purchase)!=0)
 			{
 				System.out.println("Premium Saved:" + String.format("%.2f",store.savedInPurchase(purchase)));			
@@ -482,6 +572,120 @@ public class Menu
 		}
 	}
 			
+	
+	/** Buy Subscription menu **/
+	private void buySubscritionMenu(Client aClient , Bag shoppingBag)
+	{
+		// Create new shopping bag
+		if (shoppingBag == null)
+		{
+			shoppingBag = store.createShoppingBag();
+		}
+		
+		System.out.print("\n"
+				+ "Buy Options:"
+				+ "\n (0) Return / Cancel"
+				+ "\n (1) Add application to Subscribe"
+				+ "\n (2) Remove app from Subscriptions Bag"
+				+ "\n (3) Check value of subscriptions to be added"
+				+ "\n (4) Checkout"
+				+ "\n (4) List application subscribed"
+				+ "\n ");
+		
+		// asks for user menu input and verifies its validity
+		switch (askInputIntAndValidate(0,3))
+		{
+
+		case 0:
+			menuClient(aClient);
+			break;
+
+		case 1: // Add Application 
+			
+			// Informs applications in store
+			System.out.println("Anual Subscription is 1/10 of BasePrice");
+			System.out.println("Apps in the Store: [AppName:BasePrice]");
+			printList(store.getAppsList());
+			//If not empty informs of applications in the bag 
+			if(shoppingBag.getBagItems().size() > 0)
+			{
+				System.out.println("\nContents: "
+						+ "\n" +  shoppingBag);
+			}
+
+			boolean askForAppToSub = true;
+			
+			while(askForAppToSub)
+			{	
+				// Asks for application to subscribe
+				App appToSub = askForAppNameValidatesAndReturnsApp(store.getAppsList());
+				
+				if(!aClient.getSubscribedApps().contains(appToSub))
+				{
+					// Adds application to bag
+					shoppingBag.putInBag(appToSub, 1);
+					askForAppToSub = false;
+				}
+				else
+				{
+					System.out.println("App already Subscibed");
+				}
+			}
+			
+			// Returns to buy subscription menu
+			buySubscritionMenu(aClient, shoppingBag);
+			break;	
+
+		case 2: // Remove application from Subscriptions Bag
+			
+			//Checks if bag is empty
+			if(shoppingBag.getBagItems().size() > 0)
+			{
+				// Asks for application to remove and compares with store
+				App appToRemove = askForAppNameValidatesAndReturnsApp(shoppingBag.getAppsInBag());
+				
+				shoppingBag.removeFromBag(appToRemove);
+			}
+			else
+			{
+				System.out.println("App not in the bag: ");	
+			}
+			// Returns to buy subscription menu
+			buySubscritionMenu(aClient, shoppingBag);
+			break;
+				
+		case 4: // Informs total value in the bag
+			
+			System.out.println("The value of anual subcriptions for this year in the bag is:"
+					+ "" + String.format("%.2f", shoppingBag.valueInBag() / 10));
+			
+			// Checks if user has discount and informs value to pay
+			System.out.println("Value to pay (With Client Discounts): " + String.format("%.2f", store.valueInBag(shoppingBag, aClient) / 10));
+			
+			// Returns to buy subscription menu
+			buySubscritionMenu(aClient, shoppingBag);
+			break;
+
+		case 5:
+			if(store.checkoutSubscription(aClient, shoppingBag)) 
+			{
+				System.out.println("Subscriptions done!!");
+			}
+					
+			menuClient(aClient);
+			break;
+
+		default:
+			// Ask again for input!!
+			System.out.println("Please introduze a correct option");
+
+			// Returns to buy subscription menu
+			buySubscritionMenu(aClient, shoppingBag);
+			break;
+		}
+			
+	}
+	
 	/** Programmer menu options **/
 	private void menuProgrammer(Programmer aProgrammer)
 	{
@@ -545,9 +749,12 @@ public class Menu
 				+ "\n (13) List all Programmers"
 				+ "\n (14) List applications off User"
 				+ "\n (15) Applications with Monthly discount / Type"
+				+ "\n (16) Users with 'Incentive' Discount"
+				+ "\n (17) Clients invited by client"
+				+ "\n (18) List all free apps chosen by each client"
 				+ "\n");
 
-		switch (askInputIntAndValidate(0, 15))
+		switch (askInputIntAndValidate(0, 18))
 		{
 
 		case 0:
@@ -610,8 +817,6 @@ public class Menu
 			printMap(store.getWeekLessSoldApps(week, appnumber));
 			menuAdministrator(aAdministrator);
 			break;
-
-
 
 		case 8:
 			// Lists all the purchases in the AppStore
@@ -676,6 +881,41 @@ public class Menu
 			menuAdministrator(aAdministrator);
 			break;
 
+		case 16:
+			System.out.println("Clients with Incentive discount: ");
+			if (store.clienstWithIncentiveDiscount().size() > 0)
+			{
+				printList(store.clienstWithIncentiveDiscount());
+			}
+			else
+			{
+				System.out.println("None");
+			}
+			menuAdministrator(aAdministrator);
+			break;
+			
+		case 17:
+			// prints clients invited by client
+			System.out.println("Find clients invited introduce: ");
+			Client user = (Client) askForUserIdValidatesAndReturnsUser();
+			
+			System.out.println("Clients invited: ");
+			if (store.clientsInvited(user).size() > 0)
+			{
+				printList(store.clientsInvited(user));
+			}
+			else
+			{
+				System.out.println("None");
+			}
+			menuAdministrator(aAdministrator);
+			break;
+			
+		case 18:
+			System.out.println("Free applications chosen by clients");
+			System.out.println("Client Data : App List");
+			printMap(store.freeAppsChosenByClients());
+			break;
 
 		default:
 			// Ask again for input!!
@@ -828,9 +1068,9 @@ public class Menu
 		boolean askForPassword = true;
 		while(askForPassword)
 		{
-			System.out.print("\nUserId: ");
+			System.out.print("\nPassword: ");
 			userPassword = scanText.nextLine();
-			if (userId.length() > 4 && !store.userExists(userId))
+			if (userPassword.length() > 4 )
 			{
 				askForPassword = false;
 			}
@@ -860,6 +1100,44 @@ public class Menu
 		return true;
 	}
 	
+	
+	/** Ask for password confirmation **/
+	public String reconfirmPassword(User aUSer)
+	{
+		boolean passwordCorrect = false;
+		int counter = 0;
+		while(passwordCorrect == false)
+		{
+
+			System.out.println("Password: ");
+			String password = scanText.nextLine();
+
+			if(aUSer.isPasswordCorrect(password))
+			{
+				return password;
+			}
+			
+			else if(password == "exit") 
+			{
+				break;
+			}
+	
+			else
+			{
+				counter += 1;
+				if(counter > 3)
+				{
+					System.out.print("Failed to introduce password to many times. Exiting");
+					break;
+				}
+				System.out.print("Password introduced incorrect."
+						+ "\nPlease introduce correct password or 'exit'");
+			}
+		}
+		return null;
+	}
+	
+	
 	/** Ask for an User name, verifies if exists and returns user object **/
 	private User askForUserIdValidatesAndReturnsUser()
 	{
@@ -869,14 +1147,14 @@ public class Menu
 		{
 			System.out.print("\nUserId: ");
 			String userId = scanText.nextLine();
-			if (userId.length() > 4 && !store.userExists(userId))
+			if (store.userExists(userId))
 			{
 				askForId = false;
 				user = store.findUser(userId);
 
 			}
 			else {
-				System.out.print("UserId in use or not valid!");
+				System.out.print("UserId not valid!");
 			}
 		}
 		return user;
@@ -959,18 +1237,33 @@ public class Menu
 	/* Prints */
 	public void printList(List<?> aList)
 	{
-		for(Object obj : aList)
+		if(aList.isEmpty())
 		{
-			System.out.println(obj);
+			System.out.println("No Items in List");
+		}
+		else
+		{
+			for(Object obj : aList)
+			{
+				System.out.println(obj);
+			}
 		}
 	}
 
 	public <K, V> void printMap(Map<K, V>  aMap)
 	{
-		for(Map.Entry<K, V>  entry : aMap.entrySet())
+		if(aMap.isEmpty())
 		{
-			System.out.println(entry.getKey() +" : " + entry.getValue());
+			System.out.println("No Items in List");
 		}
+		else
+		{
+			for(Map.Entry<K, V>  entry : aMap.entrySet())
+			{
+				System.out.println(entry.getKey() +" : " + entry.getValue());
+			}
+		}
+		
 	}
 
 }

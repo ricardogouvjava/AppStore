@@ -13,16 +13,16 @@ public class WeekAnalyst
 	private int week;
 	private List<Purchase> weekPurchases;
 	private Map<App, Integer> weekAppSales;
-
+	
 	public WeekAnalyst(Calendar aCalendar)
 	{
 		week = aCalendar.get(Calendar.WEEK_OF_YEAR);
 		weekPurchases = new ArrayList<>();
-		weekAppSales = new HashMap<>();
+		weekAppSales = new HashMap<>();		
 	}
 
 	// Methods
-	public void addPurchase(Purchase aPurchase)
+	public void addPurchase(PurchaseApps aPurchase)
 	{
 		weekPurchases.add(aPurchase);
 		updateWeekAppSales(aPurchase);
@@ -41,20 +41,19 @@ public class WeekAnalyst
 		return sold;
 	}
 
-	
-	private void updateWeekAppSales(Purchase aPurchase)
+	private void updateWeekAppSales(PurchaseApps aPurchase)
 	{
 		// Checks if key exists and sums value
-		for(Map.Entry<App, Integer> entry : aPurchase.getPurchaseBag().getBagItems().entrySet())
+		for(Map.Entry<App, Integer> entry : aPurchase.getItems().entrySet())
 		{
 			weekAppSales.merge(entry.getKey(), entry.getValue(), (vOld, vNew) -> vOld + vNew);
 		}
 	}
 
-	public HashMap<App, Integer> weekLessSoldApps(List<App> aAppsInStore, int aNumber)
+	public HashMap<App, Integer> lessSoldApps(AppStore aStore, int aNumber)
 	{
 		// adds applications absent from list
-		for(App app : aAppsInStore)
+		for(App app : aStore.getAppsList())
 		{
 			weekAppSales.putIfAbsent(app, 0);
 		}
@@ -82,6 +81,31 @@ public class WeekAnalyst
 		return sortedWeekAppSales;
 	}
 
+	/** update application discounts based on performance of previous week **/
+	public void updateAppWeeklyDiscounts(AppStore aStore, Map<App, Integer> appMapListsToDiscount, int discountValue)
+	{
+		resetAllWeeklyAppDiscounts(aStore);
+		giveWeeklyDiscount(appMapListsToDiscount, discountValue);
+	}
+	
+	/** Reset application discounts of applications **/
+	private void resetAllWeeklyAppDiscounts(AppStore aStore)
+	{
+		for(App app : aStore.getAppsList())
+		{
+			app.setWeeklyDiscount(0);
+		}
+	}
+	
+	/** Give discount to applications**/
+	private void giveWeeklyDiscount(Map<App, Integer> appMapListsToDiscount, int discountValue)
+	{
+		for(App app : appMapListsToDiscount.keySet())
+		{
+			app.setWeeklyDiscount(discountValue);
+		}
+	}
+	
 	// Getter
 	public int getWeekNumber()
 	{

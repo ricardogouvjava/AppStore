@@ -30,6 +30,37 @@ abstract class User
 
 	}
 
+	//Methods
+	@Override
+	public String toString()
+	{
+		return "Id :" + id + ", Age: " + age;
+	}
+
+	/** Encrypt password  **/
+	private String encryptPassword(String aPassword)
+	{
+	    return encryptor.encryptPassword(aPassword);
+	}
+
+	/** Compare password **/
+	public boolean isPasswordCorrect(String userInput)
+	{
+		boolean passwordCorrect = false;
+
+		if (encryptor.checkPassword(userInput, encyptedPassword))
+        {
+        	passwordCorrect = true;
+        }
+
+		else
+		{
+        	passwordCorrect = false;
+        }
+
+        return passwordCorrect;
+	}
+		
 	/** Add application to list **/
 	public void addApp(App aApp, int aQuantity)
 	{
@@ -47,21 +78,16 @@ abstract class User
 		scores.add(aScore);
 		updateScore();
 	}
-
-	/** Encrypt password  **/
-	private String encryptPassword(String aPassword)
+	
+	/** Update average Score **/
+	private void updateScore()
 	{
-	    return encryptor.encryptPassword(aPassword);
-	}
-
-	public int getAge()
-	{
-		return age;
-	}
-
-	public Map<App, Integer> getApps()
-	{
-		return apps;
+		double sum = 0;
+		for (Score score : getScores())
+		{
+			sum += score.getScoreValue();
+		}
+		averageScore = sum / getScores().size();
 	}
 
 	/** return list of applications not scored **/
@@ -83,79 +109,66 @@ abstract class User
 		}
 		return scoredApps;
 	}
-
-	public double getAverageScore()
-	{
-		return averageScore;
-	}
-
+	
+	
 	// Getters
 	public String getId()
 	{
 		return id;
 	}
-
+	public int getAge()
+	{
+		return age;
+	}
+	public Map<App, Integer> getApps()
+	{
+		return apps;
+	}
+	public double getAverageScore()
+	{
+		return averageScore;
+	}
 	public List<Score> getScores()
 	{
 		return scores;
 	}
-
-	/** Compare password **/
-	public boolean isPasswordCorrect(String userInput)
-	{
-		boolean passwordCorrect = false;
-
-		if (encryptor.checkPassword(userInput, encyptedPassword))
-        {
-        	passwordCorrect = true;
-        }
-
-		else
-		{
-        	passwordCorrect = false;
-        }
-
-        return passwordCorrect;
-	}
-
+	
 	// Setters
 	public void setAge(int aAge)
 	{
 		age = aAge;
 	}
-
 	public void setEncyptedPassword(String aPassword)
 	{
 		encyptedPassword = encryptPassword(encyptedPassword);
 	}
-
-
 	public void setPassword(String aPassword)
 	{
 		encyptedPassword = encryptPassword(aPassword);
 	}
-
 	public void setUserId(String aUserId)
 	{
 		id = aUserId;
 	}
 
-	//Methods
-	@Override
-    public String toString()
-	{
-		return "Id :" + id + ", Age: " + age;
+	public void setEncryptor(PasswordEncryptor encryptor)
+ {
+		this.encryptor = encryptor;
 	}
 
-	/** Update average Score **/
-	private void updateScore()
-	{
-		double sum = 0;
-		for (Score score : getScores())
-		{
-			sum += score.getScoreValue();
-		}
-		averageScore = sum / getScores().size();
+	public void setAverageScore(double averageScore) {
+		this.averageScore = averageScore;
 	}
 
+	public void setScores(List<Score> scores)
+ {
+		this.scores = scores;
+	}
+
+	public void setApps(Map<App, Integer> apps)
+ {
+		this.apps = apps;
+	}
+	
+	
 }

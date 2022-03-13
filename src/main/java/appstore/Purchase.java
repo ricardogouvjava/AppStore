@@ -3,73 +3,54 @@ package appstore;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Purchase
+abstract class Purchase
 {
 	private Client client;
-	private Bag purchaseBag;
 	private Date buyDate;
-	private double price;
-
-
-	public Purchase(Client aClient, Bag aBag, Date aDate)
+	private double value;
+	
+	// Constructor
+	public Purchase(Client aClient, Date aDate)
 	{
 		client = aClient;
-		purchaseBag = aBag;
 		buyDate = aDate;
-		price = getPurchaseValue();
-
+		value = calculateValue();
 	}
+	
 	//Methods
 	@Override
 	public String toString()
 		{
 			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-			return "Date: "+ formatter.format(buyDate.getTime()) + ", Client: " + client.getId() +
-					"\nBag:"+ purchaseBag;
+			return "Date: "+ formatter.format(buyDate.getTime()) + ", Client: " + client.getId();
 		}
 
-	public double getPurchaseValue() 
-	{
-		return purchaseBag.valueInBag() *(100 - client.getDiscount() /100) ;
-	}
+	/** Value off purchase with discount**/
+	abstract double calculateValue();
 	
-	/* */
-	public double getPurchaseDiscountValue()
-	{		
-		return purchaseBag.valueInBag() * client.getDiscount()  / 100 ;
-	}
 	
-
 	// Getters
-	public Client getClientName()
+	public Client getClient()
 	{
 		return client;
-	}
-	public double getPrice()
-	{
-		return price;
 	}
 	public Date getBuyDate()
 	{
 		return buyDate;
 	}
-	public Bag getPurchaseBag()
+	public double getValue() 
 	{
-		return purchaseBag;
+		return value;
 	}
-
+	
 	// Setters
 	public void setClient(Client aClient)
 	{
 		client = aClient;
 	}
-	public void setPrice(double aPrice)
+	public void setValue(double aValue)
 	{
-		price = aPrice;
-	}
-	public void setPurchaseBag(Bag aBag)
-	{
-		purchaseBag = aBag;
+		value = aValue;
 	}
 	public void setBuyDate(Date aDate)
 	{
