@@ -1,5 +1,6 @@
 package appstore;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -22,7 +23,7 @@ public class Generator
 	public void generateDaysData()
 	{
 		/** User Generation **/
-		if(store.getUsersList().size() < 1000)
+		if(store.getUsersList().size() < 100)
 		{
 			int generateClients = rand.nextInt(3) + 1;
 			for(int i = 0 ; i <=  generateClients ; i++)
@@ -33,7 +34,7 @@ public class Generator
 		}
 		
 		/** User invite **/ 
-		if(store.getUsersList().size() < 1000)
+		if(store.getUsersList().size() < 100)
 		{
 			int generateClients = rand.nextInt(3) + 1;
 			for(int i = 0 ; i <=  generateClients ; i++)
@@ -53,7 +54,7 @@ public class Generator
 		}
 
 		/** Application Generation **/
-		if (store.getAppsList().size() < 500)
+		if (store.getAppsList().size() < 1000)
 		{
 			int generateApps = rand.nextInt(store.getProgrammersList().size() / 5 + 1) + 1;
 			for(int i = 0 ; i <=  generateApps ; i++)
@@ -63,7 +64,8 @@ public class Generator
 		}
 
 		/** Purchase Generation **/
-		int generatePurchases = (int) (rand.nextInt(store.getUsersList().size()) * 0.08 + 1);
+		int generatePurchases = (int) (rand.nextInt(store.getUsersList().size()) * 0.1 + 1);
+		
 		for(int i = 0 ; i <=  generatePurchases ; i++)
 		{
 			generatePurchase();
@@ -72,19 +74,35 @@ public class Generator
 		/** Score Generation **/
 		if(store.getScores().size() < store.getPurchases().size() * 0.5)
 		{
-			int generateScores = (int) ((store.getPurchases().size() * 0.2) + 1);
+			int generateScores = (int) (rand.nextInt(store.getPurchases().size()) * 0.2) + 1;
 			for(int i = 0 ; i <=  generateScores ; i++)
 			{
 				generateRandomScore();
 			}
 		}
 		
+		/** Free app generation **/
 		if(store.getAppsList().size() > 3)
 		{
 			/** Pick free weekly application generation **/
 			Client clientWantsFreeApp = pickRandomClient();
 			App appWanted =  pickRandomApp();
 			clientWantsFreeApp.addChoosenFreeApp(appWanted);
+			System.out.println("Free App Chosen by client: " + clientWantsFreeApp.getId() + ", App: " + appWanted.getName());
+		}
+		
+		/** Subscription generation **/
+		if(store.getAppsList().size() > 3)
+		{
+			/** Pick free weekly application generation **/
+			Client clientWantsSub = pickRandomClient();
+			App appWanted =  pickRandomApp();
+			if(!clientWantsSub.subscribedApps().contains(appWanted))
+			{
+				Subscription sub = clientWantsSub.subscribe(appWanted, Calendar.getInstance());
+				System.out.println("New Sub by client: " + clientWantsSub.getId() + ", Sub: " + sub);
+					
+			}
 		}
 		
 	}
@@ -96,8 +114,7 @@ public class Generator
 		store.addUser(randomType, generateRandomUserId(), generateRandomPassword(), generateRandomAge());
 	}
 	
-	/** Generates client and returns object 
-	 * @return **/
+	/** Generates client and returns object **/
 	public Client generateReturnClient()
 	{
 		Client client = null;
@@ -229,7 +246,6 @@ public class Generator
 	/** Score Generator **/
 	private void generateRandomScore()
 	{
-		Score score = null;
 		Client client = null;
 		App app = null;
 		boolean findUserToScore = true;
@@ -253,11 +269,9 @@ public class Generator
 				}
 
 				findUserToScore = false;
-				score = client.giveScore(app, scoreValue, comment, store);
+				client.giveScore(app, scoreValue, comment, store);
 			}
 		}
-	
-		System.out.print("Score aded: " + score);
 	}
 
 	/** Random RandomNotScoredApp chooser **/

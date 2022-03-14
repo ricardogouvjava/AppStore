@@ -159,7 +159,8 @@ public class App
 	{
 		type = aType;
 	}	
-	public void setBuildDate(Date buildDate) {
+	public void setBuildDate(Date buildDate) 
+	{
 		this.buildDate = buildDate;
 	}
 	public void setProgrammer(Programmer aProgrammer)

@@ -1,6 +1,9 @@
 package appstore;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -292,10 +295,12 @@ public class Menu
 				+ "\n  (8) Subscribe Premium (Normal Client Only)"
 				+ "\n  (9) Cancel Premium (Premium Only)"
 				+ "\n (10) Choose Weekly free app"
-				+ "\n ("
+				+ "\n (11) Renew subscrition"
+				+ "\n (12) Cancel subscrition"
+				+ "\n (13) List subscriptions"
 				+ "\n");
 
-		switch (askInputIntAndValidate(0, 10))
+		switch (askInputIntAndValidate(0, 13))
 		{
 
 		case 0:
@@ -390,8 +395,8 @@ public class Menu
 			menuClient(aClient);
 			break;
 			
-		case 9:
-			// Cancel premium
+		case 9:// Cancel premium
+			
 			String pswdCP = reconfirmPassword(aClient);
 			
 			if (pswdCP != null)
@@ -436,8 +441,73 @@ public class Menu
 			}
 			menuClient(aClient);
 			break;
-		
+			
+		case 11: // Renew Sub
+			
+			// List applications in watingReSubscriptionApps List
+			List<App> watingReSubscriptionApps = aClient.watingReSubscriptiondApps();
+			if(watingReSubscriptionApps.size() <= 0)
+			{
+				System.out.print("No Subscriptions to Renew");
+			}
+			else
+			{
+				System.out.println("\nApp in Renew List:");
+				
+				printList(watingReSubscriptionApps);
 
+				App appToRenew = askForAppNameValidatesAndReturnsApp(watingReSubscriptionApps);
+			
+				for(Subscription subToRenew : aClient.getWatingReSubscription())
+				{
+					if(subToRenew.getApp() == appToRenew)	
+					{
+						aClient.reSubscribe(subToRenew);
+						menuClient(aClient);
+						break;
+					}
+				}				
+			}
+			
+			menuClient(aClient);
+			break;
+		
+		case 12: // Cancel Sub
+
+			// List applications in subscriptions List
+			List<App> subcriptionsApps = aClient.subscribedApps();
+			
+			if(subcriptionsApps.size() > 0)
+			{
+				System.out.println("\nApp in Subscription List:");
+				
+				printList(subcriptionsApps);
+				
+				App appToCancel = askForAppNameValidatesAndReturnsApp(subcriptionsApps);
+				
+				for(Subscription subToCancel : aClient.getSubscriptions())
+				{
+					if(subToCancel.getApp() == appToCancel)	
+					{
+						aClient.cancelSubscrition(subToCancel);
+						menuClient(aClient);
+						break;
+					}
+				}				
+			}
+			else 
+			{
+				System.out.print("No Subscriptions to cancel");
+			}
+						
+			menuClient(aClient);
+			break;		
+
+		case 13:
+			System.out.println("Subscriptions: ");
+			printList(aClient.subscribedApps());
+			menuClient(aClient);
+			break;
 
 		default:
 			// Ask again for input!!
@@ -572,7 +642,6 @@ public class Menu
 		}
 	}
 			
-	
 	/** Buy Subscription menu **/
 	private void buySubscritionMenu(Client aClient , Bag shoppingBag)
 	{
@@ -589,11 +658,10 @@ public class Menu
 				+ "\n (2) Remove app from Subscriptions Bag"
 				+ "\n (3) Check value of subscriptions to be added"
 				+ "\n (4) Checkout"
-				+ "\n (4) List application subscribed"
 				+ "\n ");
 		
 		// asks for user menu input and verifies its validity
-		switch (askInputIntAndValidate(0,3))
+		switch (askInputIntAndValidate(0,4))
 		{
 
 		case 0:
@@ -620,7 +688,7 @@ public class Menu
 				// Asks for application to subscribe
 				App appToSub = askForAppNameValidatesAndReturnsApp(store.getAppsList());
 				
-				if(!aClient.getSubscribedApps().contains(appToSub))
+				if(!aClient.subscribedApps().contains(appToSub))
 				{
 					// Adds application to bag
 					shoppingBag.putInBag(appToSub, 1);
@@ -654,9 +722,9 @@ public class Menu
 			buySubscritionMenu(aClient, shoppingBag);
 			break;
 				
-		case 4: // Informs total value in the bag
+		case 3: // Informs total value in the bag
 			
-			System.out.println("The value of anual subcriptions for this year in the bag is:"
+			System.out.println("The value of anual subcriptions for this year in the bag is: "
 					+ "" + String.format("%.2f", shoppingBag.valueInBag() / 10));
 			
 			// Checks if user has discount and informs value to pay
@@ -666,14 +734,14 @@ public class Menu
 			buySubscritionMenu(aClient, shoppingBag);
 			break;
 
-		case 5:
+		case 4:
 			if(store.checkoutSubscription(aClient, shoppingBag)) 
 			{
 				System.out.println("Subscriptions done!!");
-			}
-					
+			}	
 			menuClient(aClient);
 			break;
+			
 
 		default:
 			// Ask again for input!!
@@ -690,14 +758,15 @@ public class Menu
 	private void menuProgrammer(Programmer aProgrammer)
 	{
 		System.out.print("\n"
-				+ "User Options:"
+				+ "Programmer Options:"
 				+ "\n (0) Return"
 				+ "\n (1) List developed applications"
 				+ "\n (2) Programmer average score"
 				+ "\n (3) Earnings"
-				+ "\n input:");
+				+ "\n (4) Change build date of owned app"
+				+ "\n");
 
-		switch (askInputIntAndValidate(0,7))
+		switch (askInputIntAndValidate(0,4))
 		{
 
 		case 0:
@@ -706,7 +775,7 @@ public class Menu
 			break;
 
 		case 1:
-			// List Application owned by user
+			// List Application owned by Programmer
 			System.out.println("Developped applications:");
 			printList(new ArrayList<>(aProgrammer.getApps().keySet()));
 			menuProgrammer(aProgrammer);
@@ -723,7 +792,30 @@ public class Menu
 			System.out.println("Earnings:" + aProgrammer.getEarnings(store));
 			menuProgrammer(aProgrammer);
 			break;
-
+			
+		case 4:// Change date of build
+			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+			List<App> madeApps =  new ArrayList<>(aProgrammer.getApps().keySet());
+			for(App app : madeApps)
+			{
+				System.out.println(app.getName() + ": " + formatter.format(app.getBuildDate()));
+			}
+			// Ask for application name and verifies if the programmer owns it
+			App appTochange = askForAppNameValidatesAndReturnsApp(madeApps);
+			
+			Date date = askForDateAndReturnsDate();
+			
+			if(appTochange != null && date != null)
+			{
+				appTochange.setBuildDate(date);
+			}
+			else
+			{
+				System.out.println("Canceled");
+			}
+			menuProgrammer(aProgrammer);
+			break;
+		
 		}
 
 	}
@@ -1137,7 +1229,6 @@ public class Menu
 		return null;
 	}
 	
-	
 	/** Ask for an User name, verifies if exists and returns user object **/
 	private User askForUserIdValidatesAndReturnsUser()
 	{
@@ -1227,12 +1318,46 @@ public class Menu
 		App application = null;
 		for(App app : aAppList)
 		{
-			if(app.getName().equals(aAppName));
-			application = app;
+			if(app.getName().equals(aAppName)) 
+			{
+				application = app;
+			}
 		}
 		return application;
 	}
 
+	/** Asks for date and validates **/
+	private Date askForDateAndReturnsDate()
+	{
+		boolean askForDate = true;
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+
+			while(askForDate)
+			{
+				System.out.print("\nDate (dd/MM/yyyy): ");
+				String dateString = scanText.nextLine();
+				
+				if(dateString.equals("exit"))
+				{
+					return null;
+				}
+
+		        try {
+
+		            date = formatter.parse(dateString);
+		            askForDate = false;
+		        } 
+		        
+		        catch (ParseException e) 
+		        {
+		        	System.out.print("Wrong data input");
+		        	askForDate = true;
+		        }
+			}
+			
+			return date;
+	}
 	
 	/* Prints */
 	public void printList(List<?> aList)

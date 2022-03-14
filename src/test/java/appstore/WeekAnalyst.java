@@ -11,12 +11,14 @@ import java.util.Map.Entry;
 public class WeekAnalyst
 {
 	private int week;
+	private int year;
 	private List<Purchase> weekPurchases;
 	private Map<App, Integer> weekAppSales;
 	
 	public WeekAnalyst(Calendar aCalendar)
 	{
 		week = aCalendar.get(Calendar.WEEK_OF_YEAR);
+		year = aCalendar.get(Calendar.YEAR);
 		weekPurchases = new ArrayList<>();
 		weekAppSales = new HashMap<>();		
 	}
@@ -111,6 +113,12 @@ public class WeekAnalyst
 	{
 		return week;
 	}
+	
+	
+	public int getYear() {
+		return year;
+	}
+
 	public Map<App, Integer> getAppSales()
 	{
 		return weekAppSales;

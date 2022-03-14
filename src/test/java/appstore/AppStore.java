@@ -27,6 +27,7 @@ public class AppStore
 	private List<Score> scores; 						// List of all scores given to the applications
 	private List<WeekAnalyst> weeks;
 	private List<Subscription> subscriptions;
+	private List<List<WeekAnalyst>> years;
 	
 	// Constructor
 	public AppStore(String aName)
@@ -44,6 +45,7 @@ public class AppStore
 		generator = new Generator(this);
 		appTypeWithDiscount = Generator.randomAppType();
 		subscriptions = new ArrayList<Subscription>();
+		years = new ArrayList<List<WeekAnalyst>>();
 	}
 
 	/* - Methods -
@@ -69,6 +71,13 @@ public class AppStore
 	{
 		for(int i = 1; i <= aDays; i++)
 		{
+			
+			if(calendar.get(Calendar.YEAR) != currentWeek.getYear())
+			{
+				years.add(weeks);
+				weeks.clear();
+			}
+			
 			// when in new Month updates discounts
 			if(calendar.get(Calendar.MONTH) != currentMonth)
 			{
@@ -99,9 +108,8 @@ public class AppStore
 
 			System.err.println("New Day");
 
-			// check subscriptions
-			
-			updateSubs();
+			updateSubs(); 	// check subscriptions
+			 
 			generator.generateDaysData(); // Generates random data for a day
 		}
 	}
@@ -157,26 +165,20 @@ public class AppStore
 	public PurchaseApps checkout(Client aClient, Bag shoppingBag)
 	{
 		PurchaseApps purchase = null;
-		try
+		purchase = aClient.buy(shoppingBag, calendar);
+
+		// Register sale in applications
+		for (Map.Entry<App, Integer> entry : shoppingBag.getBagItems().entrySet())
 		{
-			purchase = aClient.buy(shoppingBag, calendar);
 
-			// Register sale in applications
-			for (Map.Entry<App, Integer> entry : shoppingBag.getBagItems().entrySet())
-			{
-
-				entry.getKey().registerSale(calendar.getTime(), entry.getValue());
-			}
-
-			System.out.println("\nPurchase made: " + purchase);
-			purchases.add(purchase);
-			currentWeek.addPurchase(purchase);
+			entry.getKey().registerSale(calendar.getTime(), entry.getValue());
 		}
 
-		catch (NullPointerException e)
-		{
-			System.out.println(e.getMessage());
-		}
+		System.out.println("\nPurchase made: " + purchase);
+		purchases.add(purchase);
+		currentWeek.addPurchase(purchase);
+	
+
 		
 		return purchase;
 
@@ -193,7 +195,8 @@ public class AppStore
 			{
 				subscription = aClient.subscribe(entry.getKey(), calendar);
 				subscriptions.add(subscription);
-			}
+				System.out.println("New sub: " + subscription);
+			}	
 		}
 
 		catch (NullPointerException e)
@@ -427,7 +430,24 @@ public class AppStore
 	/** returns list of less sold application X week **/
 	public HashMap<App, Integer> getWeekLessSoldApps(int aWeekNumber, int aNumberOfApps)
 	{
-		return returnWeekObject(aWeekNumber).lessSoldApps(this, aNumberOfApps);
+		if(currentWeek.getWeekNumber() == 1)
+		{
+			for(List<WeekAnalyst> weeksYear : years) 
+			{
+				for(WeekAnalyst week : weeksYear) 
+				{
+					if(week.getWeekNumber() == 52 && week.getYear() == calendar.get(Calendar.YEAR) -1)
+					{
+						return week.lessSoldApps(this, aNumberOfApps);
+					}
+				}
+			}
+		}
+		else 
+		{
+			return returnWeekObject(aWeekNumber).lessSoldApps(this, aNumberOfApps);	
+		}
+		return null;
 	}
 
 	/** finds last week less sold applications and applies discounts **/
@@ -568,7 +588,7 @@ public class AppStore
 		{
 			for(Subscription sub : aSubsOutOfDate)
 			{
-				sub.cancelSubscription(this);
+				sub.holtSubscription(this);
 			}
 			return true;
 		}

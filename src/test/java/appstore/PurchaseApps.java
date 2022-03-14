@@ -12,6 +12,8 @@ public class PurchaseApps extends Purchase
 	public PurchaseApps(Client aClient, Bag aBag, Date aDate) 
 	{
 		super(aClient, aDate);
+		purchaseBag = aBag;
+		super.setValue(calculateValue());
 		purchaseItems = aBag.getBagItems();
 		savedValue = calculateSavedValue();
 	}
@@ -25,9 +27,9 @@ public class PurchaseApps extends Purchase
 	
 	@Override
 	/** Value off purchase with discount**/
-	double calculateValue()
+	protected double calculateValue()
 	{
-		return purchaseBag.valueInBag() *(100 - getClient().getClientDiscount() /100) ;
+		return purchaseBag.valueInBag() * (100 - getClient().getClientDiscount() /100) ;
 	}
 	
 	/** Value saved in Sub **/
