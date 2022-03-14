@@ -19,3 +19,6 @@ A aplicação da App Store deve permitir:
 **[Ficha Extra 1.1 - App de gestao](https://github.com/ricardogouvjava/Projectos-Java/blob/main/fichas/fichaExtra1/Ficha%20Extra%201.1.pdf)**
 
 Neste projeto pretende-se que o aluno perceba a importância de desenvolver código que seja fácil de evoluir e manter. O objetivo será acrescentar funcionalidades indicadas no enunciadoao projeto anteriormente feito (num novo branch).
+
+AppFinalValue = BasePrice * ( 100 - AppTypeDiscount - LessSoldDiscount - ClientTypeDiscount - IncentiveDiscount)
+
