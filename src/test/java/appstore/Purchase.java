@@ -14,7 +14,7 @@ abstract class Purchase
 	{
 		client = aClient;
 		buyDate = aDate;
-		value = calculateValue();
+		value = 0;
 	}
 	
 	//Methods
@@ -26,7 +26,7 @@ abstract class Purchase
 		}
 
 	/** Value off purchase with discount**/
-	abstract double calculateValue();
+	protected abstract double calculateValue();
 	
 	
 	// Getters

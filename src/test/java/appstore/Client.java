@@ -14,8 +14,7 @@ public class Client extends User
 	private List<Client> invitedClients;
 	private List<App> freeApps;
 	private List<Subscription> subscriptions;
-	private List<App> subscribedApps;
-	private List<App> watingReSubscriptionApps;
+	private List<Subscription> watingReSubscription;
 
 	// Constructor
 	public Client(String aId, String aPassword, int aAge)
@@ -29,8 +28,7 @@ public class Client extends User
 		invitedClients = new ArrayList<Client>();
 		freeApps = new ArrayList<App>();
 		subscriptions = new ArrayList<Subscription>();
-		subscribedApps = new ArrayList<App>();
-		watingReSubscriptionApps = new ArrayList<App>();
+		watingReSubscription = new ArrayList<Subscription>();
 	}
 
 	// Methods
@@ -72,11 +70,11 @@ public class Client extends User
 	}
 	
 	/** Hold Subscription **/
-	public boolean holdSubscription(Subscription aSub)
+	public boolean holtSubscription(Subscription aSub)
 	{
-		if(subscribedApps.remove(aSub.getApp()))
+		if(subscriptions.remove(aSub))
 		{
-			watingReSubscriptionApps.add(aSub.getApp());
+			watingReSubscription.add(aSub);
 			return true;
 		}
 		else
@@ -86,11 +84,14 @@ public class Client extends User
 	}
 	
 	/** Hold Subscription **/
-	public boolean reSubscribe(App aApp)
+	public boolean cancelSubscrition(Subscription aSub)
 	{
-		if(watingReSubscriptionApps.contains(aApp))
+		if(subscriptions.remove(aSub))
 		{
-			
+			return true;
+		}
+		else if(watingReSubscription.remove(aSub))
+		{
 			return true;
 		}
 		else
@@ -99,8 +100,22 @@ public class Client extends User
 		}
 	}
 	
+	/** Hold Subscription **/
+	public boolean reSubscribe(Subscription aSub)
+	{
+		if(watingReSubscription.contains(aSub))
+		{
+			aSub.extendSubscription();
+			updateSpending(aSub.getValue());
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 	
-	
+		
 	/** Calculates current client discount **/
 	public double getClientDiscount() 
 	{
@@ -166,6 +181,27 @@ public class Client extends User
 		}
 	}
 		
+	/** **/
+	public List<App> subscribedApps()
+	{
+		List<App> tempList = new ArrayList<App>();
+		for(Subscription sub : subscriptions)
+		{
+			tempList.add(sub.getApp());
+		}
+		return tempList;
+	}
+	
+	public List<App> watingReSubscriptiondApps()
+	{
+		List<App> tempList = new ArrayList<App>();
+		for(Subscription sub : watingReSubscription)
+		{
+			tempList.add(sub.getApp());
+		}
+		return tempList;
+	}
+	
 	// Getters
 	public double getSpendings()
 	{
@@ -204,14 +240,10 @@ public class Client extends User
 	public List<Subscription> getSubscriptions() {
 		return subscriptions;
 	}
-	public List<App> getWatingReSubscriptionApps() {
-		return watingReSubscriptionApps;
+	public List<Subscription> getWatingReSubscription() {
+		return watingReSubscription;
 	}
-	public List<App> getSubscribedApps()
-	{
-		return subscribedApps;
-	}
-
+	
 	
 	// Setters
 	public void setSpendings(double spendings) {
@@ -238,14 +270,11 @@ public class Client extends User
 	public void setHasChoosenFreeWeeklyApp(boolean hasChoosenFreeWeeklyApp) {
 		this.hasChoosenFreeWeeklyApp = hasChoosenFreeWeeklyApp;
 	}
-	public void setWatingReSubscriptionApps(List<App> watingReSubscriptionApps) {
-		this.watingReSubscriptionApps = watingReSubscriptionApps;
+	public void setWatingReSubscription(List<Subscription> watingReSubscription) {
+		this.watingReSubscription = watingReSubscription;
 	}
 	public void setSubscriptions(List<Subscription> subscribedApps) {
 		this.subscriptions = subscribedApps;
-	}
-	public void setSubscribedApps(List<App> subscriptionApps) {
-		this.subscribedApps = subscriptionApps;
 	}
 }
 
