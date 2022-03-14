@@ -31,7 +31,21 @@ public class Client extends User
 		watingReSubscription = new ArrayList<Subscription>();
 	}
 
-	// Methods
+	/* Methods
+	 * 
+	 * buy(Bag, Calendar)
+	 * subscribe(App, Calendar)
+	 * holtSubscription(Subscription)
+	 * cancelSubscrition(Subscription)
+	 * reSubscribe(Subscription)
+	 * getClientDiscount()
+	 * giveScore(App, double, String, AppStore)
+	 * updateSpending(double)
+	 * inviteClient(AppStore)
+	 * addChoosenFreeApp(App)
+	 * pickFreeAppSucess(App) 
+	 */
+		
 	/** Adds application to user library **/
 	public PurchaseApps buy(Bag aShoppingBag, Calendar aCalendar)
 	{

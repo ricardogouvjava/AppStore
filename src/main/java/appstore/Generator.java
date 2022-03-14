@@ -18,7 +18,28 @@ public class Generator
 
 	}
 
-	// Methods
+	/* Methods
+	 * 
+	 * generateDaysData()
+	 * generateUser()
+	 * generateReturnClient()
+	 * generateProgrammer()
+	 * generateRandomUserId()
+	 * randomStringGenerator()
+	 * generateRandomAge()
+	 * generateRandomPassword()
+	 * generateProgrammerDesignation()
+	 * generatePurchase()
+	 * generateRandomBag(int)
+	 * pickRandomApp()
+	 * pickRandomClient()
+	 * generateRandomScore()
+	 * pickRandomNotScoredApp(Client)
+	 * randomAppType()
+	 * randomPriceGenerator()
+	 * getStore()
+	 * setStore(AppStore)
+	 */
 
 	public void generateDaysData()
 	{

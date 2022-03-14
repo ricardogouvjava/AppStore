@@ -23,10 +23,12 @@ public class Menu
 	 * 1. Main menu | menuMain()
 	 *    1.1 User Login
 	 *    1.2 User Creation
+	 *    
 	 *    1.3 List AppsMenu | menuListApps()
 	 *        1.3.1 By Name
 	 *        1.3.2 By Times Sold
 	 *        1.3.3 By Score    
+	 *        
 	 *        1.3.3 By chosen application type | menuListAppsByType()
 	 *              1.3.3.1 Games
 	 *              1.3.3.2 Business
@@ -39,40 +41,57 @@ public class Menu
 	 *
 	 * 2. Client menu | menuClient(Client aClient)
 	 *    2.1 List owned applications
+	 *    
 	 *    2.2 Buy Applications | buyAppMenu(Client aClient, Bag shoppingBag)
 	 *        2.2.1 Add application to shopping bag
 	 *        2.2.2 Alter number application bag
 	 *        2.2.3 Remove application from bag
 	 *        2.2.4 Check value of shopping bag
 	 *        2.2.5 Checkout
-	 *    2.3 Give Score
-	 *    2.4 List application that score was given
-	 *    2.5 List application that scores was not given
-	 *    2.6 List scores given to application
+	 *    
+	 *    2.3 Buy Subscription(aClient)
+	 *    	  2.3.1 Add application to Subscribe
+	 *    	  2.3.2 Remove application from Subscriptions Bag
+	 *    	  2.3.3 Check value of subscriptions to be added
+	 *    	  2.3.4 Checkout
+	 *    
+	 *    2.4 Give Score
+	 *    2.5 List application that score was given
+	 *    2.6 List application that scores was not given
+	 *    2.7 List scores given to application
+	 *    2.8 Subscribe Premium (Normal Client Only)
+	 *    2.9 Cancel Premium (Premium Only)
+	 *   2.10 Choose Weekly free application
+	 *   2.11 Renew subscription
+	 *   2.12 Cancel subscription
+	 *   2.13 List subscriptions"
 	 *
 	 * 3. Programmer menu | menuProgrammer(Programmer aProgrammer
 	 *    3.1 List developed applications
 	 *    3.2 Programmer average score
 	 *    3.3 Earnings
+	 *    3.4 Change build date of owned application
 	 *
 	 * 4. Administrator Menu | menuAdministrator(Administrator aAdministrator)
 	 *    4.1 Move Time Forward
 	 *    4.2 Total earnings
 	 *    4.3 Earnings by programmer
-	 *    4.4 applications with discount
+	 *    4.4 applications with weekly discount
 	 *    4.5 Times an application was sold
-	 *    4.6 List applications sold last week
-	 *    4.7 Less sold applications in a given week
+	 *    4.6 applications sales in given week of the current year
+	 *    4.7 Less sold applications in given week of the current year
 	 *    4.8 List all purchases
-	 *    4.9 List purchases by week
+	 *    4.9 List purchases in given week of the current year
 	 *    4.10 List all Users
 	 *    4.11 List all Clients
 	 *    4.12 List all ClientPremium
 	 *    4.13 List all Programmers
 	 *    4.14 List applications off User
+	 *    4.15 Applications with Monthly discount / Type
 	 *    4.16 Users with 'Incentive' Discount
-	 *    4.17 Clients invited by Client
-	 */
+	 *    4.17 Clients invited by client
+	 *    4.18 List all free applications chosen by each client"
+	 * /
 
 	/** Main menu options **/
 	public void menuMain()
@@ -295,8 +314,8 @@ public class Menu
 				+ "\n  (8) Subscribe Premium (Normal Client Only)"
 				+ "\n  (9) Cancel Premium (Premium Only)"
 				+ "\n (10) Choose Weekly free app"
-				+ "\n (11) Renew subscrition"
-				+ "\n (12) Cancel subscrition"
+				+ "\n (11) Renew subscription"
+				+ "\n (12) Cancel subscription"
 				+ "\n (13) List subscriptions"
 				+ "\n");
 
@@ -655,7 +674,7 @@ public class Menu
 				+ "Buy Options:"
 				+ "\n (0) Return / Cancel"
 				+ "\n (1) Add application to Subscribe"
-				+ "\n (2) Remove app from Subscriptions Bag"
+				+ "\n (2) Remove application from Subscriptions Bag"
 				+ "\n (3) Check value of subscriptions to be added"
 				+ "\n (4) Checkout"
 				+ "\n ");
@@ -820,7 +839,7 @@ public class Menu
 
 	}
 
-	/** Manager menu options **/
+	/** Administrator menu options **/
 	private void menuAdministrator(Administrator aAdministrator)
 	{
 		System.out.print("\n"
@@ -831,10 +850,10 @@ public class Menu
 				+ "\n  (3) Earnings by programmer"
 				+ "\n  (4) Applications with weekly discount"
 				+ "\n  (5) Times an app was sold"
-				+ "\n  (6) All app sales by week"
-				+ "\n  (7) Less sold apps in a given week"
+				+ "\n  (6) App sales in given week of the current year"
+				+ "\n  (7) Less sold apps in given week of the current year"
 				+ "\n  (8) List all purchases"
-				+ "\n  (9) List purchases by week"
+				+ "\n  (9) List purchases in given week of the current year"
 				+ "\n (10) List all Users"
 				+ "\n (11) List all Clients"
 				+ "\n (12) List all ClientPremium"
@@ -843,7 +862,7 @@ public class Menu
 				+ "\n (15) Applications with Monthly discount / Type"
 				+ "\n (16) Users with 'Incentive' Discount"
 				+ "\n (17) Clients invited by client"
-				+ "\n (18) List all free apps chosen by each client"
+				+ "\n (18) List all free applications chosen by each client"
 				+ "\n");
 
 		switch (askInputIntAndValidate(0, 18))
@@ -1019,13 +1038,16 @@ public class Menu
 
 	/*
 	* Several methods for input & validation :
-	 * 1. Integer input validation | askInputIntAndValidate(int min, int max)
-	 * 2. User login | serLogin()
-	 * 3. User creation | userCreation()
-	 * 4. User validation | askForUserIdValidatesAndReturnsUser()
-	 * 4. Score Validation | askForScoreAndValidates()
-	 * 5. Application Validation | askForAppNameValidatesAndReturnsApp()
-	 * */
+	 * askInputIntAndValidate(int, int)
+	 * userLogin()
+	 * userCreation()
+	 * askForUserIdValidatesAndReturnsUser()
+	 * askForScoreAndValidates()
+	 * askForAppNameValidatesAndReturnsApp()
+	 * appExists(String, List<App>)
+	 * findApp(String, List<App>)
+	 * Date askForDateAndReturnsDate()
+	 * /
 	
 	/** Ask for user menu input and verifies its validity **/
 	private int askInputIntAndValidate(int min, int max)
