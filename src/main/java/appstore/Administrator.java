@@ -8,5 +8,9 @@ public class Administrator extends User
 		super(aUserId, aPassword, aAge);
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+	
+	
 
 }

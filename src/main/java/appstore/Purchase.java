@@ -5,16 +5,14 @@ import java.util.Date;
 
 abstract class Purchase
 {
-	private Client client;
-	private Date buyDate;
-	private double value;
-	
+	private final Client client;
+	private final Date buyDate;
+		
 	// Constructor
 	public Purchase(Client aClient, Date aDate)
 	{
 		client = aClient;
 		buyDate = aDate;
-		value = 0;
 	}
 	
 	//Methods
@@ -38,23 +36,6 @@ abstract class Purchase
 	{
 		return buyDate;
 	}
-	public double getValue() 
-	{
-		return value;
-	}
 	
-	// Setters
-	public void setClient(Client aClient)
-	{
-		client = aClient;
-	}
-	public void setValue(double aValue)
-	{
-		value = aValue;
-	}
-	public void setBuyDate(Date aDate)
-	{
-		buyDate = aDate;
-	}
-	
+		
 }
