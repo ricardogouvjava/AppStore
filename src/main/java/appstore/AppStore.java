@@ -49,22 +49,61 @@ public class AppStore
 		years = new ArrayList<List<WeekAnalyst>>();
 	}
 
-	/* - Methods -
-	 * Administrator Methods:
-	 * 	forwardDateXDays(int aDays)
+	/* - Methods List -
 	 * 
-	 * AppStore Method:
-	 * addUser(String aType, String aId, String aPassword, int aAge)
-	 * addScore(Score aScore)
-	 * designateProgrammer(String aAppName, double aPrice, AppType aAppType, Programmer programmer)
-	 * createShoppingBag()
-	 * checkout(Client aClient, Bag shoppingBag)
+	 *	* Administrator methods *
+	 *   	forwardDateXDays(int)
+	 *  
+	 * * AppStore *
+	 *   	addUser(String, String, String, int)
+	 * 	 	designateProgrammer(String, double, AppType, Programmer)
+	 *   	orderAppsBy(String aCase)
+	 *   	totalStoreEarnings()
+	 *   	listAppsByType(AppType aType)
 	 * 
-	 *
+	 *  * Purchase *
+	 * 		createShoppingBag()
+	 * 		valueInBag(Bag, Client)
+	 * 		savedInPurchase(PurchaseApps)
+	 * 		checkout(Client aClient, Bag)
+	 * 		checkoutSubscription(Client aClient, Bag)
+	 * 		listPurchasesTimePeriod(Date, Date)
 	 * 
-	 *
-	 *
-	 */
+	 *  * User *
+	 *		userExists(String aId)
+	 *		findUser(String aUserId)
+	 * 
+	 * * Client *
+	 * 		addScore(Score aScore)
+	 * 		getClientsList()
+	 * 		getClientsPremiumList()
+	 *		freeAppsChosenByClients()
+	 *		clientsInvited(Client aClient)
+	 
+	 * * Programmer *
+	 *		earningsByProgrammer()
+	 *		public List<Programmer> getProgrammersList()
+	/*
+	 * * Subscription *
+	 * 		changeToPremium(Client, String)
+	 * 		changeToClient(ClientPremium, String)
+	 * 		updateSubs()
+	public boolean cancelSubscription(Client, Subscription) 
+	/*
+	 * Discounts *
+	 * 		checkAppsWithWeeklyDiscounts()
+	 * 		checkAppsWithMonthlyDiscounts()
+	 * 		clienstWithIncentiveDiscount()
+	 * 		updateAppMonthlyDiscounts(int)
+	 * 		public void resetAllMonthlyAppDiscounts()
+	 * 		public void updateWeeklyDiscounts() 
+	 * 
+	 * * Week *
+	 * 		returnWeekObject(int)
+	 * 		getWeekPurchases(int)
+	 * 		getWeekLessSoldApps(int, int)
+	 * 		getWeekSales(int)
+	 * 
 	
 	/* Administrator methods */
 	/** Moves local date X amount of days forward **/
