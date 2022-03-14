@@ -5,15 +5,16 @@ import java.util.Map;
 
 public class PurchaseApps extends Purchase
 {
-	private Bag purchaseBag;
-	private Map<App, Integer> purchaseItems;
-	private double savedValue;
+	private final Bag purchaseBag;
+	private final Map<App, Integer> purchaseItems;
+	private final double value;
+	private final double savedValue;
 
 	public PurchaseApps(Client aClient, Bag aBag, Date aDate) 
 	{
 		super(aClient, aDate);
 		purchaseBag = aBag;
-		super.setValue(calculateValue());
+		value = calculateValue();
 		purchaseItems = aBag.getBagItems();
 		savedValue = calculateSavedValue();
 	}
@@ -37,22 +38,20 @@ public class PurchaseApps extends Purchase
 	{		
 		return purchaseBag.valueInBag() * getClient().getClientDiscount()  / 100 ;
 	}
-
-		
+	
 	// Getters
 	public Map<App, Integer> getItems()
 	{
 		return purchaseItems;
+	}
+	public double getValue() 
+	{
+		return value;
 	}
 	public double getSavedValue() 
 	{
 		return savedValue;
 	}
 
-	// Setters
-	public void setSavedValue(double savedValue) 
-	{
-		this.savedValue = savedValue;
-	}
 
 }

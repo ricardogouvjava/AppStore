@@ -5,20 +5,22 @@ import java.util.Date;
 
 public class Subscription extends Purchase
 {
-	private App app;
+	private final App app;
+	private final double value;
 	private Date endDate;
-	
+	private boolean active;
+		
 	// Constructor
 	public Subscription(Client aClient, Date aDate, App aApp)
 	{
 		super(aClient, aDate);
-		this.app = 	aApp;
-		super.setValue(calculateValue());
-		this.endDate = calculateEndDate(aDate);
+		app = 	aApp;
+		value = calculateValue();
+		active = true;
+		endDate = calculateEndDate(aDate);
 		
 	}
 
-	
 	// Methods
 	@Override
 	public String toString()
@@ -33,7 +35,6 @@ public class Subscription extends Purchase
 		return app.getPrice() / 10;
 	}
 
-	
 	/** Check if subscription passed finished **/
 	public boolean isSubscriptionValid(Calendar aCalendar)
 	{
@@ -41,6 +42,8 @@ public class Subscription extends Purchase
 		{
 			return true;
 		}
+		setActive(false);
+		getClient().holtSubscription(this);
 		return false;
 	}
 
@@ -59,7 +62,13 @@ public class Subscription extends Purchase
 		}
 	}
 	
-	/** **/
+	public void holtSubscription(Subscription sub) 
+	{
+		setActive(false);
+		getClient().holtSubscription(this);
+	}
+	
+	/** Calculates Subscription end date **/
 	private Date calculateEndDate(Date aDate)
 	{
 		Calendar tempCal = Calendar.getInstance();
@@ -69,63 +78,28 @@ public class Subscription extends Purchase
 		
 	}
 	
-	/** holt subscription **/
-	public boolean holtSubscription(AppStore store) 
-	{
-		try
-		{	
-			// Remove application from lists SubscribedApps and watingReSubscriptionApps and store
-			super.getClient().holtSubscription(this);
-			store.getSubscriptions().remove(store.getSubscriptions().indexOf(this));
-			return true;
-
-		}
-		catch (Exception e)
-		{
-		e.getStackTrace();	
-		return false;
-		}
-	}
-	
-	/** Cancel subscription **/
-	public boolean cancelSubscription(AppStore store) 
-	{
-		try
-		{	
-			// Remove application from lists SubscribedApps and watingReSubscriptionApps and store
-			super.getClient().cancelSubscrition(this);
-			store.getSubscriptions().remove(store.getSubscriptions().indexOf(this));
-			return true;
-
-		}
-		catch (Exception e)
-		{
-		e.getStackTrace();	
-		return false;
-		}
-	}
-	
 	// Getters
 	public App getApp() 
 	{
 		return app;
 	}
-	public Date getEndDate() {
+	public double getValue() 
+	{
+		return value;
+	}
+	public Date getEndDate() 
+{
 		return endDate;
 	}
-	
-	// Setters
-	public void setApp(App app) 
-	{
-		this.app = app;
+	public boolean isActive() {
+		return active;
 	}
 
-
-	
-
-
+	// Setters
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
-	
+	public void setActive(boolean active) {
+		this.active = active;
+	}
 }

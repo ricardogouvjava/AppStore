@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -114,7 +115,10 @@ public class AppStore
 		}
 	}
 	
-	/* AppStore Methods */
+	/* 
+	 * AppStore *
+	 */
+	
 	/** Ads new user to AppStore **/
 	public void addUser(String aType, String aId, String aPassword, int aAge)
 	{
@@ -148,193 +152,12 @@ public class AppStore
 
 	}
 
-	/** Adds score to score list **/
-	public void addScore(Score aScore)
-	{
-		scores.add(aScore);
-		System.out.println("\nScore added:" + aScore);
-	}
-	
-	/** Create new shopping bag **/
-	public Bag createShoppingBag()
-	{
-		return new Bag();
-	}
-
-	/** Checkouts the client with items in the shopping bag **/
-	public PurchaseApps checkout(Client aClient, Bag shoppingBag)
-	{
-		PurchaseApps purchase = null;
-		purchase = aClient.buy(shoppingBag, calendar);
-
-		// Register sale in applications
-		for (Map.Entry<App, Integer> entry : shoppingBag.getBagItems().entrySet())
-		{
-
-			entry.getKey().registerSale(calendar.getTime(), entry.getValue());
-		}
-
-		System.out.println("\nPurchase made: " + purchase);
-		purchases.add(purchase);
-		currentWeek.addPurchase(purchase);
-	
-
-		
-		return purchase;
-
-	}
-		
-	/** Checkouts the client with items in the shopping bag **/
-	public boolean checkoutSubscription(Client aClient, Bag shoppingBag)
-	{
-		Subscription subscription = null;
-		try
-		{
-			// Register subscriptions of applications
-			for (Map.Entry<App, Integer> entry : shoppingBag.getBagItems().entrySet())
-			{
-				subscription = aClient.subscribe(entry.getKey(), calendar);
-				subscriptions.add(subscription);
-				System.out.println("New sub: " + subscription);
-			}	
-		}
-
-		catch (NullPointerException e)
-		{
-			System.out.println(e.getMessage());
-		}
-		
-		return true;
-	}	
-	
-	/** Check applications with Weekly discounts **/
-	public List<App> checkAppsWithWeeklyDiscounts()
-	{
-		List<App> appsWithDiscount = new ArrayList<>();
-
-		for(App app : apps)
-		{
-			if(app.getWeeklyDiscount() != 0)
-			{
-				appsWithDiscount.add(app);
-			}
-		}
-		return appsWithDiscount;
-	}
-
-	/** Check applications with Monthly discounts **/
-	public List<App> checkAppsWithMonthlyDiscounts()
-	{
-		List<App> appsWithDiscount = new ArrayList<>();
-
-		for(App app : apps)
-		{
-			if(app.getMonthlyAppTypeDiscount() != 0)
-			{
-				appsWithDiscount.add(app);
-			}
-		}
-		return appsWithDiscount;
-	}
-		
-	/** Value in bag **/
-	public double valueInBag(Bag tempBag, Client aClient)
-	{
-		double purchasevalue = 0;
-		if(aClient instanceof ClientPremium)
-		{
-			purchasevalue = tempBag.valueInBag() * premimumDiscount / 100 ;
-		}
-		else
-		{
-			purchasevalue = tempBag.valueInBag();
-		}
-		
-		return purchasevalue;
-	}
-	
-	/** Value saved in purchase **/
-	public double savedInPurchase(PurchaseApps aPurchase)
-	{
-		return aPurchase.getSavedValue();
-	}
-		
 	/** Designates programmer to develop an application **/
 	public App designateProgrammer(String aAppName, double aPrice, AppType aAppType, Programmer programmer)
 	{
 		App app = programmer.developApp(aAppName, aPrice, aAppType, calendar.getTime());
 		apps.add(app);
 		return app;
-	}
-
-	/** Prints earnings by programmer **/
-	public void earningsByProgrammer()
-	{
-		System.out.println("The programmers earnings are:");
-		for(Programmer programmer : getProgrammersList())
-		{
-			System.out.println("Programmer: '" + programmer.getId() +
-					"' earned: " + String.format("%,.2f",programmer.getEarnings(this)));
-		}
-	}
-
-	/* Find Methods */
-	/** Verify if User exists **/
-	public boolean userExists(String aId)
-	{
-		boolean exists = false;
-		for(User user: users)
-		{
-			if(user.getId().equals(aId))
-			{
-				exists = true;
-			}
-		}
-		return exists;
-	}
-	
-	/** Returns user object **/
-	public User findUser(String aUserId)
-	{
-		User returnUser = null;
-		for(User user: users)
-		{
-			if(user.getId().equals(aUserId))
-			{
-				returnUser = user;
-			}
-		}
-		return returnUser;
-	}
-
-		
-	/** Returns the list of applications of one chosen Type **/
-	public List<App> listAppsByType(AppType aType)
-	{
-		List<App> listType =  new ArrayList<>();
-
-		for (App app : apps)
-		{
-			if (app.getType().equals(aType))
-			{
-				listType.add(app);
-			}
-		}
-		return listType;
-	}
-
-	/** Returns all Purchases made in a time period **/
-	public List<Purchase> listPurchasesTimePeriod(Date aStart, Date aEnds)
-	{
-		List<Purchase> tempList = new ArrayList<>();
-		for (Purchase purchase : purchases)
-		{
-			if(purchase.getBuyDate().after(aStart) && purchase.getBuyDate().before(aEnds))
-			{
-				tempList.add(purchase);
-			}
-		}
-		return tempList;
 	}
 
 	/** Returns the list of applications in AppStore ordered by {Name Sold Score} **/
@@ -382,6 +205,407 @@ public class AppStore
 		}
 		return sum;
 	}
+		
+	/** Returns the list of applications of one chosen Type **/
+	public List<App> listAppsByType(AppType aType)
+	{
+		List<App> listType =  new ArrayList<>();
+
+		for (App app : apps)
+		{
+			if (app.getType().equals(aType))
+			{
+				listType.add(app);
+			}
+		}
+		return listType;
+	}
+	
+	/*
+	 * Purchase *
+	 */
+	
+	/** Create new shopping bag **/
+	public Bag createShoppingBag()
+	{
+		return new Bag();
+	}
+
+	/** Value in bag **/
+	public double valueInBag(Bag tempBag, Client aClient)
+	{
+		double purchasevalue = 0;
+		if(aClient instanceof ClientPremium)
+		{
+			purchasevalue = tempBag.valueInBag() * premimumDiscount / 100 ;
+		}
+		else
+		{
+			purchasevalue = tempBag.valueInBag();
+		}
+		
+		return purchasevalue;
+	}
+	
+	/** Value saved in purchase **/
+	public double savedInPurchase(PurchaseApps aPurchase)
+	{
+		return aPurchase.getSavedValue();
+	}
+
+	/** Checkouts the client with items in the shopping bag **/
+	public PurchaseApps checkout(Client aClient, Bag shoppingBag)
+	{
+		PurchaseApps purchase = null;
+		purchase = aClient.buy(shoppingBag, calendar);
+
+		// Register sale in applications
+		for (Map.Entry<App, Integer> entry : shoppingBag.getBagItems().entrySet())
+		{
+
+			entry.getKey().registerSale(calendar.getTime(), entry.getValue());
+		}
+
+		System.out.println("\nPurchase made: " + purchase);
+		purchases.add(purchase);
+		currentWeek.addPurchase(purchase);
+	
+
+		
+		return purchase;
+
+	}
+		
+	/** Checkouts the client with items in the shopping bag **/
+	public boolean checkoutSubscription(Client aClient, Bag shoppingBag)
+	{
+		Subscription subscription = null;
+		try
+		{
+			// Register subscriptions of applications
+			for (Map.Entry<App, Integer> entry : shoppingBag.getBagItems().entrySet())
+			{
+				subscription = aClient.subscribe(entry.getKey(), calendar);
+				subscriptions.add(subscription);
+				System.out.println("New sub: " + subscription);
+			}	
+		}
+
+		catch (NullPointerException e)
+		{
+			System.out.println(e.getMessage());
+		}
+		
+		return true;
+	}	
+
+	/** Returns all Purchases made in a time period **/
+	public List<Purchase> listPurchasesTimePeriod(Date aStart, Date aEnds)
+	{
+		List<Purchase> tempList = new ArrayList<>();
+		for (Purchase purchase : purchases)
+		{
+			if(purchase.getBuyDate().after(aStart) && purchase.getBuyDate().before(aEnds))
+			{
+				tempList.add(purchase);
+			}
+		}
+		return tempList;
+	}
+	
+	
+	/*
+	 *  User *
+	 */
+	
+	/** Verify if User exists **/
+	public boolean userExists(String aId)
+	{
+		boolean exists = false;
+		for(User user: users)
+		{
+			if(user.getId().equals(aId))
+			{
+				exists = true;
+			}
+		}
+		return exists;
+	}
+	
+	/** Returns user object **/
+	public User findUser(String aUserId)
+	{
+		User returnUser = null;
+		for(User user: users)
+		{
+			if(user.getId().equals(aUserId))
+			{
+				returnUser = user;
+			}
+		}
+		return returnUser;
+	}
+
+	
+	/* 
+	 * Client *
+	 */
+	
+	/** Adds score to score list **/
+	public void addScore(Score aScore)
+	{
+		scores.add(aScore);
+		System.out.println("\nScore added:" + aScore);
+	}
+	
+	/** Returns Client list **/
+	public List<Client> getClientsList()
+	{
+		List<Client>  returnclients = new ArrayList<>();
+		for (User user: users)
+		{
+			if (user instanceof Client)
+			{
+				returnclients.add((Client) user);
+			}
+		}
+		return returnclients;
+	}
+
+	/** Returns ClientPremium list **/
+	public List<ClientPremium> getClientsPremiumList()
+	{
+		List<ClientPremium>  returnClientPremium = new ArrayList<>();
+		for (User user: users)
+		{
+			if (user instanceof ClientPremium)
+			{
+				returnClientPremium.add((ClientPremium) user);
+			}
+		}
+		return returnClientPremium;
+	}
+	
+	/** Returns free applications chosen by users  **/
+	public Map<Client, List<App>> freeAppsChosenByClients()
+	{
+		Map<Client, List<App>> freeAppsList = new HashMap<Client, List<App>>();
+		for(Client client : getClientsList())
+		{
+			if(!client.getFreeApps().isEmpty())
+			{
+				freeAppsList.put(client, client.getFreeApps());
+			}
+		}
+		return freeAppsList;
+	}
+	
+	
+	/** Clients Invited by Client **/
+	public List<Client> clientsInvited(Client aClient)
+	{
+		return aClient.getInvitedClients();
+	}
+		
+	/*
+	 * Programmer *
+	 */
+	
+	/** Prints earnings by programmer **/
+	public void earningsByProgrammer()
+	{
+		System.out.println("The programmers earnings are:");
+		for(Programmer programmer : getProgrammersList())
+		{
+			System.out.println("Programmer: '" + programmer.getId() +
+					"' earned: " + String.format("%,.2f",programmer.getEarnings(this)));
+		}
+	}
+
+	/** Returns ClientPremium list **/
+	public List<Programmer> getProgrammersList()
+	{
+		List<Programmer> returnClientPremium = new ArrayList<>();
+		for (User user: users)
+		{
+			if (user instanceof Programmer)
+			{
+				returnClientPremium.add((Programmer) user);
+			}
+		}
+		return returnClientPremium;
+	}	
+	
+	
+	/*
+	 *  Subscription *
+	 */
+	
+	/** Upgrades the normal client to Premium 
+	 * Transfers the data to a new Client object**/
+	public ClientPremium changeToPremium(Client aClient, String userPassword)
+	{
+		
+		String id = aClient.getId();
+		int age = aClient.getAge();
+		double averageScore = aClient.getAverageScore();
+		double spendings = aClient.getSpendings();
+				
+		List<Purchase> purchases = aClient.getPurchases();
+		List<Client> invitedclients = aClient.getInvitedClients();
+		List<Score> scoresGiven = aClient.getScores();
+		Map<App, Integer> appsbought = aClient.getApps();
+		
+		boolean hasChoosenFreeWeeklyApp = aClient.getHasChoosenFreeWeeklyApp();
+		List<App> freeApps = aClient.getFreeApps();
+		List<Subscription> subscriptions = aClient.getSubscriptions();
+		List<Subscription> watingReSubscription = aClient.getWatingReSubscription();
+		
+		getUsersList().remove(aClient);
+		
+		addUser("ClientPremium", id, userPassword, age);
+		
+		ClientPremium clientPremium = (ClientPremium) findUser(id);
+		clientPremium.setAverageScore(averageScore);
+		clientPremium.setSpendings(spendings);
+		
+		clientPremium.setPurchases(purchases);
+		clientPremium.setInvitedClients(invitedclients);
+		clientPremium.setApps(appsbought);
+		clientPremium.setScores(scoresGiven);
+		
+		clientPremium.setHasChoosenFreeWeeklyApp(hasChoosenFreeWeeklyApp);
+		clientPremium.setFreeApps(freeApps);
+		clientPremium.setSubscriptions(subscriptions);
+		clientPremium.setWatingReSubscription(watingReSubscription);
+		
+		return clientPremium;
+	}
+	
+	/** Downgrades the premium client to normal client 
+	 * Transfers the data to a new Client object**/
+	public Client changeToClient(ClientPremium aClientPremium, String userPassword)
+	{
+		String id = aClientPremium.getId();
+		int age = aClientPremium.getAge();
+		double averageScore = aClientPremium.getAverageScore();
+		double spendings = aClientPremium.getSpendings();
+			
+		List<Purchase> purchases = aClientPremium.getPurchases();
+		List<Client> invitedclients = aClientPremium.getInvitedClients();
+		List<Score> scoresGiven = aClientPremium.getScores();
+		Map<App, Integer> appsbought = aClientPremium.getApps();
+		
+		boolean hasChoosenFreeWeeklyApp = aClientPremium.getHasChoosenFreeWeeklyApp();
+		List<App> freeApps = aClientPremium.getFreeApps();
+		List<Subscription> subscriptions = aClientPremium.getSubscriptions();
+		List<Subscription> watingReSubscription = aClientPremium.getWatingReSubscription();
+		
+		getUsersList().remove(aClientPremium);
+		
+		addUser("Client", id, userPassword, age);
+		
+		Client client = (ClientPremium) findUser(id);
+		client.setAverageScore(averageScore);
+		client.setInvitedClients(invitedclients);
+		client.setApps(appsbought);
+		client.setScores(scoresGiven);
+		client.setSpendings(spendings);
+		client.setPurchases(purchases);
+		
+		client.setHasChoosenFreeWeeklyApp(hasChoosenFreeWeeklyApp);
+		client.setFreeApps(freeApps);
+		client.setSubscriptions(subscriptions);
+		client.setWatingReSubscription(watingReSubscription);
+		
+		return client;
+	}
+	
+	/** Remove out of date subscriptions from subscriptions list and from user **/
+	private boolean updateSubs()
+	{
+		Iterator<Subscription> i = subscriptions.iterator();
+		while(i.hasNext())
+		{
+			Subscription sub = i.next();
+			if(!sub.isSubscriptionValid(calendar)) //sub checks it self and removes form client
+			{
+				// Remove application from lists SubscribedApps and watingReSubscriptionApps and store
+				i.remove();
+				getSubscriptions().remove(getSubscriptions().indexOf(sub));
+			}
+		}
+		return true;
+	}
+	
+	/** Cancel subscription of Application **/
+	public boolean cancelSubscription(Client aClient, Subscription sub) 
+	{
+		try
+		{	
+			// Remove application from lists SubscribedApps and watingReSubscriptionApps and store
+			aClient.cancelSubscrition(sub);
+			getSubscriptions().remove(getSubscriptions().indexOf(sub));
+			return true;
+
+		}
+		catch (Exception e)
+		{
+		e.getStackTrace();	
+		return false;
+		}
+	}	
+	
+	/*
+	 * Discounts *
+	 */
+	
+	/** Check applications with Weekly discounts **/
+	public List<App> checkAppsWithWeeklyDiscounts()
+	{
+		List<App> appsWithDiscount = new ArrayList<>();
+
+		for(App app : apps)
+		{
+			if(app.getWeeklyDiscount() != 0)
+			{
+				appsWithDiscount.add(app);
+			}
+		}
+		return appsWithDiscount;
+	}
+
+	/** Check applications with Monthly discounts **/
+	public List<App> checkAppsWithMonthlyDiscounts()
+	{
+		List<App> appsWithDiscount = new ArrayList<>();
+
+		for(App app : apps)
+		{
+			if(app.getMonthlyAppTypeDiscount() != 0)
+			{
+				appsWithDiscount.add(app);
+			}
+		}
+		return appsWithDiscount;
+	}
+		
+	/** Clients with Incentive Discount */
+	public List<Client> clienstWithIncentiveDiscount()
+	{
+		List<Client> clientsWithIcentive = new ArrayList<Client>();
+		for(User user: users)
+		{
+			if(user instanceof Client)
+			{
+				if(((Client) user).hasIncentiveDiscount())
+				{
+					clientsWithIcentive.add((Client)user);	
+				}
+			}
+		}
+		return clientsWithIcentive;
+	}
 	
 	/** update application discounts based Application type Month **/
 	private void updateAppMonthlyDiscounts(int discountValue)
@@ -405,7 +629,25 @@ public class AppStore
 		}
 	}
 	
-	/* Week Methods */
+	/** finds last week less sold applications and applies discounts **/
+	public void updateWeeklyDiscounts() 
+	{
+		// find previous week number
+		int previousWeek = currentWeek.getWeekNumber() - 1;
+		
+		// get less sold applications previous week
+		HashMap<App, Integer> appsToDiscount = getWeekLessSoldApps(previousWeek, 5);
+		
+		// apply discounts
+		currentWeek.updateAppWeeklyDiscounts(this, appsToDiscount, discountValueMonth);
+	}
+	
+	
+	
+	/* 
+	 * Week *
+	 */
+	
 	/** Returns week object **/
 	public WeekAnalyst returnWeekObject(int aWeekNumber)
 	{
@@ -450,160 +692,11 @@ public class AppStore
 		return null;
 	}
 
-	/** finds last week less sold applications and applies discounts **/
-	public void updateWeeklyDiscounts() 
+	/** returns list application sales done in X week **/
+	public Map<App, Integer> getWeekSales(int aWeekNumber)
 	{
-		// find previous week number
-		int previousWeek = currentWeek.getWeekNumber() - 1;
-		
-		// get less sold applications previous week
-		HashMap<App, Integer> appsToDiscount = getWeekLessSoldApps(previousWeek, 5);
-		
-		// apply discounts
-		currentWeek.updateAppWeeklyDiscounts(this, appsToDiscount, discountValueMonth);
-	}
-	
-	
-	/** Clients with Incentive Discount */
-	public List<Client> clienstWithIncentiveDiscount()
-	{
-		List<Client> clientsWithIcentive = new ArrayList<Client>();
-		for(User user: users)
-		{
-			if(user instanceof Client)
-			{
-				if(((Client) user).hasIncentiveDiscount())
-				{
-					clientsWithIcentive.add((Client)user);	
-				}
-			}
-		}
-		return clientsWithIcentive;
-	}
-	
-	/** Clients Invited by Client **/
-	public List<Client> clientsInvited(Client aClient)
-	{
-		return aClient.getInvitedClients();
-	}
-		
-	/* Change subscription */
-	/** Upgrades the normal client to Premium 
-	 * Transfers the data to a new Client object**/
-	public ClientPremium changeToPremium(Client aClient, String userPassword)
-	{
-		
-		String id = aClient.getId();
-		int age = aClient.getAge();
-		double averageScore = aClient.getAverageScore();
-		double spendings = aClient.getSpendings();
-				
-		List<Purchase> purchases = aClient.getPurchases();
-		List<Client> invitedclients = aClient.getInvitedClients();
-		List<Score> scoresGiven = aClient.getScores();
-		Map<App, Integer> appsbought = aClient.getApps();
-		
-		getUsersList().remove(aClient);
-		
-		addUser("ClientPremium", id, userPassword, age);
-		
-		ClientPremium clientPremium = (ClientPremium) findUser(id);
-		clientPremium.setAverageScore(averageScore);
-		clientPremium.setSpendings(spendings);
-		
-		clientPremium.setPurchases(purchases);
-		clientPremium.setInvitedClients(invitedclients);
-		clientPremium.setApps(appsbought);
-		clientPremium.setScores(scoresGiven);
-		
-		return clientPremium;
-	}
-	
-	/** Downgrades the premium client to normal client 
-	 * Transfers the data to a new Client object**/
-	public Client changeToClient(ClientPremium aClientPremium, String userPassword)
-	{
-		String id = aClientPremium.getId();
-		int age = aClientPremium.getAge();
-		double averageScore = aClientPremium.getAverageScore();
-		double spendings = aClientPremium.getSpendings();
-			
-		List<Purchase> purchases = aClientPremium.getPurchases();
-		List<Client> invitedclients = aClientPremium.getInvitedClients();
-		List<Score> scoresGiven = aClientPremium.getScores();
-		Map<App, Integer> appsbought = aClientPremium.getApps();
-		
-		getUsersList().remove(aClientPremium);
-		
-		addUser("Client", id, userPassword, age);
-		
-		Client client = (ClientPremium) findUser(id);
-		client.setAverageScore(averageScore);
-		client.setInvitedClients(invitedclients);
-		client.setApps(appsbought);
-		client.setScores(scoresGiven);
-		client.setSpendings(spendings);
-		client.setPurchases(purchases);
-		
-		return client;
-	}
-	
-	
-	/** Returns free applications chosen by users  **/
-	public Map<Client, List<App>> freeAppsChosenByClients()
-	{
-		Map<Client, List<App>> freeAppsList = new HashMap<Client, List<App>>();
-		for(Client client : getClientsList())
-		{
-			if(!client.getFreeApps().isEmpty())
-			{
-				freeAppsList.put(client, client.getFreeApps());
-			}
-		}
-		return freeAppsList;
-	}
-	
-	
-	/** Check subscriptions date **/
-	private List<Subscription> checkSubsOutDate()
-	{
-		List<Subscription> subsOutOfDate = new ArrayList<Subscription>();
-		
-		// find out of date subs
-		for(Subscription sub : subscriptions)
-		{
-			if(!sub.isSubscriptionValid(calendar))
-			{
-				subsOutOfDate.add(sub);
-			}
-		}
-		
-		return subsOutOfDate;
-	}
-	
-	/** Remove out of date subscriptions from subscriptions list and from user **/
-	private boolean processOutOfDateSubscriptions(List<Subscription> aSubsOutOfDate)
-	{
-		try 
-		{
-			for(Subscription sub : aSubsOutOfDate)
-			{
-				sub.holtSubscription(this);
-			}
-			return true;
-		}
-		catch(Exception e)
-		{
-			e.getStackTrace();
-			return false;
-		}
-	
-	}
-	
-	/** Remove out of date subscriptions from subscriptions list and from user **/
-	private boolean updateSubs()
-	{
-		return processOutOfDateSubscriptions(checkSubsOutDate());
+		return returnWeekObject(aWeekNumber).getAppSales();
+
 	}
 	
 	
@@ -676,51 +769,6 @@ public class AppStore
 		return subscriptions;
 	}
 
-	/** Returns ClientPremium list **/
-	public List<Programmer> getProgrammersList()
-	{
-		List<Programmer> returnClientPremium = new ArrayList<>();
-		for (User user: users)
-		{
-			if (user instanceof Programmer)
-			{
-				returnClientPremium.add((Programmer) user);
-			}
-		}
-		return returnClientPremium;
-	}	
-	/** returns list application sales done in X week **/
-	public Map<App, Integer> getWeekSales(int aWeekNumber)
-	{
-		return returnWeekObject(aWeekNumber).getAppSales();
-
-	}
-	/** Returns Client list **/
-	public List<Client> getClientsList()
-	{
-		List<Client>  returnclients = new ArrayList<>();
-		for (User user: users)
-		{
-			if (user instanceof Client)
-			{
-				returnclients.add((Client) user);
-			}
-		}
-		return returnclients;
-	}
-	/** Returns ClientPremium list **/
-	public List<ClientPremium> getClientsPremiumList()
-	{
-		List<ClientPremium>  returnClientPremium = new ArrayList<>();
-		for (User user: users)
-		{
-			if (user instanceof ClientPremium)
-			{
-				returnClientPremium.add((ClientPremium) user);
-			}
-		}
-		return returnClientPremium;
-	}
 	
 }
 
