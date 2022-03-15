@@ -132,7 +132,7 @@ abstract class User
 	{
 		return scores;
 	}
-	
+
 	// Setters
 	public void setAge(int aAge)
 	{
@@ -150,25 +150,21 @@ abstract class User
 	{
 		id = aUserId;
 	}
-
 	public void setEncryptor(PasswordEncryptor encryptor)
- {
+	{
 		this.encryptor = encryptor;
 	}
-
-	public void setAverageScore(double averageScore) {
+	public void setAverageScore(double averageScore)
+ {
 		this.averageScore = averageScore;
 	}
-
 	public void setScores(List<Score> scores)
- {
+	{
 		this.scores = scores;
 	}
-
 	public void setApps(Map<App, Integer> apps)
- {
+	{
 		this.apps = apps;
 	}
-	
-	
+
 }

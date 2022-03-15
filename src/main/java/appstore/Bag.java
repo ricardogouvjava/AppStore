@@ -14,7 +14,16 @@ public class Bag
 		bagItems = new HashMap<>();
 	}
 
-	// Method
+	/* Method
+	 * 
+	 * putInBag(App, int)
+	 * removeFromBag(App)
+	 * alterAppValueInBag(App, int)
+	 * getAppsInBag()
+	 * valueInBag()
+	 * calculateValueInBagWithBasePrices()
+	 */
+	
 	/** Prints returns string of all bag data **/
 	@Override
 	public String toString()
