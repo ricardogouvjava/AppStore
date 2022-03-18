@@ -22,3 +22,4 @@ Neste projeto pretende-se que o aluno perceba a importância de desenvolver cód
 
 AppFinalValue = BasePrice * ( 100 - AppTypeDiscount - LessSoldDiscount - ClientTypeDiscount - IncentiveDiscount)
 
+## Concluido
